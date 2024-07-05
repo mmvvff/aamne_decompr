@@ -1,4 +1,4 @@
-# OECD AMNE Value-Added Decomposition
+# OECD Analytical AMNE Value-Added Decomposition
 
 This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's Analytical AMNE database. The decomposition is performed using the `decompr` R package.
 
@@ -6,11 +6,12 @@ This repository implements the value-added trade accounting framework of Wang et
 
 The main objective of this project is to:
 
-1. Prepare data from the OECD's Analytical AMNE (Activities of Multinational Enterprises) database.
+1. Prepare data from the OECD's [Analytical AMNE](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html) (Activities of Multinational Enterprises) database.
 2. Apply the value-added trade accounting framework developed by Wang et al. (2013).
 3. Utilize the `decompr` R package to perform the decomposition.
+4. Delineate a strategy to estimate VA-trade content for specific sector-sector relations in the context of `decompr`.
 
-This tool allows researchers and analysts to gain insights into global value chains and the contribution of multinational enterprises to international trade.
+This tool allows researchers and analysts to gain insights into global value chains and the contribution of multinational enterprises to international trade at specific sector-sector relations.
 
 ## Dependencies
 
@@ -69,14 +70,12 @@ Contributions to this project are welcome. Please fork the repository and submit
 
 ## Citation
 
-If you use this tool in your research, please cite both this repository and the original Wang et al. (2013) paper:
+If you use this tool in your research, please cite both this repository, the original Wang et al. (2013) paper and the `decompr` package:
 
-Wang, Z., Wei, S. J., & Zhu, K. (2013). Quantifying international production sharing at the bilateral and sector levels (No. w19677). National Bureau of Economic Research.
+Wang, Z., Wei, S. J., & Zhu, K. (2013). Quantifying international production sharing at the bilateral and sector levels ([No. w19677](https://www.nber.org/papers/w19677)). National Bureau of Economic Research.
+
+Quast, B.A. and V. Kummritz (2015). decompr: Global Value Chain decomposition in R. [CTEI Working Papers, 1](https://repec.graduateinstitute.ch/pdfs/cteiwp/CTEI-2015-01.pdf). [R link](https://cran.r-project.org/web/packages/decompr/index.html)
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For any questions or issues, please open an issue on this repository or contact [Your Name] at [your.email@example.com].

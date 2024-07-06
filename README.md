@@ -1,6 +1,6 @@
 # OECD Analytical AMNE Value-Added Decomposition
 
-This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's Analytical AMNE database. The decomposition is performed using the `decompr` R package.
+This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's Analytical AMNE database. The decomposition is performed using the `decompr` R package, and various strategies are outlined to identify value-added trade within sector-to-sector relationships.
 
 ## Overview
 

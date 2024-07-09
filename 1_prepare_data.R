@@ -21,12 +21,10 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne18_01_preparedata"
-PROJECT <- "aamne_decompr"
-#PROJECT_DIR <- "/Users/manuel/datapipes_mirror/icio_nrr/"
-PROJECT_DIR <- "/Users/manuel/gdrive/prgrmmng/git_repos/"
+NAME <- "R_aamne_01_decompr_preparedata"
+PROJECT <- "r_aamne_nrr"
+PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
 EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
-
 
 # Set working directory The code below will traverse the path upwards until it
 # finds the root folder of the project.
@@ -50,7 +48,18 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-path_data_aamne <- "oecd_aamne/aamne18"
+path_data_aamne <- "oecd_aamne/aamne18/"
+# path_data_aamne <- "oecd_aamne/aamne23/"
+
+##### OECD LABELS for VECTORS OF MATRICES
+vctr_aamne18_io_fnldmnd <- c("HFCE","NPISH","GGFC","GFCF","INVNT","P33")
+vctr_aamne18_io_govatax <- c("GVA","TAX","GO")
+
+vctr_aamne23_io_fnldmnd <- c("HFCE","NONRES","NPISH","GGFC","GFCF","INVNT")
+vctr_aamne23_io_govatax <- c("GVA","TAXSUB","GO")
+
+vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
+vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 
 ###### INITIATE LOOP
 vctr_allyears<-as.character(as.vector(2005:2016))
@@ -64,7 +73,7 @@ pb$tick()
 cat("\n")
 flush.console()
 
-#i<-c("2015")
+#i<-c("2010")
 
 # ##@## Load data: AAMNE
 
@@ -72,33 +81,49 @@ flush.console()
 # we load Rdata icio
 setwd(file.path(EXTERNAL_HD))
 
-aamne_io_i_tbl<-read_csv(paste0(
-  file.path(path_data_aamne,"3_icio_split_ownership",""),
-  "ICIOMNE",i,".csv")) %>%
-  rename(cntry=cou,ownrshp=own,sctr=ind)
-dim(aamne_io_i_tbl)
+aamne_io_i <- list.files(
+  path = paste0(path_data_aamne, "3_icio_split_ownership"),
+  pattern = paste0("^.*", i, "\\.csv$"),
+  full.names = TRUE)
+
+aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
 
 setwd(file.path(PROJECT_DIR, PROJECT))
 
+# ##@## confirm AAMNE version
+
+##### Expected dimensions of each version
+
+dim_aamne18 <- c(4083, 4443)
+dim_aamne23 <- c(6317, 6777)
+
+if (all(dim(aamne_io_i_tbl) == dim_aamne18)) {
+  aamne_io_i_tbl <- aamne_io_i_tbl %>%
+    rename(cntry=cou,ownrshp=own,sctr=ind)
+} else if (all(dim(aamne_io_i_tbl) == dim_aamne23)) {
+  aamne_io_i_tbl <- aamne_io_i_tbl %>%
+    rename(cntry_own_sctr="...1") %>%
+    tidyr::separate(
+      cntry_own_sctr,
+      into = c("cntry","ownrshp","sctr"),
+      sep = "_")
+} else
+{print("not ICIO-AAMNE")}
+
+# ##$##
 
 # ##$##
 
 # ##@## Recode data
 
-# ##@## VECTORS OF MATRICES
-vctr_aamne_io_fnldmnd<-c("HFCE","NPISH","GGFC","GFCF","INVNT","P33")
-vctr_aamne_io_govatax<-c("GVA","TAX","GO")
-# ##$##
-
-# ##@## We Rename columns names of Final Demand to fit 3 pieces
+# We Rename columns names of Final Demand to fit 3 pieces
 aamne_io_i_tbl<-aamne_io_i_tbl%>%
   rename_with(
     ~gsub("_", "_fnldmnd_", .x, fixed=TRUE),
     .cols=contains(paste(vctr_aamne_io_fnldmnd)))
 aamne_io_i_tbl
 # ##$##
-
-# ##$##
+rev(names(aamne_io_i_tbl))[1:6]
 
 # ##@## intermediate matrix: z
 
@@ -106,6 +131,9 @@ aamne_io_i_tbl
 aamne_z_i <- aamne_io_i_tbl %>%
   dplyr::select(!contains("fnldmnd")) %>% # remove final demand components
   dplyr::filter(!sctr %in% vctr_aamne_io_govatax) %>% # remove aggregates
+  dplyr::filter(!cntry %in% vctr_aamne_io_govatax) %>% # remove aggregates
+  # the above two are equivalent to drop_na(), but preferred for readability
+  # tidyr::drop_na() %>%
   # combine ownership and industry into single industry
   dplyr::mutate(own_sctr = stringr::str_c(ownrshp,sctr,sep = "_")) %>%
   dplyr::select(!c(ownrshp,sctr)) %>%
@@ -113,7 +141,6 @@ aamne_z_i <- aamne_io_i_tbl %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
 aamne_z_i
-
 # confirm order of country-own-industry in rows vs. columns
 aamne_z_i
 aamne_z_i[,(ncol(aamne_z_i)-6-1):ncol(aamne_z_i)]
@@ -151,14 +178,26 @@ aamne_z_i_matrix <- aamne_z_i %>%
 dim(aamne_z_i_matrix)
 # ##$##
 
+# ##@## Save
+# aamne_z_i_matrix
+saveRDS(aamne_z_i_matrix,
+  file=paste0(
+    file.path(pipeline, "store",""),
+    "data_aamne_z_",i,"_matrix.rds"))
+
+# ##$##
+
 # ##$##
 
 # ##@## final demand matrix: f
 
 # ##@## prepare
 aamne_f_i <- aamne_io_i_tbl %>%
-  dplyr::select(cntry,ownrshp,sctr,contains("fnldmnd")) %>% # remove final demand components
+  dplyr::select(cntry,ownrshp,sctr,contains("fnldmnd")) %>% # include final demand components
   dplyr::filter(!sctr %in% vctr_aamne_io_govatax) %>% # remove aggregates
+  dplyr::filter(!cntry %in% vctr_aamne_io_govatax) %>% # remove aggregates
+  # although the above two are equivalent to drop_na(), they more readable
+  # tidyr::drop_na() %>%
   # combine ownership and industry into single industry
   dplyr::mutate(own_sctr = stringr::str_c(ownrshp,sctr,sep = "_")) %>%
   dplyr::select(!c(ownrshp,sctr)) %>%
@@ -196,7 +235,12 @@ components_f <- unique(
     "[a-z]+_([0-9A-Z]+)")[,2]
   )
 # test
-stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne_io_fnldmnd))})
+if (length(industries_f) == 68) {
+  stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne18_io_fnldmnd))})
+} else if (length(industries_f) == 82) {
+  stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne23_io_fnldmnd))})
+} else {print("Not ICIO-AAMNE")}
+
 # output
 fnldmnd <- intersect(components_f,sort(vctr_aamne_io_fnldmnd))
 # ##$##
@@ -208,17 +252,32 @@ aamne_f_i_matrix <- aamne_f_i %>%
 dim(aamne_f_i_matrix)
 # ##$##
 
+# ##@## save
+# aamne_f_i_matrix
+saveRDS(aamne_f_i_matrix,
+  file=paste0(
+    file.path(pipeline, "store",""),
+    "data_aamne_f_",i,"_matrix.rds"))
+
+# ##$###
+
 # ##$##
 
 # ##@## gross output vector: go
 
 # ##@## prepare
-aamne_go_i <- aamne_io_i_tbl %>%
-  dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
-  dplyr::filter(sctr %in% c("GO")) %>% # focus on go
-  dplyr::select(!c(cntry,ownrshp)) %>%
-  dplyr::select(sctr,sort(names(.))) # sort columns
-aamne_go_i
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
+  aamne_go_i <- aamne_io_i_tbl %>%
+    dplyr::filter(sctr %in% c("GO")) %>% # focus on go
+    dplyr::select(!c(cntry,ownrshp)) %>%
+    dplyr::select(sctr,sort(names(.))) # sort columns
+} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+  aamne_go_i <- aamne_io_i_tbl %>%
+    dplyr::filter(cntry %in% c("GO")) %>% # focus on go
+    dplyr::select(!c(sctr,ownrshp)) %>%
+    dplyr::select(cntry,sort(names(.))) # sort columns
+} else
+{print("not ICIO-AAMNE")}
 
 # confirm order of country-own-industry in rows vs. columns
 aamne_go_i
@@ -241,13 +300,19 @@ industries_go <- unique(
     "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
   )
 
-
 # ##$##
 
 # ##@## matrix: aamne_go_i_vector
 aamne_go_i_vector <- aamne_go_i %>%
-  dplyr::select(!c(sctr)) %>%
+  dplyr::select(!where(is.character)) %>%
   dplyr::slice(1) %>% as.numeric(.)
+# ##$##
+
+# ##@## Save: aamne_go_i_vector
+saveRDS(aamne_go_i_vector,
+  file=paste0(
+    file.path(pipeline, "store",""),
+    "data_aamne_go_",i,"_vector.rds"))
 # ##$##
 
 # ##$##
@@ -255,12 +320,20 @@ aamne_go_i_vector <- aamne_go_i %>%
 # ##@## gross output vector: va
 
 # ##@## prepare
-aamne_va_i <- aamne_io_i_tbl %>%
-  dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
-  dplyr::filter(sctr %in% c("GVA")) %>% # focus on go
-  dplyr::select(!c(cntry,ownrshp)) %>%
-  dplyr::select(sctr,sort(names(.))) # sort columns
-aamne_va_i
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
+  aamne_va_i <- aamne_io_i_tbl %>%
+    dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
+    dplyr::filter(sctr %in% c("GVA")) %>% # focus on go
+    dplyr::select(!c(cntry,ownrshp)) %>%
+    dplyr::select(sctr,sort(names(.))) # sort columns
+} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+  aamne_va_i <- aamne_io_i_tbl %>%
+    dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
+    dplyr::filter(cntry %in% c("GVA")) %>% # focus on go
+    dplyr::select(!c(sctr,ownrshp)) %>%
+    dplyr::select(cntry,sort(names(.))) # sort columns
+} else
+{print("not ICIO-AAMNE")}
 
 # confirm order of country-own-industry in rows vs. columns
 aamne_va_i
@@ -287,8 +360,16 @@ industries_va <- unique(
 
 # ##@## matrix: aamne_va_i_vector
 aamne_va_i_vector <- aamne_va_i %>%
-  dplyr::select(!c(sctr)) %>%
+  dplyr::select(!where(is.character)) %>%
   dplyr::slice(1) %>% as.numeric(.)
+# ##$##
+
+# ##@## save: aamne_va_i_vector
+saveRDS(aamne_va_i_vector,
+  file=paste0(
+    file.path(pipeline, "store",""),
+    "data_aamne_va_",i,"_vector.rds"))
+
 # ##$##
 
 # ##$##
@@ -296,13 +377,25 @@ aamne_va_i_vector <- aamne_va_i %>%
 # ##@## gross output vector: gva
 
 # ##@## prepare
-aamne_gva_i <- aamne_io_i_tbl %>%
-  dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
-  dplyr::filter(sctr %in% c("GVA","TAX")) %>% # focus on VA
-  dplyr::select(!c(cntry,ownrshp,sctr)) %>%
-  dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
-  tibble::add_column(sctr=c("GVA"), .before = 1) %>%
-  dplyr::select(sctr,sort(names(.))) # sort columns to match order in rows
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
+  aamne_gva_i <- aamne_io_i_tbl %>%
+    dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
+    dplyr::filter(sctr %in% c("GVA","TAX")) %>% # focus on VA
+    dplyr::select(!c(cntry,ownrshp,sctr)) %>%
+    dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
+    tibble::add_column(sctr=c("GVA"), .before = 1) %>%
+    dplyr::select(sctr,sort(names(.))) # sort columns to match order in rows
+} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+  aamne_gva_i <- aamne_io_i_tbl %>%
+    dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
+    dplyr::filter(cntry %in% c("GVA","TAXSUB")) %>% # focus on VA
+    dplyr::select(!c(cntry,ownrshp,sctr)) %>%
+    dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
+    tibble::add_column(sctr=c("GVA"), .before = 1) %>%
+    dplyr::select(sctr,sort(names(.))) # sort columns to match order in rows
+} else
+{print("not ICIO-AAMNE")}
+
 any(is.na(aamne_gva_i))
 aamne_gva_i
 # confirm order of country-own-industry in rows vs. columns
@@ -332,6 +425,13 @@ industries_gva <- unique(
 aamne_gva_i_vector <- aamne_gva_i %>%
   dplyr::select(!c(sctr)) %>%
   dplyr::slice(1) %>% as.numeric(.)
+# ##$##
+
+# ##@## save: aamne_gva_i_vector
+saveRDS(aamne_gva_i_vector,
+  file=paste0(
+    file.path(pipeline, "store",""),
+    "data_aamne_gva_",i,"_vector.rds"))
 # ##$##
 
 # ##$##
@@ -395,41 +495,6 @@ stopifnot(exprs = {
     length(countries_aamne)*length(vctr_aamne_io_fnldmnd)
   )
 })
-
-# ##$##
-
-# ##@## Save files
-
-# aamne_z_i_matrix
-saveRDS(aamne_z_i_matrix,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamnev_z_",i,"_matrix.rds"))
-#
-# aamne_f_i_matrix
-saveRDS(aamne_f_i_matrix,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_f_",i,"_matrix.rds"))
-
-# aamne_go_i_vector
-saveRDS(aamne_go_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_go_",i,"_vector.rds"))
-#
-# aamne_va_i_vector
-saveRDS(aamne_va_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_va_",i,"_vector.rds"))
-#
-# aamne_gva_i_vector
-saveRDS(aamne_gva_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_gva_",i,"_vector.rds"))
-#
 
 # ##$##
 

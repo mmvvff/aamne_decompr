@@ -50,71 +50,6 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-# ##@## CODES | VECTORS: Load country codes
-
-# ##@## wb income and oecd membership
-codes_oecd_membership <- read_csv(file.path("empirical", "0_data", "external", "codes_cntrs_oecd_members_all.csv"))
-class(codes_oecd_membership)
-codes_oecd_membership <- codes_oecd_membership %>%
-  rename(country_code_iso3=country_isoalpha3_code)%>%
-  pivot_longer(-country_code_iso3,names_to="year",values_to="yrthrshld_oecdmbrshp")%>%
-  mutate(year=as_factor(year))
-codes_oecd_membership
-
-wb_income_classifications <- read_csv(file.path("empirical", "0_data", "external", "codes_cntrs_wb_incmgrps_1987_2015.csv"))
-class(wb_income_classifications)
-wb_income_classifications <- wb_income_classifications %>%
-pivot_longer(-country_code_iso3, names_to = "year", values_to = "yrthrshld_incmgrp")
-wb_income_classifications
-
-codes_cntrs_dvlpment<-left_join(
-  wb_income_classifications,
-  codes_oecd_membership) %>%
-  mutate(yrthrshld_oecdmbrshp=if_else(is.na(yrthrshld_oecdmbrshp),c("NON-OECD"),yrthrshld_oecdmbrshp)) %>%
-  group_by(year) %>%
-  mutate(yrthrshld_dvlpmnt6=case_when(
-    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_HIC",
-    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_HIC",
-    c(yrthrshld_incmgrp==c("UMIC") | yrthrshld_incmgrp==c("LMIC")) & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_MIC",
-    c(yrthrshld_incmgrp==c("UMIC") | yrthrshld_incmgrp==c("LMIC")) & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_MIC",
-    yrthrshld_incmgrp==c("LIC") & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_LIC",
-    yrthrshld_incmgrp==c("LIC") & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_LIC")) %>%
-  mutate(yrthrshld_dvlpmnt2=if_else(
-    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("OECD"),"Highly Industrialized","Emerging"))
-
-#
-# yrthrshld_dvlpmnt2
-codes_cntrs_dvlpment$yrthrshld_dvlpmnt2<-factor(
-  codes_cntrs_dvlpment$yrthrshld_dvlpmnt2,
-  levels=c("Highly Industrialized","Emerging"))
-
-#glimpse(codes_cntrs_dvlpment) # output
-# ##$##
-
-codes_cntrs_dvlpment_initial_hghind<-codes_cntrs_dvlpment%>%
-  dplyr::filter(year %in% c("2004")) %>%
-  dplyr::filter(yrthrshld_dvlpmnt2 %in% c("Highly Industrialized"))
-codes_cntrs_hghind_vctr<-c(codes_cntrs_dvlpment_initial_hghind$country_code_iso3)
-
-# UNSD
-# we load our csv file to create vectors of development-level and regions
-unsd_country_codes <- read_csv(file.path("empirical", "0_data", "external", "codes_cntrs_unsd_mvf.csv"))
-
-# ICIO codes_cntrs
-# codes_cntrs_icioV18_all
-codes_cntrs_icioV18_all <- read_csv(file.path("empirical", "0_data", "external",
-  "codes_cntrs_oecd_icioV18_all.csv"))
-
-codes_cntrs_icioV18_all_vctr <- c(codes_cntrs_icioV18_all$country_code_iso3) #facilitates filtering/selecting
-# icio row and wld
-codes_cntrs_icio_wld <- c("WLD")
-codes_cntrs_icio_row <- c("ROW")
-
-# CN | MX
-codes_cntrs_icio_mx_cn <- read_csv(file.path("empirical", "0_data", "external",
-  "codes_cntrs_icio_mx_cn.csv"))
-
-# ##$##
 # ##@## CODES | VECTORS: codes and vectors for sectors
 
 # ##@## DATA: sector codes
@@ -211,9 +146,6 @@ codes_tradables_techrnd<-intersect(codes_techrnd_highmed,codes_tradables_umxsx)
 # ##$##
 
 # ##$##
-# ##@## CODES | VECTORS: UNIVERSE OF STUDY: global
-# ##$##
-
 
 func_getvarname <- function(variable, pattern_exclude = "") {
   # get variable name a character vector

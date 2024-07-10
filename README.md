@@ -28,9 +28,23 @@ You can install these packages using:
 install.packages(c("decompr", "dplyr", "readr", "tidyr", "stringr"))
 ```
 
-## Data
+## Folder structure and data
 
-The data used in this project comes from the OECD's Analytical AMNE database. You will need to download this data separately and place it in the `data/` directory. Please refer to the OECD website for access and usage terms.
+You need to setup in your local machine the following folder structure:
+
+```
+.
+├── 1_data/                 # Raw data files
+├── 2_pipeline/             # Data processing pipelines
+├── 3_output/               # Output files
+```
+
+The above folder structure draws on [Ties de Kok's suggestions](https://towardsdatascience.com/how-to-keep-your-research-projects-organized-part-1-folder-structure-10bd56034d3a). The first lines of code in all scripts include these suggestions to facilitate the creation of subfolders.
+
+The data used in this project comes from the OECD's Analytical AMNE [database](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html). You will need to download this data separately and place it in the `1_data/` directory. Please refer to the OECD website for access and usage terms.
+
+The scripts in this project can handle both the 2018 and 2023 versions of aAAMNE.
+It depends on the researcher's judgement which version to use.
 
 ## Usage
 
@@ -67,9 +81,6 @@ The repository is structured as follows:
 
 ```
 .
-├── 1_data/                 # Raw data files (not included in repo)
-├── 2_pipeline/             # Data processing pipelines
-├── 3_output/               # Output files
 ├── src/                    # Source code
 │   ├── cou/
 │   │   ├── 1_decompr_sngl.R # Script
@@ -80,7 +91,6 @@ The repository is structured as follows:
 └── LICENSE                 # License file
 ```
 
-The above folder structure draws on [Ties de Kok's suggestions](https://towardsdatascience.com/how-to-keep-your-research-projects-organized-part-1-folder-structure-10bd56034d3a). The first lines of code in all scripts include these suggestions to facilitate the creation of subfolders.
 
 ## Contributing
 

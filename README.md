@@ -56,14 +56,14 @@ For parallel processing:
 4. In turn, there are two additional subset of scripts addressing different analytical concerns:
 
 - If you are interested in revealing the VA content via backward linkages
-with the entire economy, choose this subset of scripts. This scripts help reveal
+with the entire economy, choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cou). This scripts help reveal
 the aggregate VA contributions from all sectors of origin (sources of VA)
 to each of the sectors of destination covered in the aAMNE database (users of VA).
 This is the typical approach of `decompr`.
 
 - If you are interested in revealing the VA content via backward linkages
 with special focus on certain sectors (e.g., only tradable sectors),
-choose this subset of scripts. This reveals the aggregate VA contributions
+choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). This reveals the aggregate VA contributions
 from a specific sector of origin (source of VA) to each of
 the sectors of destination covered in the aAMNE database (users of VA).
 These scripts modify the inputs feeding into `decompr`.

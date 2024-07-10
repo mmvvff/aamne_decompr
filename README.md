@@ -1,12 +1,12 @@
 # OECD Analytical AMNE WWZ Value-Added Decomposition
 
-This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's [Analytical AMNE database](https://doi.org/10.1787/d9de288d-en). The decomposition is performed using the `decompr` R package, and some strategies are outlined to estimate value-added trade within sector-to-sector relationships.
+This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's [Analytical AMNE](https://doi.org/10.1787/d9de288d-en)(Activities of Multinational Enterprises) database. The decomposition is performed using the `decompr` R package, and some strategies are outlined to estimate value-added trade within sector-to-sector relationships.
 
 ## Overview
 
 The main objective of this project is to:
 
-1. Prepare data from the OECD's [Analytical AMNE](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html) (Activities of Multinational Enterprises) database, following the strategy delineated in [Miroudot & Ye (2019: 14)](https://doi.org/10.1080/09535314.2019.1701997)
+1. Prepare data from the OECD's Analytical AMNE [database](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html), following the strategy delineated in Miroudot & Ye (2019: 14).
 2. Apply the value-added trade accounting framework developed by Wang et al. (2013), using the `decompr` R package to perform the decomposition.
 3. Delineate a strategy to estimate VA-trade content for specific sector-sector relations in the context of `decompr`.
 
@@ -98,13 +98,15 @@ Contributions to this project are welcome. Please fork the repository and submit
 
 ## Citation
 
-If you use this tool in your research, please cite both this repository, the original Wang et al. (2013) and Miroudot & Ye (2019) papers, and the `decompr` package:
+If you use this tool in your research, please cite both this repository, and the following references as well:
 
-Miroudot, Sébastien & Ye, Ming (2019). "Multinational production in value-added terms". [Economic Systems Research, Online version](https://www.tandfonline.com/doi/full/10.1080/09535314.2019.1701997)
+Miroudot, Sébastien & Ye, Ming (2019). "Multinational production in value-added terms". [Economic Systems Research, Online version](https://doi.org/10.1080/09535314.2019.1701997)
+
+Quast, B.A. and V. Kummritz (2015). "decompr: Global Value Chain decomposition in R". [CTEI Working Papers, 1](https://repec.graduateinstitute.ch/pdfs/cteiwp/CTEI-2015-01.pdf). [R link](https://cran.r-project.org/web/packages/decompr/index.html)
 
 Wang, Z., Wei, S. J., & Zhu, K. (2013). "Quantifying international production sharing at the bilateral and sector levels" ([No. w19677](https://www.nber.org/papers/w19677)). National Bureau of Economic Research.
 
-Quast, B.A. and V. Kummritz (2015). "decompr: Global Value Chain decomposition in R". [CTEI Working Papers, 1](https://repec.graduateinstitute.ch/pdfs/cteiwp/CTEI-2015-01.pdf). [R link](https://cran.r-project.org/web/packages/decompr/index.html)
+
 
 ## License
 

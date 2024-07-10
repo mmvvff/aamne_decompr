@@ -94,7 +94,11 @@ The above folder structure draws on [Ties de Kok suggestions](https://towardsdat
 
 ## Contributing
 
-Contributions to this project are welcome. Please fork the repository and submit a pull request with your changes.
+Contributions to this project are welcome, but keep in mind that this is
+**a work in progress**; e.g., there is several data not fully explained that are used
+aggregate sectors for my own research purposes.
+
+Please fork the repository and submit a pull request with your changes.
 
 ## Citation
 

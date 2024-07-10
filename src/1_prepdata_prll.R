@@ -13,15 +13,17 @@ Sys.sleep(1)
 
 # Imports: All the library imports go here
 
-#library(miceadds)
-library(tidyverse)
-library(progress)
-library(decompr)
+# library(miceadds)
+library(readr)
+library(tidyr)
+library(dplyr)
+library(foreach)
+library(doParallel)
 library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_01_decompr_preparedata"
+NAME <- "R_aamne_decompr"
 PROJECT <- "r_aamne_nrr"
 PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
 EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
@@ -51,27 +53,31 @@ if (!dir.exists(pipeline)) {
 path_data_aamne <- "oecd_aamne/aamne18/"
 # path_data_aamne <- "oecd_aamne/aamne23/"
 
-##### OECD LABELS for VECTORS OF MATRICES
+# ##@## OECD LABELS for VECTORS OF MATRICES
+# ##@## aamne18
 vctr_aamne18_io_fnldmnd <- c("HFCE","NPISH","GGFC","GFCF","INVNT","P33")
 vctr_aamne18_io_govatax <- c("GVA","TAX","GO")
-
+# ##$##
+# ##@## aamne23
 vctr_aamne23_io_fnldmnd <- c("HFCE","NONRES","NPISH","GGFC","GFCF","INVNT")
 vctr_aamne23_io_govatax <- c("GVA","TAXSUB","GO")
-
+# ##$##
 vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
+# ##$##
+
+#setup parallel backend to use many processors
+cores = detectCores()
+# substract n processors to avoid overloading
+cl <- makeCluster(cores[1]-2)
+registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2016))
-pb<-progress_bar$new(total=length(vctr_allyears))
-pb$tick(0)
-for(i in vctr_allyears){ # START of loop
-Sys.sleep(1)
-cat("\n")
-print(i)
-pb$tick()
-cat("\n")
-flush.console()
+vctr_allyears<-as.character(as.vector(2005:2013))
+
+foreach(
+  i=vctr_allyears,
+  .packages=c("readr","tidyr","dplyr")) %dopar% { # START of loop
 
 #i<-c("2010")
 
@@ -140,13 +146,13 @@ aamne_z_i <- aamne_io_i_tbl %>%
   dplyr::relocate(cntry,own_sctr) %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
-aamne_z_i
+
 # confirm order of country-own-industry in rows vs. columns
 aamne_z_i
 aamne_z_i[,(ncol(aamne_z_i)-6-1):ncol(aamne_z_i)]
 # ##$##
 
-# ##@## vector of countries and industries
+# ##@## test: vector of countries and industries
 # countries
 countries_z_source <- unique(aamne_z_i$cntry)
 countries_z_dest <- unique(
@@ -168,22 +174,13 @@ industries_z_dest <- unique(
 #
 stopifnot(exprs = {all.equal(industries_z_source, industries_z_dest)})
 industries_z <- intersect(industries_z_source, industries_z_dest)
-
 # ##$##
 
-# ##@## matrix: aamne_z_i_matrix
+# ##@## output: aamne_z_i_matrix
+
 aamne_z_i_matrix <- aamne_z_i %>%
   dplyr::select(!c(cntry,own_sctr)) %>%
   as.matrix(.) %>% unname(.)
-dim(aamne_z_i_matrix)
-# ##$##
-
-# ##@## Save
-# aamne_z_i_matrix
-saveRDS(aamne_z_i_matrix,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_z_",i,"_matrix.rds"))
 
 # ##$##
 
@@ -204,7 +201,6 @@ aamne_f_i <- aamne_io_i_tbl %>%
   dplyr::relocate(cntry,own_sctr) %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
-aamne_f_i
 
 # confirm order of country-own-industry in rows vs. columns
 aamne_f_i
@@ -240,9 +236,6 @@ if (length(industries_f) == 68) {
 } else if (length(industries_f) == 82) {
   stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne23_io_fnldmnd))})
 } else {print("Not ICIO-AAMNE")}
-
-# output
-fnldmnd <- intersect(components_f,sort(vctr_aamne_io_fnldmnd))
 # ##$##
 
 # ##@## matrix: aamne_f_i_matrix
@@ -251,15 +244,6 @@ aamne_f_i_matrix <- aamne_f_i %>%
   as.matrix(.) %>% unname(.)
 dim(aamne_f_i_matrix)
 # ##$##
-
-# ##@## save
-# aamne_f_i_matrix
-saveRDS(aamne_f_i_matrix,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_f_",i,"_matrix.rds"))
-
-# ##$###
 
 # ##$##
 
@@ -308,12 +292,6 @@ aamne_go_i_vector <- aamne_go_i %>%
   dplyr::slice(1) %>% as.numeric(.)
 # ##$##
 
-# ##@## Save: aamne_go_i_vector
-saveRDS(aamne_go_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_go_",i,"_vector.rds"))
-# ##$##
 
 # ##$##
 
@@ -362,14 +340,6 @@ industries_va <- unique(
 aamne_va_i_vector <- aamne_va_i %>%
   dplyr::select(!where(is.character)) %>%
   dplyr::slice(1) %>% as.numeric(.)
-# ##$##
-
-# ##@## save: aamne_va_i_vector
-saveRDS(aamne_va_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_va_",i,"_vector.rds"))
-
 # ##$##
 
 # ##$##
@@ -423,20 +393,13 @@ industries_gva <- unique(
 
 # ##@## matrix: aamne_gva_i_vector
 aamne_gva_i_vector <- aamne_gva_i %>%
-  dplyr::select(!c(sctr)) %>%
+  dplyr::select(!where(is.character)) %>%
   dplyr::slice(1) %>% as.numeric(.)
 # ##$##
 
-# ##@## save: aamne_gva_i_vector
-saveRDS(aamne_gva_i_vector,
-  file=paste0(
-    file.path(pipeline, "store",""),
-    "data_aamne_gva_",i,"_vector.rds"))
 # ##$##
 
-# ##$##
-
-# ##@## TEST: order and size of countries and industries
+# ##@## TEST decompr requirements: order and size of countries and industries
 
 # size of countries and industries
 stopifnot(exprs = {
@@ -475,7 +438,7 @@ industries_aamne <- Reduce(
   )
 # ##$##
 
-# ##@## TEST: size of matrices and vectors
+# ##@## TEST decompr requirements: size of matrices and vectors
 stopifnot(exprs = {
   all.equal(
     dim(aamne_z_i_matrix)[1],
@@ -490,12 +453,71 @@ stopifnot(exprs = {
     length(aamne_va_i_vector),
     length(aamne_gva_i_vector)
   )
-  all.equal(
-    dim(aamne_f_i_matrix)[2],
-    length(countries_aamne)*length(vctr_aamne_io_fnldmnd)
-  )
 })
+
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
+  stopifnot(exprs = {
+    all.equal(
+      dim(aamne_f_i_matrix)[2],
+      length(countries_aamne)*length(vctr_aamne18_io_fnldmnd)
+    )
+  })
+} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+  stopifnot(exprs = {
+    all.equal(
+      dim(aamne_f_i_matrix)[2],
+      length(countries_aamne)*length(vctr_aamne23_io_fnldmnd)
+    )
+  })
+}
+# ##$##
+
+# ##@## Save
+# countries_aamne
+saveRDS(countries_aamne,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_countries_",i,".rds"))
+#
+# industries_aamne
+saveRDS(industries_aamne,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_industries_",i,".rds"))
+
+# aamne_z_i_matrix
+saveRDS(aamne_z_i_matrix,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_z_",i,"_matrix.rds"))
+
+# aamne_f_i_matrix
+saveRDS(aamne_f_i_matrix,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_f_",i,"_matrix.rds"))
+
+# aamne_go_i_vector
+saveRDS(aamne_go_i_vector,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_go_",i,"_vector.rds"))
+
+# aamne_va_i_vector
+saveRDS(aamne_va_i_vector,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_va_",i,"_vector.rds"))
+
+# aamne_gva_i_vector
+saveRDS(aamne_gva_i_vector,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_gva_",i,"_vector.rds"))
 
 # ##$##
 
 }
+
+#stop cluster
+stopCluster(cl)

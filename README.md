@@ -1,4 +1,4 @@
-# OECD Analytical AMNE WWZ Value-Added Decomposition
+# WWZ Value-Added Decomposition of the OECD's Analytical AMNE 
 
 This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's [Analytical AMNE](https://doi.org/10.1787/d9de288d-en) (Activities of Multinational Enterprises) database. The decomposition is performed using the `decompr` R package, and strategies are outlined to estimate value-added trade within sector-to-sector relationships.
 

@@ -352,3 +352,61 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
 # ##$##
 
 }
+
+##### join and export
+
+# ##@## collect estimates for sectoral aggregates included as source of VA
+
+for (idx in seq(nrow(vctr_sctr_aggregates))) {
+  # names for included
+  name_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"names"[[1]]
+
+  # ##@## decomp_aamne_name_sctr_aggregates_wwz
+  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
+  decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
+
+  # reset initial setup
+  setwd(file.path(PROJECT_DIR, PROJECT))
+
+  # combine df rowwise
+  decomp_aamne_name_sctr_aggregates_wwz<-decomp_aamne_name_sctr_aggregates_wwz_list%>%
+    Reduce(f=bind_rows) %>%
+    tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
+  #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
+
+  saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
+    ungroup() %>% tibble::add_column(updated=Sys.Date()),
+    file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
+  # ##$##
+}
+
+# ##$##
+
+# ##@## collect estimates for sectoral aggregates excluded as source of VA
+
+for (idx in seq(nrow(vctr_sctr_aggregates))) {
+  # names for excluded
+  name_sctr_aggregates <- func_xstring(vctr_sctr_aggregates[idx,]$"names"[[1]])
+
+  # ##@## decomp_aamne_name_sctr_aggregates_wwz
+  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
+  decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
+
+  # reset initial setup
+  setwd(file.path(PROJECT_DIR, PROJECT))
+
+  # combine df rowwise
+  decomp_aamne_name_sctr_aggregates_wwz<-decomp_aamne_name_sctr_aggregates_wwz_list%>%
+    Reduce(f=bind_rows) %>%
+    tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
+  #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
+
+  saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
+    ungroup() %>% tibble::add_column(updated=Sys.Date()),
+    file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
+  # ##$##
+}
+
+# ##$##

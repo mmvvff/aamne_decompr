@@ -335,6 +335,17 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
 
 ##### join and export
 
+vctr_sctr_aggregates <- tibble(
+  codes = c(
+    list(codes_tradables_umxsx),
+    list(codes_nrrprd_upstrm),
+    list(codes_tradables_techrnd)),
+  names = c(
+    func_getvarname(codes_tradables_umxsx, "codes_"),
+    func_getvarname(codes_nrrprd_upstrm, "codes_"),
+    func_getvarname(codes_tradables_umxsx, "codes_"))
+  )
+
 # ##@## collect estimates for sectoral aggregates included as source of VA
 
 for (idx in seq(nrow(vctr_sctr_aggregates))) {
@@ -357,7 +368,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
 
   saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
     ungroup() %>% tibble::add_column(updated=Sys.Date()),
-    file=file.path(pipeline, "out","decomp_aamne_",name_sctr_aggregates,"_wwz.rds"))
+    file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
   # ##$##
 }
 
@@ -385,7 +396,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
 
   saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
     ungroup() %>% tibble::add_column(updated=Sys.Date()),
-    file=file.path(pipeline, "out","decomp_aamne_",name_sctr_aggregates,"_wwz.rds"))
+    file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
   # ##$##
 }
 

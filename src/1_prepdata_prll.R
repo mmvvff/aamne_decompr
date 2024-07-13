@@ -50,8 +50,8 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-path_data_aamne <- "oecd_aamne/aamne18/"
-# path_data_aamne <- "oecd_aamne/aamne23/"
+# path_data_aamne <- "oecd_aamne/aamne18/"
+path_data_aamne <- "oecd_aamne/aamne23/"
 
 # ##@## OECD LABELS for VECTORS OF MATRICES
 # ##@## aamne18
@@ -69,11 +69,11 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 #setup parallel backend to use many processors
 cores = detectCores()
 # substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2)
+cl <- makeCluster(cores[1]-1)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2013))
+vctr_allyears<-as.character(as.vector(2000:2013))
 
 foreach(
   i=vctr_allyears,

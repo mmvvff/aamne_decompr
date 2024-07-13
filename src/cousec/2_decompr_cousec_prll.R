@@ -56,22 +56,12 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-# we load our csv file to use for the creation of vectors defining sector_codes for nrrprd_vc
-codes_sector_icioV18 <- read.csv(file.path("empirical", "0_data", "external",
-  "codes_sector_oecdV18_classification.csv"))
-codes_sector_icioV18 <- codes_sector_icioV18 %>%
-  mutate_if(sapply(codes_sector_icioV18, is.numeric), as.factor)
-#glimpse(codes_sector_icioV18)
-
-# we load our csv file to use for filtering non-sector_codes in datafiles
-codes_sector_icioV18all <- read_csv(file.path("empirical", "0_data", "external",
-  "codes_sector_oecdV18_all.csv"))
-codes_sector_icioV18all$sector_code <- stringr::str_sub(codes_sector_icioV18all$sector_code, 2)
-codes_sector_icioV18all_vctr <- c(codes_sector_icioV18all$sector_code)
-#glimpse(codes_sector_icioV18all_vctr)
+#codes_sector_aamne_all <- read_csv(file.path("empirical", "0_data", "external",
+#  "codes_sector_oecd_aamneV18_classification.csv"))
+#glimpse(codes_sector_aamne_all)
 
 codes_sector_aamne_all <- read_csv(file.path("empirical", "0_data", "external",
-  "codes_sector_oecd_aamneV18_classification.csv"))
+  "codes_sector_oecd_aamneV23_classification.csv"))
 #glimpse(codes_sector_aamne_all)
 
 # ##$##
@@ -81,19 +71,6 @@ codes_sector_aamne_all <- read_csv(file.path("empirical", "0_data", "external",
 # manufacturing sectors we use the sector codes of icio (Eurostat based on ISIC
 # Rev. 4)
 # we create a vector of codes of nrr vc, sectors and segments
-
-# suppliers
-codes_sector_aamne_all_tradables_mx <- dplyr::filter(codes_sector_aamne_all,
-  tradables_mx == 1)
-codes_tradables_mx <- paste(codes_sector_aamne_all_tradables_mx$sector_code)
-unique(codes_tradables_mx)
-
-codes_sector_aamne_all_tradables_sx <- dplyr::filter(codes_sector_aamne_all,
-  tradables_sx == 1)
-codes_tradables_sx <- paste(codes_sector_aamne_all_tradables_sx$sector_code)
-unique(codes_tradables_sx)
-
-codes_tradables_umxsx <- union(codes_tradables_mx,codes_tradables_sx)
 # nrrprd  producers
 codes_sector_aamne_all_nrrprd_vc <- dplyr::filter(codes_sector_aamne_all,
   nrr_vc_prdcrs==1)
@@ -109,6 +86,19 @@ codes_sector_aamne_all_nrrprd_dwnstrm <- dplyr::filter(codes_sector_aamne_all,
   nrr_dwnstrm_prdcrs==1)
 codes_nrrprd_dwnstrm <- paste(codes_sector_aamne_all_nrrprd_dwnstrm$sector_code)
 unique(codes_nrrprd_dwnstrm)
+
+# suppliers
+codes_sector_aamne_all_tradables_mx <- dplyr::filter(codes_sector_aamne_all,
+  tradables_mx == 1)
+codes_tradables_mx <- paste(codes_sector_aamne_all_tradables_mx$sector_code)
+unique(codes_tradables_mx)
+
+codes_sector_aamne_all_tradables_sx <- dplyr::filter(codes_sector_aamne_all,
+  tradables_sx == 1)
+codes_tradables_sx <- paste(codes_sector_aamne_all_tradables_sx$sector_code)
+unique(codes_tradables_sx)
+
+codes_tradables_umxsx <- setdiff(union(codes_tradables_mx,codes_tradables_sx), codes_nrrprd_vc)
 
 # manfucaturing users of end-products
 codes_sector_aamne_all_mnfctrng_usrs <- dplyr::filter(codes_sector_aamne_all,
@@ -169,7 +159,7 @@ cl <- makeCluster(cores[1]-2)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2013))
+vctr_allyears<-as.character(as.vector(2000:2013))
 
 foreach(
   i=vctr_allyears,
@@ -241,11 +231,13 @@ vctr_sctr_aggregates <- tibble(
   codes = c(
     list(codes_tradables_umxsx),
     list(codes_nrrprd_upstrm),
+    list(codes_nrrprd_dwnstrm),
     list(codes_tradables_techrnd)),
   names = c(
     func_getvarname(codes_tradables_umxsx, "codes_"),
     func_getvarname(codes_nrrprd_upstrm, "codes_"),
-    func_getvarname(codes_tradables_umxsx, "codes_"))
+    func_getvarname(codes_nrrprd_dwnstrm, "codes_"),
+    func_getvarname(codes_tradables_techrnd, "codes_"))
   )
 
 # ##@## for selected sectoral aggregates: include as sources of VA
@@ -339,11 +331,13 @@ vctr_sctr_aggregates <- tibble(
   codes = c(
     list(codes_tradables_umxsx),
     list(codes_nrrprd_upstrm),
+    list(codes_nrrprd_dwnstrm),
     list(codes_tradables_techrnd)),
   names = c(
     func_getvarname(codes_tradables_umxsx, "codes_"),
     func_getvarname(codes_nrrprd_upstrm, "codes_"),
-    func_getvarname(codes_tradables_umxsx, "codes_"))
+    func_getvarname(codes_nrrprd_dwnstrm, "codes_"),
+    func_getvarname(codes_tradables_techrnd, "codes_"))
   )
 
 # ##@## collect estimates for sectoral aggregates included as source of VA

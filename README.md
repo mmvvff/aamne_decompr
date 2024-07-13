@@ -1,4 +1,4 @@
-# WWZ Value-Added Decomposition of the OECD's Analytical AMNE 
+# WWZ Value-Added Decomposition of the OECD's Analytical AMNE
 
 This repository implements the value-added trade accounting framework of Wang et al. (2013) using data from the OECD's [Analytical AMNE](https://doi.org/10.1787/d9de288d-en) (Activities of Multinational Enterprises) database. The decomposition is performed using the `decompr` R package, and strategies are outlined to estimate value-added trade within sector-to-sector relationships.
 
@@ -58,7 +58,7 @@ The choice between versions depends on the researcher's judgment and specific re
 
 2. Place the OECD Analytical AMNE data in the `1_data/` directory.
 
-3. There are two main subsets of R scripts: single core and parallel processing.
+3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.
 
    For single core processing:
    ```
@@ -71,9 +71,9 @@ The choice between versions depends on the researcher's judgment and specific re
 
 4. There are two additional subsets of scripts addressing different analytical concerns:
 
-   - If you are interested in revealing the VA content via backward linkages with the entire economy, choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cou). These scripts help reveal the aggregate VA contributions from all sectors of origin (sources of VA) to each of the sectors of destination covered in the aAMNE database (users of VA). This is the typical approach of `decompr`.
+   - If you are interested in revealing the VA content via backward linkages with the entire economy, choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cou). These scripts help reveal the aggregate VA contributions from all sectors of origin (sources of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. This is the typical approach of `decompr`.
 
-   - If you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). This reveals the aggregate VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination covered in the aAMNE database (users of VA). These scripts modify the inputs feeding into `decompr`. Please look closely at the example provided.
+   - If you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). This reveals the VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. To accomplish this, these scripts modify the inputs feeding into `decompr`. Please look closely at the example provided.
 
 5. The results will be saved in the `output/` directory.
 
@@ -106,7 +106,7 @@ If you use this tool in your research, please cite both this repository and the 
 
 Miroudot, Sébastien & Ye, Ming (2019). "Multinational production in value-added terms". [Economic Systems Research, Online version](https://doi.org/10.1080/09535314.2019.1701997)
 
-Quast, B.A. and V. Kummritz (2015). "decompr: Global Value Chain decomposition in R". [CTEI Working Papers, 1](https://repec.graduateinstitute.ch/pdfs/cteiwp/CTEI-2015-01.pdf). [R link](https://cran.r-project.org/web/packages/decompr/index.html)
+Quast, B.A. and V. Kummritz (2015). "decompr: Global Value Chain decomposition in R". [CTEI Working Papers, 1](https://repec.graduateinstitute.ch/pdfs/cteiwp/CTEI-2015-01.pdf). For the R project, [follow this link](https://cran.r-project.org/web/packages/decompr/index.html)
 
 Wang, Z., Wei, S. J., & Zhu, K. (2013). "Quantifying international production sharing at the bilateral and sector levels" ([No. w19677](https://www.nber.org/papers/w19677)). National Bureau of Economic Research.
 

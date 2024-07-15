@@ -15,7 +15,7 @@ sudo apt update -qq -y
 sudo R -e 'install.packages("xml2", dependencies = T, INSTALL_opts = c("--no-lock"))'
 cd ~/0_scripts
 [ -f r_requirements.R ] && sudo rm r_requirements.R
-sudo wget -O r_requirements.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_setup/r_requirements.R
+sudo wget -O r_requirements.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_setup/src_ubuntu_rserver/r_requirements.R
 sudo Rscript r_requirements.R
 cd ~
 sudo apt autoremove -y && sudo apt update -qq -y && sudo apt upgrade -qq -y

@@ -38,5 +38,21 @@ cat "$file" | sudo xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
 #   -x2: use 2 connections per download
 #   --summary-interval=0: suppress download progress summary
 
-# For GCP users
+# Change to the AAMNE 2023 data directory
+cd ~/1_data/data_aamne23
+
+# Unzip all .zip files in the current directory and its subdirectories
+sudo find . -name '*.zip' -exec unzip -o {} \;
+# find: search for files
+# -name '*.zip': match all .zip files
+# -exec: execute the following command for each found file
+# unzip -o {}: unzip the file, overwrite existing files without prompting
+
+# Remove all .zip files after extraction
+sudo find . -name '*.zip' -delete
+
+# For GCP users: Sync local data to Google Cloud Storage bucket
 gsutil -m rsync -r ~/1_data/data_aamne23 gs://data_oecd/aamne23/
+# -m: perform operations in parallel for improved performance
+# rsync: synchronize contents of directories
+# -r: recursively copy subdirectories

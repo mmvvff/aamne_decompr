@@ -1,3 +1,4 @@
+cd ~
 # Update and upgrade system packages
 sudo apt update -qq -y && sudo apt upgrade -qq -y && sudo apt update -qq -y
 # -qq: run quietly (suppress output)
@@ -15,10 +16,8 @@ sudo mkdir -p 0_scripts 1_data 2_pipeline 3_output
 # -p: create parent directories if they don't exist
 
 # Change to the data directory
-cd ~/1_data
-
 # Create subdirectory for AAMNE 2023 data
-sudo mkdir -p data_aamne23
+cd ~/1_data && sudo mkdir -p data_aamne23 && cd ./data_aamne23
 
 # Remove existing URL file if it exists
 [ -f url_aamne23.txt ] && sudo rm url_aamne23.txt

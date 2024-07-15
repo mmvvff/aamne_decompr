@@ -29,7 +29,7 @@ sudo wget -O url_aamne23.txt https://raw.githubusercontent.com/mmvvff/aamne_deco
 
 # Download AAMNE 2023 data files
 file="url_aamne23.txt"
-cat "$file" | xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
+cat "$file" | sudo xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
 # cat: read file contents
 # xargs -n 1: execute aria2c for each line of input
 # aria2c: download manager

@@ -1,3 +1,6 @@
+# Change to home directory
+cd ~
+
 # instalamos entorno de R
 sudo apt update
 sudo apt install -y software-properties-common ca-certificates apt-transport-https gnupg dirmngr

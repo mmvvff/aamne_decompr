@@ -1,4 +1,6 @@
+# Change to home directory
 cd ~
+
 # Update and upgrade system packages
 sudo apt update -qq -y && sudo apt upgrade -qq -y && sudo apt update -qq -y
 # -qq: run quietly (suppress output)
@@ -15,8 +17,7 @@ sudo apt autoremove -qq -y
 sudo mkdir -p 0_scripts 1_data 2_pipeline 3_output
 # -p: create parent directories if they don't exist
 
-# Change to the data directory
-# Create subdirectory for AAMNE 2023 data
+# Change to the data directory and create subdirectory for AAMNE 2023 data
 cd ~/1_data && sudo mkdir -p data_aamne23 && cd ./data_aamne23
 
 # Remove existing URL file if it exists
@@ -32,7 +33,7 @@ file="url_aamne23.txt"
 cat "$file" | sudo xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
 # cat: read file contents
 # xargs -n 1: execute aria2c for each line of input
-# aria2c: download manager
+# aria2c options:
 #   -c: continue partially downloaded files
 #   -x2: use 2 connections per download
 #   --summary-interval=0: suppress download progress summary

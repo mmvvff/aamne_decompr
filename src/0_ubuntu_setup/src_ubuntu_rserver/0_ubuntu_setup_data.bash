@@ -37,3 +37,6 @@ cat "$file" | sudo xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
 #   -c: continue partially downloaded files
 #   -x2: use 2 connections per download
 #   --summary-interval=0: suppress download progress summary
+
+# For GCP users
+gsutil -m rsync -r ~/1_data/data_aamne23 gs://data_oecd/aamne23/

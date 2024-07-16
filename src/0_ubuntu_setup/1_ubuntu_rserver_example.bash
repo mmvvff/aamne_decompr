@@ -9,4 +9,5 @@ sudo wget -O 2_decompr_cousec_prll.R https://raw.githubusercontent.com/mmvvff/aa
 
 cd ~
 sudo Rscript ~/0_scripts/1_prepdata_prll.R
-sudo Rscript ~/0_scripts/2_decompr_cousec_prll.R
+# to avoid that the r scripts stops becuase it looses connection:
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R &

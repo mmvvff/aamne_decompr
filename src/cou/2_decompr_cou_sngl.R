@@ -69,7 +69,7 @@ func_xstring <- function(original_string, char_insert="x") {
 }
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2000:2013))
+vctr_allyears<-as.character(c(2000:2013))
 pb<-progress_bar$new(total=length(vctr_allyears))
 pb$tick(0)
 for(i in vctr_allyears){ # START of loop

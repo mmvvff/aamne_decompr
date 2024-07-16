@@ -75,7 +75,7 @@ cl <- makeCluster(cores[1]-2)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2013))
+vctr_allyears<-as.character(c(2005:2013))
 
 foreach(
   i=vctr_allyears,

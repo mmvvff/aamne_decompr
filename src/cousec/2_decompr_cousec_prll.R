@@ -26,7 +26,7 @@ library(conflicted)
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr"
 PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "~"
+PROJECT_DIR <- "/home/mmvvff_v1"
 RAW_DATA <- "0_data/"
 #PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
 #RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
@@ -40,8 +40,8 @@ setwd(file.path(PROJECT_DIR, PROJECT))
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-if (dir.exists(file.path("empirical", "2_pipeline"))) {
-  pipeline <- file.path("empirical", "2_pipeline", NAME)
+if (dir.exists(file.path( "2_pipeline"))) {
+  pipeline <- file.path( "2_pipeline", NAME)
 } else {
   pipeline <- file.path("2_pipeline", NAME)
 }
@@ -60,11 +60,11 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-#codes_sector_aamne_all <- read_csv(file.path("empirical", "0_data", "external",
+#codes_sector_aamne_all <- read_csv(file.path( "0_data", "external",
 #  "codes_sector_oecd_aamneV18_classification.csv"))
 #glimpse(codes_sector_aamne_all)
 
-codes_sector_aamne_all <- read_csv(file.path("empirical", "0_data", "external",
+codes_sector_aamne_all <- read_csv(file.path( "0_data", "external",
   "codes_sector_oecd_aamneV23_classification.csv"))
 #glimpse(codes_sector_aamne_all)
 
@@ -172,31 +172,31 @@ foreach(
 #i<-c("2010")
 
 # ##@## Load data
-countries_aamne <- readRDS(paste0(file.path("empirical",
+countries_aamne <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_countries_",i,".rds"))
 #
-industries_aamne <- readRDS(paste0(file.path("empirical",
+industries_aamne <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_industries_",i,".rds"))
 #
-aamne_z_i_matrix <- readRDS(paste0(file.path("empirical",
+aamne_z_i_matrix <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_z_",i,"_matrix.rds"))
 #
-aamne_f_i_matrix <- readRDS(paste0(file.path("empirical",
+aamne_f_i_matrix <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_f_",i,"_matrix.rds"))
 #
-aamne_go_i_vector <- readRDS(paste0(file.path("empirical",
+aamne_go_i_vector <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_go_",i,"_vector.rds"))
 #
-aamne_va_i_vector <- readRDS(paste0(file.path("empirical",
+aamne_va_i_vector <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_va_",i,"_vector.rds"))
 #
-aamne_gva_i_vector <- readRDS(paste0(file.path("empirical",
+aamne_gva_i_vector <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_gva_",i,"_vector.rds"))
 

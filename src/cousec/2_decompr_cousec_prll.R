@@ -18,6 +18,7 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
+# library(progress)
 library(foreach)
 library(doParallel)
 library(conflicted)
@@ -40,8 +41,8 @@ setwd(file.path(PROJECT_DIR, PROJECT))
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-if (dir.exists(file.path( "2_pipeline"))) {
-  pipeline <- file.path( "2_pipeline", NAME)
+if (dir.exists(file.path("empirical", "2_pipeline"))) {
+  pipeline <- file.path("empirical", "2_pipeline", NAME)
 } else {
   pipeline <- file.path("2_pipeline", NAME)
 }
@@ -52,8 +53,6 @@ if (!dir.exists(pipeline)) {
     dir.create(file.path(pipeline, folder))
   }
 }
-
-
 # ##$##
 
 # ##@## CODES | VECTORS: codes and vectors for sectors
@@ -163,7 +162,7 @@ cl <- makeCluster(cores[1]-1)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2000:2004))
+vctr_allyears<-as.character(as.vector(2000:2013))
 
 foreach(
   i=vctr_allyears,

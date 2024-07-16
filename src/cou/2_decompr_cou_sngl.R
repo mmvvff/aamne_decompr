@@ -16,13 +16,16 @@ Sys.sleep(1)
 library(readr)
 library(tidyr)
 library(dplyr)
-library(progress)
+library(stringr)
 library(decompr)
+library(progress)
+# library(foreach)
+# library(doParallel)
 library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne18_01_decompr_preparedata"
+NAME <- "R_aamne_decompr"
 PROJECT <- "r_aamne_wwz"
 PROJECT_DIR <- "/home/mmvvff_v1"
 RAW_DATA <- "0_data/"
@@ -66,7 +69,7 @@ func_xstring <- function(original_string, char_insert="x") {
 }
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2016))
+vctr_allyears<-as.character(as.vector(2000:2013))
 pb<-progress_bar$new(total=length(vctr_allyears))
 pb$tick(0)
 for(i in vctr_allyears){ # START of loop
@@ -76,6 +79,7 @@ print(i)
 pb$tick()
 cat("\n")
 flush.console()
+
 
 #i<-c("2010")
 
@@ -157,103 +161,28 @@ saveRDS(decomp_aamne_i_wwz,
 
 # ##$##
 
-
-#### Unit of analysis: COUNTRY-SECTOR
-#### estimates where the source of VA is a subset of sectors;
-#### useful for analysis concerned with specific sector-sector relations
-
-vctr_sctr_aggregates <- tibble(
-  codes = c(
-    list(codes_tradables_umxsx),
-    list(codes_nrrprd_upstrm),
-    list(codes_tradables_techrnd)),
-  names = c(
-    func_getvarname(codes_tradables_umxsx, "codes_"),
-    func_getvarname(codes_nrrprd_upstrm, "codes_"),
-    func_getvarname(codes_tradables_umxsx, "codes_"))
-  )
-
-# ##@## for selected sectoral aggregates: include as sources of VA
-
-for (idx in seq(nrow(vctr_sctr_aggregates))) {
-
-  codes_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"codes"[[1]]
-
-  # names for included sectors
-  name_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"names"[[1]]
-
-  # ##@## set to zeros all sectors not part of sctr_aggregates
-  decomp_aamne_sctr_aggregates_i <- decomp_aamne_i
-
-  Vc_sctr_aggregates_tibble <- tibble::enframe(
-    decomp_aamne_sctr_aggregates_i$Vc,
-    name = "name", value = "value") %>%
-    dplyr::mutate(value=if_else(
-      stringr::str_detect(name,
-        pattern = paste0("(",codes_sctr_aggregates,")$", collapse = "|"),
-        negate=TRUE), # include
-      0,value))
-  Vc_sctr_aggregates <- tibble::deframe(Vc_sctr_aggregates_tibble)
-  decomp_aamne_sctr_aggregates_i$Vc <- Vc_sctr_aggregates
-  # ##$##
-
-  decomp_aamne_sctr_aggregates_i_wwz <- tibble::tibble(
-    decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = TRUE)) %>%
-    tibble::add_column(year=factor(i)) %>%
-    dplyr::relocate(year,.after=3) %>%
-    dplyr::rename(
-      cntry_c=Exporting_Country,
-      sctr_c_j=Exporting_Industry,
-      cntry_p=Importing_Country)
-
-  saveRDS(decomp_aamne_sctr_aggregates_i_wwz,
-    file=paste0(
-      file.path(pipeline, "store",""),
-      "decomp_aamne_",name_sctr_aggregates,"_",i,"_wwz.rds"))
-}
-
-# ##$##
-
-# ##@## for selected sectoral aggregates: exclude as sources of VA
-
-for (idx in seq(nrow(vctr_sctr_aggregates))) {
-
-  codes_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"codes"[[1]]
-
-  # names for excluded
-  name_sctr_aggregates <- func_xstring(vctr_sctr_aggregates[idx,]$"names"[[1]])
-
-  # ##@## set to zeros all sectors part of sctr_aggregates
-  decomp_aamne_sctr_aggregates_i <- decomp_aamne_i
-
-  Vc_sctr_aggregates_tibble <- tibble::enframe(
-    decomp_aamne_sctr_aggregates_i$Vc,
-    name = "name", value = "value") %>%
-    dplyr::mutate(value=if_else(
-      stringr::str_detect(name,
-        pattern = paste0("(",codes_sctr_aggregates,")$", collapse = "|")), # exclude
-      0,value))
-  Vc_sctr_aggregates <- tibble::deframe(Vc_sctr_aggregates_tibble)
-  decomp_aamne_sctr_aggregates_i$Vc <- Vc_sctr_aggregates
-  # ##$##
-
-  decomp_aamne_sctr_aggregates_i_wwz <- tibble::tibble(
-    decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = TRUE)) %>%
-    tibble::add_column(year=factor(i)) %>%
-    dplyr::relocate(year,.after=3) %>%
-    dplyr::rename(
-      cntry_c=Exporting_Country,
-      sctr_c_j=Exporting_Industry,
-      cntry_p=Importing_Country)
-
-  saveRDS(decomp_aamne_sctr_aggregates_i_wwz,
-    file=paste0(
-      file.path(pipeline, "store",""),
-      "decomp_aamne_",name_sctr_aggregates,"_",i,"_wwz.rds"))
-}
-
-# ##$##
-
 # ##$##
 
 }
+
+##### join and export
+
+# ##@## collect estimates: decomp_aamne_wwz
+setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+decomp_aamne_wwz_data2load=list.files(pattern=paste0("decomp_aamne_[0-9]{4}_wwz.rds"))
+decomp_aamne_wwz_list=lapply(decomp_aamne_wwz_data2load,readRDS)
+
+# reset initial setup
+setwd(file.path(PROJECT_DIR, PROJECT))
+
+# combine df rowwise
+decomp_aamne_wwz<-decomp_aamne_wwz_list%>%
+  Reduce(f=bind_rows) %>%
+  tibble::add_column(sctr_s_i=c("total"),.before="sctr_c_j")
+glimpse(decomp_aamne_wwz)
+
+saveRDS(decomp_aamne_wwz%>%
+  ungroup() %>% tibble::add_column(updated=Sys.Date()),
+  file=file.path(pipeline, "out","decomp_aamne_wwz.rds"))
+
+# ##$##

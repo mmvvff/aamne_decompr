@@ -159,11 +159,11 @@ func_xstring <- function(original_string, char_insert="x") {
 #setup parallel backend to use many processors
 cores = detectCores()
 # substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2)
+cl <- makeCluster(cores[1]-1)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2000:2013))
+vctr_allyears<-as.character(as.vector(2000:2004))
 
 foreach(
   i=vctr_allyears,

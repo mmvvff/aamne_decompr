@@ -5,9 +5,13 @@ sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubuse
 
 cd ~/0_scripts
 sudo wget -O 1_prepdata_prll.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_prepdata_prll.R
-sudo wget -O 2_decompr_cousec_sngl_0811.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl.R
+sudo wget -O 2_decompr_cousec_prll_0005.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl.R
+sudo wget -O 2_decompr_cousec_prll_0611.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl.R
+sudo wget -O 2_decompr_cousec_prll_1213.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl.R
 
 cd ~
 sudo Rscript ~/0_scripts/1_prepdata_prll.R
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_0811.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll_0005.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll_0611.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll_1213.R &

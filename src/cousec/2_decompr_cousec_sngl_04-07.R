@@ -18,9 +18,9 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-# library(progress)
-library(foreach)
-library(doParallel)
+library(progress)
+# library(foreach)
+# library(doParallel)
 library(conflicted)
 # ##$##
 
@@ -155,18 +155,18 @@ func_xstring <- function(original_string, char_insert="x") {
   return(new_string)
 }
 
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2)
-registerDoParallel(cl)
-
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2013))
+vctr_allyears<-as.character(c(2004:2007))
+pb<-progress_bar$new(total=length(vctr_allyears))
+pb$tick(0)
+for(i in vctr_allyears){ # START of loop
+Sys.sleep(1)
+cat("\n")
+print(i)
+pb$tick()
+cat("\n")
+flush.console()
 
-foreach(
-  i=vctr_allyears,
-  .packages=c("readr","tidyr","dplyr","stringr")) %dopar% { # START of loop
 
 #i<-c("2010")
 

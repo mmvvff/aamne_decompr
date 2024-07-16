@@ -5,13 +5,17 @@ sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubuse
 
 cd ~/0_scripts
 sudo wget -O 1_prepdata_prll.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_prepdata_prll.R
-sudo wget -O 2_decompr_cousec_prll_0005.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_prll.R
-sudo wget -O 2_decompr_cousec_prll_0611.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_prll.R
-sudo wget -O 2_decompr_cousec_prll_1213.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_prll.R
+sudo wget -O 2_decompr_cousec_prll.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_prll.R
+sudo wget -O 2_decompr_cousec_sngl_00-03.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_00-03.R
+sudo wget -O 2_decompr_cousec_sngl_04-07.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_04-07.R
+sudo wget -O 2_decompr_cousec_sngl_08-11.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_04-11.R
+sudo wget -O 2_decompr_cousec_sngl_12-13.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_12-13.R
 
 cd ~
 sudo Rscript ~/0_scripts/1_prepdata_prll.R
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_prll_0005.R &
-nohup Rscript ~/0_scripts/2_decompr_cousec_prll_0611.R &
-nohup Rscript ~/0_scripts/2_decompr_cousec_prll_1213.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_00-03.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_04-07.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_08-11.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_12-13.R &

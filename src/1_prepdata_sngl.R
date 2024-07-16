@@ -23,9 +23,9 @@ library(conflicted)
 
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_01_decompr_preparedata"
-PROJECT <- "r_aamne_nrr"
+PROJECT <- "r_aamne_wwz"
 PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
+RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 # Set working directory The code below will traverse the path upwards until it
 # finds the root folder of the project.
@@ -80,7 +80,7 @@ flush.console()
 
 # ICIO
 # we load Rdata icio
-setwd(file.path(EXTERNAL_HD))
+setwd(file.path(RAW_DATA))
 
 aamne_io_i <- list.files(
   path = paste0(path_data_aamne, "3_icio_split_ownership"),

@@ -26,10 +26,10 @@ library(conflicted)
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr"
 PROJECT <- "r_aamne_wwz"
+PROJECT_DIR <- "~"
+RAW_DATA <- "0_data/"
 #PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-PROJECT_DIR <- "~/"
-
-EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
+#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 
 # Set working directory The code below will traverse the path upwards until it

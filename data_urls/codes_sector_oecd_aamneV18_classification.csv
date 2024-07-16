@@ -1,0 +1,35 @@
+sector_code,sector_disaggrgt_name,sector_aggrgt_name_spplrs,sector_aggrgt_name_prdcrs,mnfctrng_users,nrr_vc_prdcrs,nrr_upstrm_prdcrs,nrr_dwnstrm_prdcrs,mnfctrng_prdcrs,apparel_prdcrs,elctrncs_prdcrs,autmtv_prdcrs,tradables_mx,tradables_sx,nontrdbls_cns,nontrdbls_sx,nontrdbls_scl,techrnd_highmed
+A,"Agriculture, forestry and fishing","Agriculture, forestry and fishing","Agriculture, forestry and fishing",,,,,,,,,,,,,,
+B,nrr_upstrm,Raw NRR inputs,Mining and Quarrying,,1,1,,,,,,,,,,,
+C10T12,"Food products, beverages and tobacco",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C13T15,"Textiles, wearing apparel, leather and related products",Manufacturing-based inputs,"Textiles, wearing apparel, leather and related products",1,,,,1,1,,,1,,,,,
+C16,Wood and products of wood and cork,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C17T18,Paper products and printing,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C19,Coke and refined petroleum products,Beneficiated NRR inputs,Coke and refined petroleum products,1,1,,1,,,,,1,,,,,
+C20T21,Chemicals and pharmaceutical products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,1
+C22,Rubber and plastic products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C23,Other non-metallic mineral products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C24,Basic metals,Beneficiated NRR inputs,Basic metals,1,1,,1,,,,,1,,,,,
+C25,Fabricated metal products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+C26,"Computer, electronic and optical products",Manufacturing-based inputs,"Computers, electronics and optical products",1,,,,1,,1,,1,,,,,1
+C27,Electrical equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,1
+C28,"Machinery and equipment, nec ",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,1
+C29,"Motor vehicles, trailers and semi-trailers",Manufacturing-based inputs,Motor vehicles and transport equipment (Automotives),1,,,,1,,,1,1,,,,,1
+C30,Other transport equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,1
+C31T33,Other manufacturing; repair and installation of machinery and equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
+DTE,"Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services",,,,,,,,,,,1,,,
+F,Construction,Construction,Construction,,,,,,,,,,,1,,,
+G,Wholesale and retail trade; repair of motor vehicles,Business services inputs,Total business services,,,,,,,,,,1,,,,
+H,Transportation and storage,Business services inputs,Total business services,,,,,,,,,,1,,,,
+I,Accomodation and food services,Business services inputs,Total business services,,,,,,,,,,,,1,,
+J58T60,"Publishing, audiovisual and broadcasting activities",Business services inputs,Total business services,,,,,,,,,,1,,,,
+J61,Telecommunications,Business services inputs,Total business services,,,,,,,,,,1,,,,
+J62T63,IT and other information services,Business services inputs,Total business services,,,,,,,,,,1,,,,1
+K,Financial and insurance activities,Business services inputs,Total business services,,,,,,,,,,1,,,,
+L,Real estate activities,Business services inputs,Total business services,,,,,,,,,,,,1,,
+MTN,Other business sector services,Business services inputs,Total business services,,,,,,,,,,1,,,,
+O,Public admin. and defence; compulsory social security,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,,,1,
+P,Education,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,,,1,
+Q,Human health and social work,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,,,1,
+RTS,"Arts, entertainment, recreation and other service activities","Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,,1,,
+T,Private households with employed persons,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,,1,,

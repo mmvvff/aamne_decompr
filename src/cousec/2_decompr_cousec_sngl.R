@@ -56,11 +56,11 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-#codes_sector_aamne_all <- read_csv(file.path( "0_data", "external",
+#codes_sector_aamne_all <- read_csv(file.path( "0_data",
 #  "codes_sector_oecd_aamneV18_classification.csv"))
 #glimpse(codes_sector_aamne_all)
 
-codes_sector_aamne_all <- read_csv(file.path( "0_data", "external",
+codes_sector_aamne_all <- read_csv(file.path( "0_data",
   "codes_sector_oecd_aamneV23_classification.csv"))
 #glimpse(codes_sector_aamne_all)
 

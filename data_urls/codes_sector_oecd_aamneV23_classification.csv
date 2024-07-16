@@ -1,0 +1,42 @@
+sector_code,sector_disaggrgt_name,sector_aggrgt_name_spplrs,sector_aggrgt_name_prdcrs,mnfctrng_users,nrr_vc_prdcrs,nrr_upstrm_prdcrs,nrr_dwnstrm_prdcrs,mnfctrng_prdcrs,apparel_prdcrs,elctrncs_prdcrs,autmtv_prdcrs,tradables_mx,tradables_sx,nontrdbls_sx,techrnd_highmed
+A01T03,"Agriculture, forestry and fishing","Agriculture, forestry and fishing","Agriculture, forestry and fishing",,,,,,,,,,,,
+B05T09,Mining and extraction of energy producing products,Raw NRR inputs,Mining and Quarrying,,1,1,,,,,,,,,
+C10T12,"Food products, beverages and tobacco",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C13T15,"Textiles, wearing apparel, leather and related products",Manufacturing-based inputs,"Textiles, wearing apparel, leather and related products",1,,,,1,1,,,1,,,
+C16,Wood and products of wood and cork,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C17T18,Paper products and printing,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C19,Coke and refined petroleum products,Beneficiated NRR inputs,Coke and refined petroleum products,1,1,,1,,,,,1,,,
+C20,Chemicals and chemical products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
+C21,"Pharmaceuticals, medicinal chemical and botanical products",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
+C22,Rubber and plastic products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C23,Other non-metallic mineral products,Manufacturing-based inputs,Basic metals,1,,,,,,,,1,,,
+C24,Basic metals,Beneficiated NRR inputs,Manufacturing,1,1,,1,,,,,1,,,
+C25,Fabricated metal products,Manufacturing-based inputs,"Computers, electronics and optical products",1,,,,,,,,1,,,
+C26,"Computer, electronic and optical products",Manufacturing-based inputs,Manufacturing,1,,,,1,,1,,1,,,1
+C27,Electrical equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
+C28,"Machinery and equipment, nec ",Manufacturing-based inputs,Motor vehicles and transport equipment (Automotives),1,,,,,,,,1,,,1
+C29,"Motor vehicles, trailers and semi-trailers",Manufacturing-based inputs,Manufacturing,1,,,,1,,,1,1,,,1
+C30,Other transport equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
+C31T33,Other manufacturing; repair and installation of machinery and equipment,Manufacturing-based inputs,"Electricity, gas, water supply, sewerage, waste and remediation services",1,,,,,,,,1,,,
+D35_E36T39,"Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services",Construction,,,,,,,,,,,1,
+F41T43,Construction,Construction,Total business services,,,,,,,,,,,1,
+G45T47,Wholesale and retail trade; repair of motor vehicles,Business services inputs,Total business services,,,,,,,,,,1,,
+H49,Land transport and transport via pipelines,Business services inputs,Total business services,,,,,,,,,,1,,
+H50,Water transport,Business services inputs,Total business services,,,,,,,,,,1,,
+H51,Air transport,Business services inputs,Total business services,,,,,,,,,,1,,
+H52,Warehousing and support activities for transportation,Business services inputs,Total business services,,,,,,,,,,1,,
+H53,Postal and courier activities,Business services inputs,Total business services,,,,,,,,,,,1,
+I55T56,Accommodation and food services,Business services inputs,Total business services,,,,,,,,,,,1,
+J58T60,"Publishing, audiovisual and broadcasting activities",Business services inputs,Total business services,,,,,,,,,,1,,1
+J61,Telecommunications,Business services inputs,Total business services,,,,,,,,,,1,,
+J62T63,IT and other information services,Business services inputs,Total business services,,,,,,,,,,1,,1
+K64T66,Financial and insurance activities,Business services inputs,Total business services,,,,,,,,,,1,,
+L68,Real estate activities,Business services inputs,Total business services,,,,,,,,,,,1,
+M69T75,"Professional, scientific and technical activities",Business services inputs,Total business services,,,,,,,,,,1,,
+N77T82,Administrative and support services,Business services inputs,Total business services,,,,,,,,,,1,,
+O84,Public admin. and defence; compulsory social security,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
+P85,Education,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
+Q86T88,Human health and social work,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
+R90T93,"Arts, entertainment and recreation","Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
+S94T96,Other service activities,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
+T97T98,Private households with employed persons,"Public admin, education, health, defence, and other services",,,,,,,,,,,,1,

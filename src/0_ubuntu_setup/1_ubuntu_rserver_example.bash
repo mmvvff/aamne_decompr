@@ -10,4 +10,4 @@ sudo wget -O 2_decompr_cousec_sngl_0407.R https://raw.githubusercontent.com/mmvv
 cd ~
 sudo Rscript ~/0_scripts/1_prepdata_prll.R
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_0203.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_0407.R &

@@ -10,4 +10,4 @@ sudo wget -O 2_decompr_cousec_prll.R https://raw.githubusercontent.com/mmvvff/aa
 
 cd ~
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R > ~/0_scripts/2_decompr_cousec_prll_output.log 2>&1 &

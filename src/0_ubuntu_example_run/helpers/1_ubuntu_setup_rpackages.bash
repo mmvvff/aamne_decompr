@@ -40,7 +40,7 @@ cd ~/0_scripts
 [ -f r_requirements.R ] && sudo rm r_requirements.R
 
 # Download latest R requirements file
-sudo wget -O r_requirements.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_setup/src_ubuntu_rserver/r_requirements.R
+sudo wget -O r_requirements.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/src_ubuntu_rserver/r_requirements.R
 
 # Install R packages from the requirements file
 sudo Rscript r_requirements.R

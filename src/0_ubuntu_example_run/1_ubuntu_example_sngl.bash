@@ -24,5 +24,5 @@ cd ~
 
 # collect output from scripts
 cd ~
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
+nohup Rscript ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
 # nohup: to avoid that the r scripts stops becuase it looses connection

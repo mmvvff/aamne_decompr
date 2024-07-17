@@ -12,7 +12,7 @@ sudo wget -O 2_decompr_cousec_sngl_12-13.R https://raw.githubusercontent.com/mmv
 
 cd ~
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_00-03.R & ;
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_04-07.R & ;
-nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_08-11.R & ;
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_00-03.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_04-07.R &
+nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_08-11.R &
 nohup Rscript ~/0_scripts/2_decompr_cousec_sngl_12-13.R &

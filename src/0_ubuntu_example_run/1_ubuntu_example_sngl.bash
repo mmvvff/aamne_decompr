@@ -12,8 +12,8 @@ sudo wget -O 2_decompr_cousec_sngl_btch_00-01.R https://raw.githubusercontent.co
 sudo wget -O 2_decompr_cousec_sngl_btch_02-03.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_02-03.R
 sudo wget -O 2_decompr_cousec_sngl_btch_04-05.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_04-05.R
 sudo wget -O 2_decompr_cousec_sngl_btch_06-07.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_06-07.R
-sudo wget -O 2_decompr_cousec_sngl_btch_08-09.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_04-11.R
-sudo wget -O 2_decompr_cousec_sngl_btch_10-11.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_04-11.R
+sudo wget -O 2_decompr_cousec_sngl_btch_08-09.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_08-09.R
+sudo wget -O 2_decompr_cousec_sngl_btch_10-11.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_10-11.R
 sudo wget -O 2_decompr_cousec_sngl_btch_12-13.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_12-13.R
 sudo wget -O 2_decompr_cousec_sngl_btch_end.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/2_decompr_cousec_sngl_btch_end.R
 

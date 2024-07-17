@@ -4,7 +4,7 @@ This guide provides instructions on how to set up R in Ubuntu and run scripts fo
 
 ## Prerequisites
 
-- Ubuntu operating system
+- Ubuntu operating system: Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-1062-gcp x86_64)
 - Internet connection
 - Bash shell
 

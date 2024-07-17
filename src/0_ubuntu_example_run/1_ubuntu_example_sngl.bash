@@ -18,7 +18,7 @@ sudo wget -O 2_decompr_cousec_sngl_btch_end.R https://raw.githubusercontent.com/
 # run scripts in parallel: minimum requiered CPU with 8 cores
 cd ~/0_scripts
 sudo wget -O 2_run_decompr_scripts.sh https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/helpers/2_run_decompr_scripts.sh
-chmod +x run_decompr_scripts.sh
+chmod +x 2_run_decompr_scripts.sh
 cd ~
 ~/0_scripts/2_run_decompr_scripts.sh
 

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # sector definitions aggregates for sector-sector relations
 cd ~/r_aamne_wwz/0_data
 sudo wget -O codes_sector_oecd_aamneV18_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV18_classification.csv
@@ -19,10 +21,14 @@ sudo wget -O 2_decompr_cousec_sngl_btch_end.R https://raw.githubusercontent.com/
 cd ~/0_scripts
 sudo wget -O 2_run_decompr_scripts.sh https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/helpers/2_run_decompr_scripts.sh
 chmod +x 2_run_decompr_scripts.sh
-cd ~
-~/0_scripts/2_run_decompr_scripts.sh
 
-# collect output from scripts
 cd ~
-nohup Rscript ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
-# nohup: to avoid that the r scripts stops becuase it looses connection
+echo "Starting 2_run_decompr_scripts.sh"
+if ~/0_scripts/2_run_decompr_scripts.sh; then
+    echo "2_run_decompr_scripts.sh completed successfully"
+    echo "Starting 2_decompr_cousec_sngl_btch_end.R"
+    nohup Rscript ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
+    echo "2_decompr_cousec_sngl_btch_end.R started in background"
+else
+    echo "2_run_decompr_scripts.sh failed, not starting 2_decompr_cousec_sngl_btch_end.R"
+fi

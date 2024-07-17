@@ -46,7 +46,14 @@ Execute the following command:
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_example_sngl_1.bash | bash
 ```
 
-These scripts will run in the background.
+These scripts will run in the background. You can check their individual execution as follows:
+E.g.:
+```
+cd ~/0_scripts
+nano 2_decompr_cousec_sngl_btch_00-01_output.log
+```
+
+These scripts take ~120 minutes per year, so plan accordingly.
 
 #### Step 2: Consolidate Findings
 

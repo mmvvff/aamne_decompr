@@ -18,7 +18,6 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-library(progress)
 # library(foreach)
 # library(doParallel)
 library(conflicted)
@@ -157,16 +156,11 @@ func_xstring <- function(original_string, char_insert="x") {
 
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2010:2011))
-pb<-progress_bar$new(total=length(vctr_allyears))
-pb$tick(0)
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(1)
 cat("\n")
 print(i)
-pb$tick()
 cat("\n")
-flush.console()
-
 
 #i<-c("2010")
 

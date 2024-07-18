@@ -7,5 +7,5 @@ sudo wget -O 2_decompr_cousec_sngl_btch_end.R https://raw.githubusercontent.com/
 
 cd ~
 echo "Starting 2_decompr_cousec_sngl_btch_end.R"
-nohup Rscript ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
+nohup Rscript ~/0_scripts/sngl_btch/2_decompr_cousec_sngl_btch_end.R > ~/0_scripts/2_decompr_cousec_sngl_btch_end_output.log 2>&1 &
 echo "2_decompr_cousec_sngl_btch_end.R started in background"

@@ -171,6 +171,8 @@ vctr_sctr_aggregates <- tibble(
 
 # ##@## collect estimates for sectoral aggregates included as source of VA
 
+print("started: sectoral aggregates included as source of VA")
+
 for (idx in seq(nrow(vctr_sctr_aggregates))) {
   # names for included
   name_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"names"[[1]]
@@ -195,9 +197,13 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   # ##$##
 }
 
+print("finished: sectoral aggregates included as source of VA")
+
 # ##$##
 
 # ##@## collect estimates for sectoral aggregates excluded as source of VA
+
+print("started: sectoral aggregates excluded as source of VA")
 
 for (idx in seq(nrow(vctr_sctr_aggregates))) {
   # names for excluded
@@ -222,5 +228,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
     file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
   # ##$##
 }
+
+print("finished: sectoral aggregates excluded as source of VA")
 
 # ##$##

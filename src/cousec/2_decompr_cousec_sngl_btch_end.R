@@ -191,7 +191,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
     tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
   #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
 
-  saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
+  saveRDS(decomp_aamne_name_sctr_aggregates_wwz %>%
     ungroup() %>% tibble::add_column(updated=Sys.Date()),
     file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
   # ##$##
@@ -223,7 +223,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
     tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
   #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
 
-  saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
+  saveRDS(decomp_aamne_name_sctr_aggregates_wwz %>%
     ungroup() %>% tibble::add_column(updated=Sys.Date()),
     file=file.path(pipeline, "out", paste0("decomp_aamne_",name_sctr_aggregates,"_wwz.rds")))
   # ##$##

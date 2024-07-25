@@ -82,10 +82,9 @@ flush.console()
 
 # ICIO
 # we load Rdata icio
-setwd(file.path(RAW_DATA))
 
 aamne_io_i <- list.files(
-  path = paste0(path_data_aamne, "3_icio_split_ownership"),
+  path = paste0(RAW_DATA, path_data_aamne),
   pattern = paste0("^.*", i, "\\.csv$"),
   full.names = TRUE)
 #
@@ -95,8 +94,6 @@ if (length(aamne_io_i) == 0) {
   }
 
 aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
-
-setwd(file.path(PROJECT_DIR, PROJECT))
 
 # ##@## confirm AAMNE version
 

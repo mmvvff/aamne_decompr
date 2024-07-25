@@ -164,6 +164,18 @@ cat("\n")
 
 #i<-c("2010")
 
+# ##@## check data availability
+data_avlblty_i <- list.files(
+  path = paste0(file.path("2_pipeline","R_aamne_decompr","tmp")),
+  pattern = paste0("^.*", i, "\\.rds$"),
+  full.names = TRUE)
+#
+if (length(data_avlblty_i) == 0) {
+    print(paste("Data unavailable for year",i))
+    next
+  }
+# ##$##
+
 # ##@## Load data
 countries_aamne <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),

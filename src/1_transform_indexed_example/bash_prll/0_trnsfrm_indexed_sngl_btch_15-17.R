@@ -248,7 +248,7 @@ cat("\n")
 # ICIO
 
 aamne_io_i <- list.files(
-  path = paste0(EXTERNAL_HD, path_data_aamne, "/3_icio_split_ownership"),
+  path = paste0(RAW_DATA, path_data_aamne),
   pattern = paste0("^.*", i, "\\.csv$"),
   full.names = TRUE)
 #

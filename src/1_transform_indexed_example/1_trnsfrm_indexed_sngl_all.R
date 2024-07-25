@@ -24,12 +24,12 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: Settings - MUST CHANGE NAME
-NAME <- "R_aamne23_01_matrices_indexed"
+NAME <- "R_aamne_indexed"
 PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
-# Set working directory The code below will traverse the path upwards until it
-# finds the root folder of the project.
+PROJECT_DIR <- "/home/mmvvff_v1"
+RAW_DATA <- "0_data/"
+#PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
+#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 setwd(file.path(PROJECT_DIR, PROJECT))
 
@@ -248,7 +248,7 @@ cat("\n")
 # ICIO
 
 aamne_io_i <- list.files(
-  path = paste0(EXTERNAL_HD, path_data_aamne, "/3_icio_split_ownership"),
+  path = paste0(RAW_DATA, path_data_aamne),
   pattern = paste0("^.*", i, "\\.csv$"),
   full.names = TRUE)
 #

@@ -87,7 +87,6 @@ foreach(
 
 # ICIO
 # we load Rdata icio
-#setwd(file.path(RAW_DATA))
 
 aamne_io_i <- list.files(
   path = paste0(RAW_DATA, path_data_aamne),
@@ -100,8 +99,6 @@ if (length(aamne_io_i) == 0) {
   }
 
 aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
-
-#setwd(file.path(PROJECT_DIR, PROJECT))
 
 # ##@## confirm AAMNE version
 

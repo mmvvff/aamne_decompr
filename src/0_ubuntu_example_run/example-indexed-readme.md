@@ -65,7 +65,7 @@ echo "Using $cores cores"
 
 # Use the calculated number of cores in a command.
 # This example uses pigz, a parallel implementation of gzip, to compress the project directory.
-tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_decompr | pigz -9 -p $cores > R_aamne_decompr.tar.gz
+tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz
 ```
 
 

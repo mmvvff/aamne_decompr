@@ -24,12 +24,12 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: Settings - MUST CHANGE NAME
-NAME <- "R_aamne23_01_matrices_indexed"
+NAME <- "R_aamne_indexed"
 PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
-# Set working directory The code below will traverse the path upwards until it
-# finds the root folder of the project.
+PROJECT_DIR <- "/home/mmvvff_v1"
+RAW_DATA <- "0_data/"
+#PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
+#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 setwd(file.path(PROJECT_DIR, PROJECT))
 
@@ -154,28 +154,23 @@ codes_sector_aamne_all <- readr::read_csv(file.path( "0_data",
 codes_sector_aamne_all_nrrprd_vc <- dplyr::filter(codes_sector_aamne_all,
   nrr_vc_prdcrs==1)
 codes_nrrprd_vc <- paste(codes_sector_aamne_all_nrrprd_vc$sector_code)
-unique(codes_nrrprd_vc)
 
 codes_sector_aamne_all_nrrprd_upstrm <- dplyr::filter(codes_sector_aamne_all,
   nrr_upstrm_prdcrs==1)
 codes_nrrprd_upstrm <- paste(codes_sector_aamne_all_nrrprd_upstrm$sector_code)
-unique(codes_nrrprd_upstrm)
 
 codes_sector_aamne_all_nrrprd_dwnstrm <- dplyr::filter(codes_sector_aamne_all,
   nrr_dwnstrm_prdcrs==1)
 codes_nrrprd_dwnstrm <- paste(codes_sector_aamne_all_nrrprd_dwnstrm$sector_code)
-unique(codes_nrrprd_dwnstrm)
 
 # suppliers
 codes_sector_aamne_all_tradables_mx <- dplyr::filter(codes_sector_aamne_all,
   tradables_mx == 1)
 codes_tradables_mx <- paste(codes_sector_aamne_all_tradables_mx$sector_code)
-unique(codes_tradables_mx)
 
 codes_sector_aamne_all_tradables_sx <- dplyr::filter(codes_sector_aamne_all,
   tradables_sx == 1)
 codes_tradables_sx <- paste(codes_sector_aamne_all_tradables_sx$sector_code)
-unique(codes_tradables_sx)
 
 codes_tradables_umxsx <- setdiff(union(codes_tradables_mx,codes_tradables_sx), codes_nrrprd_vc)
 
@@ -183,35 +178,29 @@ codes_tradables_umxsx <- setdiff(union(codes_tradables_mx,codes_tradables_sx), c
 codes_sector_aamne_all_mnfctrng_usrs <- dplyr::filter(codes_sector_aamne_all,
   mnfctrng_users==1)
 codes_mnfctrng_usrs <- paste(codes_sector_aamne_all_mnfctrng_usrs$sector_code)
-unique(codes_mnfctrng_usrs)
 
 
 # manufacturing producers
 codes_sector_aamne_all_mnfctrng_all <- dplyr::filter(codes_sector_aamne_all,
   mnfctrng_prdcrs == 1)
 codes_mnfctrng_gvc <- paste(codes_sector_aamne_all_mnfctrng_all$sector_code)
-unique(codes_mnfctrng_gvc)
 
 codes_sector_aamne_all_mnfctrng_apprl <- dplyr::filter(codes_sector_aamne_all,
   apparel_prdcrs == 1)
 codes_mnfctrng_apprl <- paste(codes_sector_aamne_all_mnfctrng_apprl$sector_code)
-unique(codes_mnfctrng_apprl)
 
 codes_sector_aamne_all_mnfctrng_atmtv <- dplyr::filter(codes_sector_aamne_all,
   autmtv_prdcrs == 1)
 codes_mnfctrng_atmtv <- paste(codes_sector_aamne_all_mnfctrng_atmtv$sector_code)
-unique(codes_mnfctrng_atmtv)
 
 codes_sector_aamne_all_mnfctrng_elctrncs <- dplyr::filter(codes_sector_aamne_all,
   elctrncs_prdcrs == 1)
 codes_mnfctrng_elctrncs <- paste(codes_sector_aamne_all_mnfctrng_elctrncs$sector_code)
-unique(codes_mnfctrng_elctrncs)
 
 # tech intensity
 codes_sector_aamne_all_techrnd_highmed <- dplyr::filter(codes_sector_aamne_all,
   techrnd_highmed == 1)
 codes_techrnd_highmed <- paste(codes_sector_aamne_all_techrnd_highmed $sector_code)
-unique(codes_techrnd_highmed)
 
 codes_tradables_techrnd<-intersect(codes_techrnd_highmed,codes_tradables_umxsx)
 # ##$##

@@ -1,15 +1,16 @@
 # Introduction: Estimate VA content based on Wang et al.
-# clear the console
-cat("\f")
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
+
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
@@ -18,8 +19,6 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-# library(foreach)
-# library(doParallel)
 library(conflicted)
 # ##$##
 
@@ -157,8 +156,7 @@ func_xstring <- function(original_string, char_insert="x") {
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2000:2013))
 for(i in vctr_allyears){ # START of loop
-Sys.sleep(1)
-cat("\n")
+Sys.sleep(0.5)
 print(i)
 cat("\n")
 

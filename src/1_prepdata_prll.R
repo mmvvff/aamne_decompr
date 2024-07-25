@@ -4,16 +4,18 @@ cat("\f")
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
+
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
-# library(miceadds)
 library(readr)
 library(tidyr)
 library(dplyr)

@@ -4,25 +4,23 @@
 
 #.rs.restartR()
 
-# clear the console
-cat("\f")
-
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
 
+# clear the console
+cat("\f")
+
 # Imports: All the library imports go here
 
 library(readr)
 library(tidyr)
 library(dplyr)
-library(stringr)
 library(foreach)
 library(doParallel)
 library(conflicted)
-
 # ##$##
 
 # ##@## PREAMBLE: Settings - MUST CHANGE NAME

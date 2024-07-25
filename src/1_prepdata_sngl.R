@@ -1,22 +1,22 @@
 # Introduction: Prepare AAMNE v18 data for decompr
-# clear the console
-cat("\f")
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
+
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
 library(readr)
 library(tidyr)
 library(dplyr)
-library(progress)
 library(decompr)
 library(conflicted)
 # ##$##
@@ -66,15 +66,10 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2005:2016))
-pb<-progress_bar$new(total=length(vctr_allyears))
-pb$tick(0)
 for(i in vctr_allyears){ # START of loop
-Sys.sleep(1)
-cat("\n")
+Sys.sleep(0.5)
 print(i)
-pb$tick()
 cat("\n")
-flush.console()
 
 #i<-c("2010")
 

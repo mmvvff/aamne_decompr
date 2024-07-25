@@ -1,15 +1,16 @@
 # Introduction: Estimate VA content based on Wang et al.
-# clear the console
-cat("\f")
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
+
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
@@ -18,7 +19,6 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-# library(progress)
 library(foreach)
 library(doParallel)
 library(conflicted)

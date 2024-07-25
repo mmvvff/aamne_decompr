@@ -4,14 +4,15 @@
 
 #.rs.restartR()
 
-# clear the console
-cat("\f")
+# clear the environment
+rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
 
-# clear the environment
-rm(list = ls())
+# clear the console
+cat("\f")
+
 
 # Imports: All the library imports go here
 
@@ -19,7 +20,6 @@ library(readr)
 library(tidyr)
 library(dplyr)
 library(stringr)
-library(decompr)
 library(conflicted)
 # ##$##
 

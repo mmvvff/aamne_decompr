@@ -8,4 +8,4 @@ sudo wget -O 1_trnsfrm_indexed_prll.R https://raw.githubusercontent.com/mmvvff/a
 [ -f 1_trnsfrm_indexed_prll.log ] && sudo rm 1_trnsfrm_indexed_prll.log
 cd ~
 # to avoid that the r scripts stops becuase it looses connection:
-nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R > ~/0_scripts/1_trnsfrm_indexed_prll.log 2>&1 &
+nohup Rscript ~/0_scripts/1_trnsfrm_indexed_prll.R > ~/0_scripts/1_trnsfrm_indexed_prll.log 2>&1 &

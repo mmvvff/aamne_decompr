@@ -3,7 +3,7 @@
 # for parallel processing
 cd ~/0_scripts
 [ -f 1_trnsfrm_indexed_prll ] && sudo rm 1_trnsfrm_indexed_prll
-sudo wget -O 1_trnsfrm_indexed_prll https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/1_trnsfrm_indexed_prll
+sudo wget -O 1_trnsfrm_indexed_prll https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/1_trnsfrm_indexed_prll.R
 
 [ -f 1_trnsfrm_indexed_prll.log ] && sudo rm 1_trnsfrm_indexed_prll.log
 cd ~

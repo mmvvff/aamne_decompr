@@ -31,7 +31,7 @@ This method uses R's `parallel` package to run scripts in parallel. Note that th
 To run scripts in parallel:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/2_ubuntu_eg_indexed_prll.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_prll.bash | bash
 ```
 
 ### Method 2: Single Core Batch Processing with Bash
@@ -39,7 +39,7 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_tran
 This method runs individual scripts in parallel using bash. Execute the following command:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/2_ubuntu_eg_indexed_sngl.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_sngl.bash | bash
 ```
 
 These scripts will run in the background. You can check their individual execution as follows:

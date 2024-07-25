@@ -10,6 +10,10 @@ sudo wget -O 0_trnsfrm_indexed_sngl_btch_10-14.R https://raw.githubusercontent.c
 sudo wget -O 0_trnsfrm_indexed_sngl_btch_15-17.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/bash_prll/0_trnsfrm_indexed_sngl_btch_15-17.R
 sudo wget -O 0_trnsfrm_indexed_sngl_btch_18-20.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/bash_prll/0_trnsfrm_indexed_sngl_btch_18-20.R
 
+# add directory permission before execution
+cd ~
+chmod u+rwx ~/r_aamne_wwz
+
 # run scripts in parallel: minimum requiered CPU with 6 cores
 cd ~/0_scripts
 [ -f 3_run_indexed_scripts.sh ] && sudo rm 3_run_indexed_scripts.sh

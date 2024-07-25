@@ -39,7 +39,7 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 This method runs individual scripts in parallel using bash. Execute the following command (use `sudo` if necessary):
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_sngl.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_sngl_btch.bash | bash
 ```
 
 These scripts will run in the background. You can check their individual execution as follows:

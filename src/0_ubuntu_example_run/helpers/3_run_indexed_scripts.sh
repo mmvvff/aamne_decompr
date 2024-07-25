@@ -12,7 +12,7 @@ scripts=(
 # Loop through the scripts and run them
 for script in "${scripts[@]}"; do
     echo "Starting $script"
-    sudo nohup Rscript ~/0_scripts/sngl_btch/$script > ~/0_scripts/${script%.R}_output.log 2>&1 &
+    nohup Rscript ~/0_scripts/sngl_btch/$script > ~/0_scripts/${script%.R}_output.log 2>&1 &
 done
 
 echo "All scripts have been started in the background."

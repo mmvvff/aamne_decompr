@@ -2,7 +2,7 @@
 
 # for single batch processing
 # download scripts
-cd ~/0_scripts && sudo mkdir sngl_btch && cd ~/0_scripts/sngl_btch &&
+cd ~/0_scripts && sudo mkdir -p sngl_btch && cd ~/0_scripts/sngl_btch &&
 sudo rm -v *indexed*btch_[0-9][0-9]-[0-9][0-9].R
 sudo wget -O 0_trnsfrm_indexed_sngl_btch_00-04.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/bash_prll/0_trnsfrm_indexed_sngl_btch_00-04.R
 sudo wget -O 0_trnsfrm_indexed_sngl_btch_05-09.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/1_transform_indexed_example/bash_prll/0_trnsfrm_indexed_sngl_btch_05-09.R

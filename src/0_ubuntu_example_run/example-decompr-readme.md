@@ -12,7 +12,7 @@ This guide provides instructions on how to set up R in Ubuntu and run scripts fr
 
 ### 1. Setting up R in Ubuntu
 
-To set up R in Ubuntu, you can run the following script directly:
+To set up R in Ubuntu, you can run the following script directly (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/0_ubuntu_setup_rserver.bash | bash
@@ -28,7 +28,7 @@ There are two methods to run the scripts:
 
 This method uses R's `parallel` package to run scripts in parallel. Note that this might yield issues depending on your server configuration.
 
-To run scripts in parallel:
+To run scripts in parallel (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_prll.bash | bash
@@ -40,7 +40,7 @@ This method runs individual scripts in parallel using bash. It's done in two ste
 
 #### Step 1: Run Individual Scripts
 
-Execute the following command:
+Execute the following command (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_1.bash | bash
@@ -60,7 +60,7 @@ These scripts take ~120 minutes per year, so plan accordingly.
 After confirming via log reports that the above scripts have finished, run the consolidation script:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_2.bash | bash
+sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_2.bash | bash
 ```
 
 ## Downloading results

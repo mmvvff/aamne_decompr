@@ -12,7 +12,7 @@ This guide offers instructions for setting up R in Ubuntu and executing scripts 
 
 ### 1. Setting up R in Ubuntu
 
-To set up R in Ubuntu, you can run the following script directly:
+To set up R in Ubuntu, you can run the following script directly (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/0_ubuntu_setup_rserver.bash | bash
@@ -28,7 +28,7 @@ There are two methods to run the scripts:
 
 This method uses R's `parallel` package to run scripts in parallel. Note that this might yield issues depending on your server configuration.
 
-To run scripts in parallel:
+To run scripts in parallel (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_prll.bash | bash
@@ -36,7 +36,7 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 
 ### Method 2: Single Core Batch Processing with Bash
 
-This method runs individual scripts in parallel using bash. Execute the following command:
+This method runs individual scripts in parallel using bash. Execute the following command (use `sudo` if necessary):
 
 ```bash
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/2_ubuntu_eg_indexed_sngl.bash | bash

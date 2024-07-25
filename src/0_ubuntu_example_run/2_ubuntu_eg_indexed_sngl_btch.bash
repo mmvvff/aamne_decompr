@@ -12,7 +12,7 @@ sudo wget -O 0_trnsfrm_indexed_sngl_btch_18-20.R https://raw.githubusercontent.c
 
 # add directory permission before execution
 cd ~
-chmod u+rwx ~/r_aamne_wwz
+sudo chmod u+rwx ~/r_aamne_wwz
 
 # run scripts in parallel: minimum requiered CPU with 6 cores
 cd ~/0_scripts

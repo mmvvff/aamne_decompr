@@ -7,7 +7,7 @@ sudo wget -O 1_trnsfrm_indexed_prll.R https://raw.githubusercontent.com/mmvvff/a
 
 # add directory permission before execution
 cd ~
-chmod u+rwx ~/r_aamne_wwz
+sudo chmod u+rwx ~/r_aamne_wwz
 
 [ -f 1_trnsfrm_indexed_prll.log ] && sudo rm 1_trnsfrm_indexed_prll.log
 cd ~

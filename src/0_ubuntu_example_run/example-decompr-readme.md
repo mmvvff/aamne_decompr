@@ -1,6 +1,6 @@
 # Ubuntu Setup and Script Execution Guide
 
-This guide provides instructions on how to set up R in Ubuntu and run scripts for the aamne_decompr project.
+This guide provides instructions on how to set up R in Ubuntu and run scripts from the aamne_decompr project. It focuses on employing WWZ VA-trade measurement framework to the aAMNE database.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ This method uses R's `parallel` package to run scripts in parallel. Note that th
 To run scripts in parallel:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_example_prll.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_prll.bash | bash
 ```
 
 ### Method 2: Single Core Processing with Bash
@@ -43,14 +43,14 @@ This method runs individual scripts in parallel using bash. It's done in two ste
 Execute the following command:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_example_sngl_1.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_1.bash | bash
 ```
 
 These scripts will run in the background. You can check their individual execution as follows:
 E.g.:
 ```
 cd ~/0_scripts
-nano 2_decompr_cousec_sngl_btch_00-01_output.log
+nano 2_decompr_cousec_sngl_btch_00-04_output.log
 ```
 
 These scripts take ~120 minutes per year, so plan accordingly.
@@ -60,7 +60,23 @@ These scripts take ~120 minutes per year, so plan accordingly.
 After confirming via log reports that the above scripts have finished, run the consolidation script:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_example_sngl_2.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_2.bash | bash
+```
+
+## Downloading results
+
+Once finished, you can download the entire project as a zip file while taking advantage of multi-core processing. The following code demonstrates how to accomplish this:
+
+```
+# Calculate the number of cores to use by subtracting 2 from the total available. This helps avoid overloading the system.
+cores=$(($(nproc) - 2))
+
+# You may print the number of cores being used for verification purposes.
+echo "Using $cores cores"
+
+# Use the calculated number of cores in a command.
+# This example uses pigz, a parallel implementation of gzip, to compress the project directory.
+tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_decompr | pigz -9 -p $cores > R_aamne_decompr.tar.gz
 ```
 
 ## Important Notes

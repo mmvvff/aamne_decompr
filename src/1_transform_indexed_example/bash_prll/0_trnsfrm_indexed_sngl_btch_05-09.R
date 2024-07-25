@@ -1,35 +1,33 @@
-# Introduction: Prepare AAMNE v18 data for decompr
-# clear the console
-cat("\f")
+# Introduction: we subset icio to ALL_NRR producers LOOP
+# WE create datafiles with NRR-producers as BUYERS and as SELLERS of inputs
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
-# clear the environment
-rm(list = ls())
+
+# clear the console
+cat("\f")
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the environment
+rm(list = ls())
 
 # Imports: All the library imports go here
 
-# library(miceadds)
 library(readr)
 library(tidyr)
 library(dplyr)
-library(foreach)
-library(doParallel)
+library(stringr)
+library(decompr)
 library(conflicted)
 # ##$##
 
-# ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_decompr"
+# ##@## PREAMBLE: Settings - MUST CHANGE NAME
+NAME <- "R_aamne23_01_matrices_indexed"
 PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "/home/mmvvff_v1"
-RAW_DATA <- "0_data/"
-#PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
-
+PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
+EXTERNAL_HD <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 # Set working directory The code below will traverse the path upwards until it
 # finds the root folder of the project.
 
@@ -52,6 +50,174 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
+# ##@## vector years
+boomyears_vctr<-c(as.character(2000:2013))
+boomyears_range<-diff(range(c(as.numeric(boomyears_vctr))))
+boomyears_max<-max(c(as.numeric(boomyears_vctr)))
+boomyears_min<-min(c(as.numeric(boomyears_vctr)))
+median_boomyears<-as.character(ceiling(((boomyears_max-boomyears_min)/2)+boomyears_min))
+initlag_boomyears<-as.character(boomyears_min-1)
+
+# ##$##
+
+# ##@## CODES | VECTORS: Load country codes ####
+
+# ##@## wb income and oecd membership
+codes_oecd_membership <- readr::read_csv(
+  file.path("0_data",
+  "codes_cntrs_oecd_members_all.csv"))
+
+codes_oecd_membership <- codes_oecd_membership %>%
+  dplyr::rename(country_code_iso3=country_isoalpha3_code)%>%
+  tidyr::pivot_longer(-country_code_iso3,names_to="year",values_to="yrthrshld_oecdmbrshp") %>%
+  dplyr::mutate(year=c(year))
+codes_oecd_membership
+
+wb_income_classifications <- readr::read_csv(
+  file.path("0_data",
+  "codes_cntrs_wb_incmgrps_1987_2015.csv"))
+
+wb_income_classifications <- wb_income_classifications %>%
+  tidyr::pivot_longer(-country_code_iso3, names_to = "year", values_to = "yrthrshld_incmgrp")
+wb_income_classifications
+
+codes_cntrs_dvlpment<-left_join(
+  wb_income_classifications,
+  codes_oecd_membership) %>%
+  dplyr::mutate(yrthrshld_oecdmbrshp=if_else(is.na(yrthrshld_oecdmbrshp),c("NON-OECD"),yrthrshld_oecdmbrshp)) %>%
+  dplyr::group_by(year) %>%
+  dplyr::mutate(yrthrshld_dvlpmnt6=case_when(
+    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_HIC",
+    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_HIC",
+    c(yrthrshld_incmgrp==c("UMIC") | yrthrshld_incmgrp==c("LMIC")) & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_MIC",
+    c(yrthrshld_incmgrp==c("UMIC") | yrthrshld_incmgrp==c("LMIC")) & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_MIC",
+    yrthrshld_incmgrp==c("LIC") & yrthrshld_oecdmbrshp==c("OECD") ~ "OECD_LIC",
+    yrthrshld_incmgrp==c("LIC") & yrthrshld_oecdmbrshp==c("NON-OECD") ~ "NON-OECD_LIC")) %>%
+  dplyr::mutate(yrthrshld_dvlpmnt2=if_else(
+    yrthrshld_incmgrp==c("HIC") & yrthrshld_oecdmbrshp==c("OECD"),"Highly Industrialized","Developing"))
+
+#
+# yrthrshld_dvlpmnt2
+codes_cntrs_dvlpment$yrthrshld_dvlpmnt2<-factor(
+  codes_cntrs_dvlpment$yrthrshld_dvlpmnt2,
+  levels=c("Highly Industrialized","Developing"))
+
+#glimpse(codes_cntrs_dvlpment) # output
+# ##$##
+
+codes_cntrs_dvlpment_initlag_hghind<-codes_cntrs_dvlpment%>%
+  dplyr::filter(year %in% initlag_boomyears) %>%
+  dplyr::filter(yrthrshld_dvlpmnt2 %in% c("Highly Industrialized"))
+codes_cntrs_hghind_initlag<-c(codes_cntrs_dvlpment_initlag_hghind$country_code_iso3)
+
+# ##@## unsd, icio names and codes
+# UNSD
+# we load our csv file to create vectors of development-level and regions
+unsd_country_codes <- readr::read_csv(file.path("0_data", "codes_cntrs_unsd_mvf.csv"))
+
+# ICIO codes_cntrs
+# codes_cntrs_icioV23_all
+codes_cntrs_icioV23_all <- readr::read_csv(file.path("0_data",
+  "codes_cntrs_oecd_icioV23_all.csv"))
+
+codes_cntrs_icioV23_all_vctr <- c(codes_cntrs_icioV23_all$country_code_iso3) #facilitates filtering/selecting
+# icio row and wld
+codes_cntrs_icio_wld <- c("WLD")
+codes_cntrs_icio_row <- c("ROW")
+
+# CN | MX
+codes_cntrs_icio_mx_cn <- readr::read_csv(file.path("0_data",
+  "codes_cntrs_icio_mx_cn.csv"))
+# ##$##
+
+# ##$##
+# ##@## CODES | VECTORS: codes and vectors for sectors
+
+# ##@## DATA: sector codes
+
+#codes_sector_aamne_all <- readr::read_csv(file.path( "0_data",
+#  "codes_sector_oecd_aamneV18_classification.csv"))
+#glimpse(codes_sector_aamne_all)
+
+codes_sector_aamne_all <- readr::read_csv(file.path( "0_data",
+  "codes_sector_oecd_aamneV23_classification.csv"))
+#glimpse(codes_sector_aamne_all)
+
+# ##$##
+
+# ##@## VECTORS: sector_codes according to sectors and segments ####
+# we create a vector of sectors that distinguish between NRR-based sectors and
+# manufacturing sectors we use the sector codes of icio (Eurostat based on ISIC
+# Rev. 4)
+# we create a vector of codes of nrr vc, sectors and segments
+# nrrprd  producers
+codes_sector_aamne_all_nrrprd_vc <- dplyr::filter(codes_sector_aamne_all,
+  nrr_vc_prdcrs==1)
+codes_nrrprd_vc <- paste(codes_sector_aamne_all_nrrprd_vc$sector_code)
+unique(codes_nrrprd_vc)
+
+codes_sector_aamne_all_nrrprd_upstrm <- dplyr::filter(codes_sector_aamne_all,
+  nrr_upstrm_prdcrs==1)
+codes_nrrprd_upstrm <- paste(codes_sector_aamne_all_nrrprd_upstrm$sector_code)
+unique(codes_nrrprd_upstrm)
+
+codes_sector_aamne_all_nrrprd_dwnstrm <- dplyr::filter(codes_sector_aamne_all,
+  nrr_dwnstrm_prdcrs==1)
+codes_nrrprd_dwnstrm <- paste(codes_sector_aamne_all_nrrprd_dwnstrm$sector_code)
+unique(codes_nrrprd_dwnstrm)
+
+# suppliers
+codes_sector_aamne_all_tradables_mx <- dplyr::filter(codes_sector_aamne_all,
+  tradables_mx == 1)
+codes_tradables_mx <- paste(codes_sector_aamne_all_tradables_mx$sector_code)
+unique(codes_tradables_mx)
+
+codes_sector_aamne_all_tradables_sx <- dplyr::filter(codes_sector_aamne_all,
+  tradables_sx == 1)
+codes_tradables_sx <- paste(codes_sector_aamne_all_tradables_sx$sector_code)
+unique(codes_tradables_sx)
+
+codes_tradables_umxsx <- setdiff(union(codes_tradables_mx,codes_tradables_sx), codes_nrrprd_vc)
+
+# manfucaturing users of end-products
+codes_sector_aamne_all_mnfctrng_usrs <- dplyr::filter(codes_sector_aamne_all,
+  mnfctrng_users==1)
+codes_mnfctrng_usrs <- paste(codes_sector_aamne_all_mnfctrng_usrs$sector_code)
+unique(codes_mnfctrng_usrs)
+
+
+# manufacturing producers
+codes_sector_aamne_all_mnfctrng_all <- dplyr::filter(codes_sector_aamne_all,
+  mnfctrng_prdcrs == 1)
+codes_mnfctrng_gvc <- paste(codes_sector_aamne_all_mnfctrng_all$sector_code)
+unique(codes_mnfctrng_gvc)
+
+codes_sector_aamne_all_mnfctrng_apprl <- dplyr::filter(codes_sector_aamne_all,
+  apparel_prdcrs == 1)
+codes_mnfctrng_apprl <- paste(codes_sector_aamne_all_mnfctrng_apprl$sector_code)
+unique(codes_mnfctrng_apprl)
+
+codes_sector_aamne_all_mnfctrng_atmtv <- dplyr::filter(codes_sector_aamne_all,
+  autmtv_prdcrs == 1)
+codes_mnfctrng_atmtv <- paste(codes_sector_aamne_all_mnfctrng_atmtv$sector_code)
+unique(codes_mnfctrng_atmtv)
+
+codes_sector_aamne_all_mnfctrng_elctrncs <- dplyr::filter(codes_sector_aamne_all,
+  elctrncs_prdcrs == 1)
+codes_mnfctrng_elctrncs <- paste(codes_sector_aamne_all_mnfctrng_elctrncs$sector_code)
+unique(codes_mnfctrng_elctrncs)
+
+# tech intensity
+codes_sector_aamne_all_techrnd_highmed <- dplyr::filter(codes_sector_aamne_all,
+  techrnd_highmed == 1)
+codes_techrnd_highmed <- paste(codes_sector_aamne_all_techrnd_highmed $sector_code)
+unique(codes_techrnd_highmed)
+
+codes_tradables_techrnd<-intersect(codes_techrnd_highmed,codes_tradables_umxsx)
+# ##$##
+
+# ##$##
+
 # path_data_aamne <- "oecd_aamne/aamne18/"
 path_data_aamne <- "oecd_aamne/aamne23/"
 
@@ -68,29 +234,21 @@ vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-1)
-registerDoParallel(cl)
-
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2013))
-
-foreach(
-  i=vctr_allyears,
-  .packages=c("readr","tidyr","dplyr")) %dopar% { # START of loop
+vctr_allyears<-as.character(c(2005:2009))
+for(i in vctr_allyears){ # START of loop
+Sys.sleep(0.5)
+print(i)
+cat("\n")
 
 #i<-c("2010")
 
 # ##@## Load data: AAMNE
 
 # ICIO
-# we load Rdata icio
-#setwd(file.path(RAW_DATA))
 
 aamne_io_i <- list.files(
-  path = paste0(RAW_DATA, path_data_aamne),
+  path = paste0(EXTERNAL_HD, path_data_aamne, "/3_icio_split_ownership"),
   pattern = paste0("^.*", i, "\\.csv$"),
   full.names = TRUE)
 #
@@ -100,8 +258,6 @@ if (length(aamne_io_i) == 0) {
   }
 
 aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
-
-#setwd(file.path(PROJECT_DIR, PROJECT))
 
 # ##@## confirm AAMNE version
 
@@ -154,7 +310,7 @@ aamne_z_i <- aamne_io_i_tbl %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
 
-# confirm order of country-own-industry in rows vs. columns
+# inspect visually order of country-own-industry in rows vs. columns
 aamne_z_i
 aamne_z_i[,(ncol(aamne_z_i)-6-1):ncol(aamne_z_i)]
 # ##$##
@@ -191,6 +347,16 @@ aamne_z_i_matrix <- aamne_z_i %>%
 
 # ##$##
 
+# ##@##  output: aamne_z_i_indxd
+aamne_z_i_indxd <- aamne_z_i %>%
+  tidyr::separate(own_sctr, c("ownrshp","sctr")) %>%
+  tidyr::gather(k, "int_z", -(c(cntry,ownrshp,sctr))) %>%
+  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j")) %>% #buyers
+  dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
+  dplyr::mutate(across(where(is.character),as.factor))
+
+# ##$##
+
 # ##$##
 
 # ##@## final demand matrix: f
@@ -209,7 +375,7 @@ aamne_f_i <- aamne_io_i_tbl %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
 
-# confirm order of country-own-industry in rows vs. columns
+# inspect visually order of country-own-industry in rows vs. columns
 aamne_f_i
 aamne_f_i[,(ncol(aamne_f_i)-2-1):ncol(aamne_f_i)]
 # ##$##
@@ -252,6 +418,16 @@ aamne_f_i_matrix <- aamne_f_i %>%
 dim(aamne_f_i_matrix)
 # ##$##
 
+# ##@## indexed: aamne_fnldmnd_i_indxd
+
+aamne_fnldmnd_i_indxd <- aamne_f_i %>%
+  tidyr::separate(own_sctr, c("ownrshp","sctr")) %>%
+  tidyr::gather(k, "value", -(c(cntry,ownrshp,sctr))) %>%
+  tidyr::separate(k, c("cntry_c","matrix","matrix_compnnt")) %>% #buyers
+  dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
+  dplyr::mutate(across(where(is.character),as.factor)) #sellers
+# ##$##
+
 # ##$##
 
 # ##@## gross output vector: go
@@ -261,16 +437,20 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
   aamne_go_i <- aamne_io_i_tbl %>%
     dplyr::filter(sctr %in% c("GO")) %>% # focus on go
     dplyr::select(!c(cntry,ownrshp)) %>%
-    dplyr::select(sctr,sort(names(.))) # sort columns
+    dplyr::select(sctr,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
   aamne_go_i <- aamne_io_i_tbl %>%
     dplyr::filter(cntry %in% c("GO")) %>% # focus on go
     dplyr::select(!c(sctr,ownrshp)) %>%
-    dplyr::select(cntry,sort(names(.))) # sort columns
+    dplyr::select(cntry,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else
 {print("not ICIO-AAMNE")}
 
-# confirm order of country-own-industry in rows vs. columns
+# inspect visually order of country-own-industry in rows vs. columns
 aamne_go_i
 aamne_go_i[,(ncol(aamne_go_i)-2-1):ncol(aamne_go_i)]
 # ##$##
@@ -310,17 +490,21 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
     dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(sctr %in% c("GVA")) %>% # focus on go
     dplyr::select(!c(cntry,ownrshp)) %>%
-    dplyr::select(sctr,sort(names(.))) # sort columns
+    dplyr::select(sctr,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
   aamne_va_i <- aamne_io_i_tbl %>%
     dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(cntry %in% c("GVA")) %>% # focus on go
     dplyr::select(!c(sctr,ownrshp)) %>%
-    dplyr::select(cntry,sort(names(.))) # sort columns
+    dplyr::select(cntry,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else
 {print("not ICIO-AAMNE")}
 
-# confirm order of country-own-industry in rows vs. columns
+# inspect visually order of country-own-industry in rows vs. columns
 aamne_va_i
 aamne_va_i[,(ncol(aamne_va_i)-2-1):ncol(aamne_va_i)]
 # ##$##
@@ -361,7 +545,9 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
     dplyr::select(!c(cntry,ownrshp,sctr)) %>%
     dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
     tibble::add_column(sctr=c("GVA"), .before = 1) %>%
-    dplyr::select(sctr,sort(names(.))) # sort columns to match order in rows
+    dplyr::select(sctr,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
   aamne_gva_i <- aamne_io_i_tbl %>%
     dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
@@ -369,13 +555,15 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
     dplyr::select(!c(cntry,ownrshp,sctr)) %>%
     dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
     tibble::add_column(sctr=c("GVA"), .before = 1) %>%
-    dplyr::select(sctr,sort(names(.))) # sort columns to match order in rows
+    dplyr::select(sctr,sort(names(.))) %>% # sort columns
+    dplyr::rename_with(~ "matrix_compnnt",
+    .cols = where(is.character))
 } else
 {print("not ICIO-AAMNE")}
 
 any(is.na(aamne_gva_i))
 aamne_gva_i
-# confirm order of country-own-industry in rows vs. columns
+# inspect visually order of country-own-industry in rows vs. columns
 aamne_gva_i
 aamne_gva_i[,(ncol(aamne_gva_i)-2-1):ncol(aamne_gva_i)]
 # ##$##
@@ -480,51 +668,44 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
 # ##$##
 
 # ##@## Save
-# countries_aamne
-saveRDS(countries_aamne,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_countries_",i,".rds"))
+
+# ##@## aamne_z_i_indxd
+stopifnot(exprs = {
+  any(sapply(aamne_z_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  })
+
+saveRDS(aamne_z_i_indxd,
+  file=paste0(file.path(pipeline, "out",""),"aamne_z_",i,"_indxd.rds"))
+# ##$##
+
+# ##@## aamne_fnldmnd_i_indxd
+stopifnot(exprs = {
+  any(sapply(aamne_fnldmnd_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  })
+saveRDS(aamne_fnldmnd_i_indxd,
+  file=paste0(file.path(pipeline, "out",""),"aamne_fnldmnd_",i,"_indxd.rds"))
+# ##$##
+
+# ##@## aamne_prdctn_i_indxd
+aamne_prdctn_i_indxd <- dplyr::bind_rows(
+  aamne_go_i,
+  aamne_va_i %>% dplyr::mutate(matrix_compnnt=ifelse(
+    matrix_compnnt %in% "GVA", "VA", matrix_compnnt)),
+  aamne_gva_i) %>%
+  dplyr::mutate(across(where(is.character),as.factor))
+
+stopifnot(exprs = {
+  any(sapply(aamne_prdctn_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  })
 #
-# industries_aamne
-saveRDS(industries_aamne,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_industries_",i,".rds"))
+saveRDS(aamne_prdctn_i_indxd,
+  file=paste0(file.path(pipeline, "out",""),"aamne_prdctn_",i,"_indxd.rds"))
 
-# aamne_z_i_matrix
-saveRDS(aamne_z_i_matrix,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_z_",i,"_matrix.rds"))
-
-# aamne_f_i_matrix
-saveRDS(aamne_f_i_matrix,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_f_",i,"_matrix.rds"))
-
-# aamne_go_i_vector
-saveRDS(aamne_go_i_vector,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_go_",i,"_vector.rds"))
-
-# aamne_va_i_vector
-saveRDS(aamne_va_i_vector,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_va_",i,"_vector.rds"))
-
-# aamne_gva_i_vector
-saveRDS(aamne_gva_i_vector,
-  file=paste0(
-    file.path(pipeline, "tmp",""),
-    "data_aamne_gva_",i,"_vector.rds"))
 
 # ##$##
 
-}
+# ##$##
 
-#stop cluster
-stopCluster(cl)
+} # END of loop
+
+warnings()

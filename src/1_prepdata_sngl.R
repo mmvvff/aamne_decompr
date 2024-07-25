@@ -65,7 +65,7 @@ vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(as.vector(2005:2016))
+vctr_allyears<-as.character(c(2005:2016))
 pb<-progress_bar$new(total=length(vctr_allyears))
 pb$tick(0)
 for(i in vctr_allyears){ # START of loop
@@ -88,6 +88,11 @@ aamne_io_i <- list.files(
   path = paste0(path_data_aamne, "3_icio_split_ownership"),
   pattern = paste0("^.*", i, "\\.csv$"),
   full.names = TRUE)
+#
+if (length(aamne_io_i) == 0) {
+    print(paste("Data unavailable for year",i))
+    next
+  }
 
 aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
 

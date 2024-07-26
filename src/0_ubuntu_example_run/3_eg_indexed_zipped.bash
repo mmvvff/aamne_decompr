@@ -4,11 +4,10 @@
 cores=$(($(nproc) - 2))
 
 # Create a directory for the zipped files if it doesn't exist
-mkdir -p ~/zipped
+cd ~ && sudo mkdir -p ~/zipped
 
 # Change to the home directory and ensure proper permissions for the source directory
-cd ~
-chmod u+rwx ~/r_aamne_wwz
+sudo chmod u+rwx ~/zipped
 
 # Move to the zipped directory
 cd ~/zipped

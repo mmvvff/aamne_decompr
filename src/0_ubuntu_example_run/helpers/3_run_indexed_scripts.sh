@@ -3,7 +3,7 @@
 # Array of script names
 scripts=(
     "0_trnsfrm_indexed_sngl_btch_00-04.R"
-    "0_trnsfrm_indexed_sngl_btch_05-09.R"
+    #"0_trnsfrm_indexed_sngl_btch_05-09.R"
     "0_trnsfrm_indexed_sngl_btch_10-14.R"
     #"0_trnsfrm_indexed_sngl_btch_15-17.R"
     #"0_trnsfrm_indexed_sngl_btch_19-20.R"

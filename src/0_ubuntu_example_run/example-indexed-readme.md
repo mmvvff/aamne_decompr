@@ -26,7 +26,7 @@ There are two methods to run the scripts:
 
 ### Method 1: Parallel Execution using R
 
-This method uses R's `parallel` package to run scripts in parallel. Note that this might yield issues depending on your server configuration.
+This approach employs R's `parallel` package to run scripts simultaneously. However, be aware that this method might face challenges based on your specific server setup. Each year processed requires a minimum of 20GB of RAM. On macOS systems, if physical available RAM is insufficient, the operating system typically compensates by using hard disk space as virtual RAM. Given these memory requirements, parallel execution is  not advised for most users. The high RAM demand can lead to performance issues or system instability.
 
 To run scripts in parallel (use `sudo` if necessary):
 
@@ -54,20 +54,10 @@ These scripts take ~60 minutes per year, so plan accordingly.
 
 ## Downloading results
 
-Once finished, you can download the entire project as a zip file while taking advantage of multi-core processing. The following code demonstrates how to accomplish this:
+Once finished, you can download the entire project as a zip file. To zip the folder while taking advantage of multi-core processing do the following:
 
 ```
-# Calculate the number of cores to use by subtracting 2 from the total available. This helps avoid overloading the system.
-cores=$(($(nproc) - 2))
-
-# You may print the number of cores being used for verification purposes.
-echo "Using $cores cores"
-
-# Use the calculated number of cores in a command.
-# This example uses pigz, a parallel implementation of gzip, to compress the project directory.
-cd ~ && sudo mkdir -p zipped && cd ~/zipped
-[ -f R_aamne_indexed.tar.gz ] && sudo rm R_aamne_indexed.tar.gz
-tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/3_eg_indexed_zipped.bash | bash
 ```
 
 

@@ -13,18 +13,20 @@ sudo chmod u+rwx ~/zipped
 cd ~/zipped
 
 # Remove any existing compressed file with the same name
-[ -f R_aamne_indexed.tar.gz ] && rm R_aamne_indexed.tar.gz
+[ -f R_aamne_indexed.tar.gz ] && sudo rm R_aamne_indexed.tar.gz
 
 # Compress the project directory using tar and pigz (parallel gzip)
 # The -9 flag sets maximum compression, and -p $cores specifies the number of cores to use
-if ! tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz 2>compression_error.log; then
+if ! sudo tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz 2>compression_error.log; then
     echo "Compression failed. Error log:"
     cat compression_error.log
     exit 1
 fi
-# Check if the zipped file exists before echoing the completion message
-if [ -f R_aamne_indexed.tar.gz ]; then
-    echo "Compression completed using $cores cores"
+
+# Check if the compressed file exists and has content
+if [ -s R_aamne_indexed.tar.gz ]; then
+    echo "Compression completed successfully using $cores cores"
 else
-    echo "Compression failed"
+    echo "Compression failed: File is empty or does not exist"
+    exit 1
 fi

@@ -17,12 +17,12 @@ cd ~/zipped
 
 # Compress the project directory using tar and pigz (parallel gzip)
 # The -9 flag sets maximum compression, and -p $cores specifies the number of cores to use
-sudo tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz 2
+sudo bash -c "tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz"
 
 # Check if the compressed file exists and has content
 if [ -s R_aamne_indexed.tar.gz ]; then
     echo "Compression completed successfully using $cores cores"
 else
-    echo "Compression failed: File is empty or does not exist"
+    echo "Compression failed"
     exit 1
 fi

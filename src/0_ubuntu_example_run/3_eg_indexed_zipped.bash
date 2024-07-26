@@ -7,7 +7,7 @@ cores=$(($(nproc) - 2))
 cd ~ && sudo mkdir -p ~/zipped
 
 # Change to the home directory and ensure proper permissions for the source directory
-sudo chmod u+rwx ~/zipped
+sudo chown $USER:$USER ~/zipped
 
 # Move to the zipped directory
 cd ~/zipped
@@ -17,7 +17,7 @@ cd ~/zipped
 
 # Compress the project directory using tar and pigz (parallel gzip)
 # The -9 flag sets maximum compression, and -p $cores specifies the number of cores to use
-sudo bash -c "tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz"
+sudo tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz 2
 
 # Check if the compressed file exists and has content
 if [ -s R_aamne_indexed.tar.gz ]; then

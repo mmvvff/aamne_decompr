@@ -62,6 +62,7 @@ if (!dir.exists(pipeline)) {
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2000:2013))
 for(i in vctr_allyears){ # START of loop
+cat("\f")
 Sys.sleep(0.5)
 print(i)
 cat("\n")

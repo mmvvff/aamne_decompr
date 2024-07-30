@@ -71,11 +71,11 @@ The choice between versions depends on the researcher's judgment and specific re
 
 4. There are two additional subsets of scripts addressing different analytical concerns:
 
-   - If you are interested in revealing the VA content via backward linkages with the entire economy, choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cou). These scripts help reveal the aggregate VA contributions from all sectors of origin (sources of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. This is the typical approach of `decompr`. Please look closely at the [example provided](src/0_ubuntu_example_run/example-decompr-cou-readme.md).
+   - If you are interested in revealing the VA content via backward linkages with the entire economy, choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cou). These scripts help reveal the aggregate VA contributions from all sectors of origin (sources of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. This is the typical approach of `decompr`. Please look at the [example provided](src/0_ubuntu_example_run/example-decompr-cou-readme.md).
 
-   - If you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). This reveals the VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. To accomplish this, these scripts modify the inputs feeding into `decompr`. Please look closely at the [example provided](src/0_ubuntu_example_run/example-decompr-cousec-readme.md).
+   - Alternatively, if you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). These scripts help reveal the VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. To accomplish this, these scripts modify the inputs feeding into `decompr`. Please look closely at the [example provided](src/0_ubuntu_example_run/example-decompr-cousec-readme.md).
 
-5. The results will be saved in the `output/` directory.
+5. The main results will be saved in the `output/` directory.
 
 ## Structure
 

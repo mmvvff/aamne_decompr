@@ -8,7 +8,7 @@ sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubuse
 # for single batch processing
 # download scripts
 cd ~/0_scripts && sudo mkdir sngl_btch && cd ~/0_scripts/sngl_btch &&
-sudo rm -v *decompr*cousec*btch_[0-9][0-9]-[0-9][0-9].R
+[ -f *decompr*cousec*btch_[0-9][0-9]-[0-9][0-9].R ] && sudo rm -v *decompr*cousec*btch_[0-9][0-9]-[0-9][0-9].R
 sudo wget -O 2_decompr_cousec_sngl_btch_00-04.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_00-04.R
 sudo wget -O 2_decompr_cousec_sngl_btch_05-09.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_05-09.R
 sudo wget -O 2_decompr_cousec_sngl_btch_10-14.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_10-14.R

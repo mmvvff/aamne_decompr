@@ -1,8 +1,6 @@
 # Introduction: Estimate VA content based on Wang et al.
 # ##@## PREAMBLE: Environment ####
 
-#.rs.restartR()
-
 # clear the environment
 rm(list = ls())
 
@@ -21,6 +19,8 @@ library(stringr)
 library(decompr)
 library(conflicted)
 # ##$##
+
+
 
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr_cou"
@@ -53,18 +53,11 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-func_getvarname <- function(variable, pattern_exclude = "") {
-  # get variable name a character vector
-  return(
-    stringr::str_remove(deparse(substitute(variable)),
-    pattern_exclude))
-}
 
-func_xstring <- function(original_string, char_insert="x") {
-  # Concatenate the character and the original string
-  new_string <- paste0(char_insert, original_string)
-  return(new_string)
-}
+
+
+
+
 
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2000:2013))
@@ -187,6 +180,6 @@ glimpse(decomp_aamne_wwz)
 
 saveRDS(decomp_aamne_wwz%>%
   ungroup() %>% tibble::add_column(updated=Sys.Date()),
-  file=file.path(pipeline, "out","decomp_aamne_wwz.rds"))
+  file=file.path(pipeline, "out","decomp_aamne_wwz_cou.rds"))
 
 # ##$##

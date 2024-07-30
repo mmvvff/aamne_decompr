@@ -1,15 +1,14 @@
 # Introduction: Estimate VA content based on Wang et al.
-# clear the console
-cat("\f")
 # ##@## PREAMBLE: Environment ####
 
-#.rs.restartR()
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
@@ -18,7 +17,6 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-# library(progress)
 library(foreach)
 library(doParallel)
 library(conflicted)
@@ -55,19 +53,6 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-func_getvarname <- function(variable, pattern_exclude = "") {
-  # get variable name a character vector
-  return(
-    stringr::str_remove(deparse(substitute(variable)),
-    pattern_exclude))
-}
-
-func_xstring <- function(original_string, char_insert="x") {
-  # Concatenate the character and the original string
-  new_string <- paste0(char_insert, original_string)
-  return(new_string)
-}
-
 #setup parallel backend to use many processors
 cores = detectCores()
 # substract n processors to avoid overloading
@@ -82,6 +67,18 @@ foreach(
   .packages=c("readr","tidyr","dplyr")) %dopar% { # START of loop
 
 #i<-c("2010")
+
+# ##@## check data availability
+data_avlblty_i <- list.files(
+  path = paste0(file.path("2_pipeline","R_aamne_decompr","tmp")),
+  pattern = paste0("^.*", i, "\\.rds$"),
+  full.names = TRUE)
+#
+if (length(data_avlblty_i) == 0) {
+    print(paste("Data unavailable for year",i))
+    next
+  }
+# ##$##
 
 # ##@## Load data
 countries_aamne <- readRDS(paste0(file.path(

@@ -17,13 +17,13 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-library(foreach)
-library(doParallel)
 library(conflicted)
 # ##$##
 
+
+
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_decompr"
+NAME <- "R_aamne_decompr_cou"
 PROJECT <- "r_aamne_wwz"
 PROJECT_DIR <- "/home/mmvvff_v1"
 RAW_DATA <- "0_data/"
@@ -53,18 +53,19 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2)
-registerDoParallel(cl)
+
+
+
+
+
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2013))
-
-foreach(
-  i=vctr_allyears,
-  .packages=c("readr","tidyr","dplyr")) %dopar% { # START of loop
+vctr_allyears<-as.character(c(2005:2009))
+for(i in vctr_allyears){ # START of loop
+cat("\f")
+Sys.sleep(0.5)
+print(i)
+cat("\n")
 
 #i<-c("2010")
 
@@ -180,6 +181,6 @@ glimpse(decomp_aamne_wwz)
 
 saveRDS(decomp_aamne_wwz%>%
   ungroup() %>% tibble::add_column(updated=Sys.Date()),
-  file=file.path(pipeline, "out","decomp_aamne_wwz.rds"))
+  file=file.path(pipeline, "out","decomp_aamne_wwz_cou.rds"))
 
 # ##$##

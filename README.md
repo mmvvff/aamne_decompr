@@ -62,11 +62,11 @@ The choice between versions depends on the researcher's judgment and specific re
 
    For single core processing:
    ```
-   Rscript -e 'source("src/1_prepdata_sngl.R"); source("src/cou/1_decompr_sngl.R")'
+   Rscript -e 'source("src/1_prepdata_sngl.R"); source("src/cou/2_decompr_cou_sngl.R")'
    ```
    For parallel processing:
    ```
-   Rscript -e 'source("src/1_prepdata_prll.R"); source("src/cou/1_decompr_cou_prll.R")'
+   Rscript -e 'source("src/1_prepdata_prll.R"); source("src/cou/2_decompr_cou_prll.R")'
    ```
 
 4. There are two additional subsets of scripts addressing different analytical concerns:

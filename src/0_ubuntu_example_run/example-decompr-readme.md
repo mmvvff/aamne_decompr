@@ -31,7 +31,7 @@ This method uses R's `parallel` package to run scripts in parallel. Note that th
 To run scripts in parallel (use `sudo` if necessary):
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_prll.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_cousec_prll.bash | bash
 ```
 
 ### Method 2: Single Core Processing with Bash
@@ -43,7 +43,7 @@ This method runs individual scripts in parallel using bash. It's done in two ste
 Execute the following command (use `sudo` if necessary):
 
 ```bash
-wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_1.bash | bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_cousec_sngl_1.bash | bash
 ```
 
 These scripts will run in the background. You can check their individual execution as follows:
@@ -60,7 +60,7 @@ These scripts take ~120 minutes per year, so plan accordingly.
 After confirming via log reports that the above scripts have finished, run the consolidation script:
 
 ```bash
-sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_sngl_2.bash | bash
+sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_decompr_cousec_sngl_2.bash | bash
 ```
 
 ## Downloading results

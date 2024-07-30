@@ -372,7 +372,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   # combine df rowwise
   decomp_aamne_name_sctr_aggregates_wwz<-decomp_aamne_name_sctr_aggregates_wwz_list%>%
     Reduce(f=bind_rows) %>%
-    tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
+    tibble::add_column(sctr_c_i=name_sctr_aggregates,.before="sctr_c_j")
   #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
 
   saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%
@@ -400,7 +400,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   # combine df rowwise
   decomp_aamne_name_sctr_aggregates_wwz<-decomp_aamne_name_sctr_aggregates_wwz_list%>%
     Reduce(f=bind_rows) %>%
-    tibble::add_column(sctr_s_i=name_sctr_aggregates,.before="sctr_c_j")
+    tibble::add_column(sctr_c_i=name_sctr_aggregates,.before="sctr_c_j")
   #glimpse(decomp_aamne_name_sctr_aggregates_wwz)
 
   saveRDS(decomp_aamne_name_sctr_aggregates_wwz%>%

@@ -1,15 +1,16 @@
 # Introduction: Estimate VA content based on Wang et al.
-# clear the console
-cat("\f")
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
+
 # clear the environment
 rm(list = ls())
 
 # clear cache
 gc(full=TRUE)
-Sys.sleep(1)
+
+# clear the console
+cat("\f")
 
 # Imports: All the library imports go here
 
@@ -18,14 +19,11 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-library(progress)
-# library(foreach)
-# library(doParallel)
 library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_decompr"
+NAME <- "R_aamne_decompr_cou"
 PROJECT <- "r_aamne_wwz"
 PROJECT_DIR <- "/home/mmvvff_v1"
 RAW_DATA <- "0_data/"
@@ -70,18 +68,24 @@ func_xstring <- function(original_string, char_insert="x") {
 
 ###### INITIATE LOOP
 vctr_allyears<-as.character(c(2000:2013))
-pb<-progress_bar$new(total=length(vctr_allyears))
-pb$tick(0)
 for(i in vctr_allyears){ # START of loop
-Sys.sleep(1)
-cat("\n")
+Sys.sleep(0.5)
 print(i)
-pb$tick()
 cat("\n")
-flush.console()
-
 
 #i<-c("2010")
+
+# ##@## check data availability
+data_avlblty_i <- list.files(
+  path = paste0(file.path("2_pipeline","R_aamne_decompr","tmp")),
+  pattern = paste0("^.*", i, "\\.rds$"),
+  full.names = TRUE)
+#
+if (length(data_avlblty_i) == 0) {
+    print(paste("Data unavailable for year",i))
+    next
+  }
+# ##$##
 
 # ##@## Load data
 countries_aamne <- readRDS(paste0(file.path(

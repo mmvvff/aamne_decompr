@@ -161,26 +161,6 @@ saveRDS(decomp_aamne_i_wwz,
 
 # ##$##
 
-}
+} # END of loop
 
-##### join and export
-
-# ##@## collect estimates: decomp_aamne_wwz
-setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
-decomp_aamne_wwz_data2load=list.files(pattern=paste0("decomp_aamne_[0-9]{4}_wwz.rds"))
-decomp_aamne_wwz_list=lapply(decomp_aamne_wwz_data2load,readRDS)
-
-# reset initial setup
-setwd(file.path(PROJECT_DIR, PROJECT))
-
-# combine df rowwise
-decomp_aamne_wwz<-decomp_aamne_wwz_list%>%
-  Reduce(f=bind_rows) %>%
-  tibble::add_column(sctr_s_i=c("total"),.before="sctr_c_j")
-glimpse(decomp_aamne_wwz)
-
-saveRDS(decomp_aamne_wwz%>%
-  ungroup() %>% tibble::add_column(updated=Sys.Date()),
-  file=file.path(pipeline, "out","decomp_aamne_wwz_cou.rds"))
-
-# ##$##
+warnings()

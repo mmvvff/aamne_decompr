@@ -65,10 +65,10 @@ sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0
 
 ## Downloading results
 
-Once finished, you can download the entire project as a zip file while taking advantage of multi-core processing. The following code accomplishes this:
+Once finished, you can download the entire project as a zip file while taking advantage of multi-core processing. The following code accomplishes this, saving the compressed file in a created ~/zipped folder:
 
 ```bash
-sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/3_eg_indexed_zipped.bash | bash
+sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/3_eg_cou_zipped.bash | bash
 ```
 
 ## Important Notes

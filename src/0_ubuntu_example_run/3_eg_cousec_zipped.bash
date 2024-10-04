@@ -13,14 +13,14 @@ sudo chown $USER:$USER ~/zipped
 cd ~/zipped
 
 # Remove any existing compressed file with the same name
-[ -f R_aamne_indexed.tar.gz ] && sudo rm R_aamne_indexed.tar.gz
+[ -f R_aamne_decompr.tar.gz ] && sudo rm R_aamne_decompr.tar.gz
 
 # Compress the project directory using tar and pigz (parallel gzip)
 # The -9 flag sets maximum compression, and -p $cores specifies the number of cores to use
-tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_indexed | pigz -9 -p $cores > R_aamne_indexed.tar.gz
+tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_decompr | pigz -9 -p $cores > R_aamne_decompr.tar.gz
 
 # Check if the compressed file exists and has content
-if [ -s R_aamne_indexed.tar.gz ]; then
+if [ -s R_aamne_decompr.tar.gz ]; then
     echo "Compression completed successfully using $cores cores"
 else
     echo "Compression failed"
@@ -28,7 +28,7 @@ else
 fi
 
 # to copy individual file
-# gsutil cp ~/zipped/R_aamne_decompr_cou.tar.gz gs://zipped2download/
+# gsutil cp ~/zipped/R_aamne_decompr.tar.gz gs://zipped2download/
 
 # to sync all contents of folder
 # gsutil -m rsync -r ~/zipped/ gs://zipped2download/

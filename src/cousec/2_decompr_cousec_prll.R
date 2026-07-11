@@ -26,9 +26,9 @@ library(conflicted)
 
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr"
-PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "/home/mmvvff_v1"
-RAW_DATA <- "0_data/"
+PROJECT <- Sys.getenv("AAMNE_PROJECT", "r_aamne_wwz")
+PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", "/home/mmvvff_v1")
+RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
 #PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
 #RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
@@ -59,12 +59,13 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-#codes_sector_aamne_all <- read_csv(file.path( "0_data",
-#  "codes_sector_oecd_aamneV18_classification.csv"))
-#glimpse(codes_sector_aamne_all)
+# aAMNE version: "aamne18" or "aamne23"; override via env var AAMNE_VERSION
+# copy the matching classification CSV from data_urls/ into 0_data/
+aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
+file_codes_sector <- paste0("codes_sector_oecd_aamne",
+  ifelse(aamne_version == "aamne18", "V18", "V23"), "_classification.csv")
 
-codes_sector_aamne_all <- read_csv(file.path( "0_data",
-  "codes_sector_oecd_aamneV23_classification.csv"))
+codes_sector_aamne_all <- read_csv(file.path("0_data", file_codes_sector))
 #glimpse(codes_sector_aamne_all)
 
 # ##$##

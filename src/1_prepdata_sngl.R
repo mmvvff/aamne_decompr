@@ -23,9 +23,9 @@ library(conflicted)
 
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr"
-PROJECT <- "r_aamne_wwz"
-PROJECT_DIR <- "/home/mmvvff_v1"
-RAW_DATA <- "0_data/"
+PROJECT <- Sys.getenv("AAMNE_PROJECT", "r_aamne_wwz")
+PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", "/home/mmvvff_v1")
+RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
 #PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
 #RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
@@ -51,8 +51,9 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-path_data_aamne <- "oecd_aamne/aamne18/"
-# path_data_aamne <- "oecd_aamne/aamne23/"
+# aAMNE version: "aamne18" or "aamne23"; override via env var AAMNE_VERSION
+aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne18")
+path_data_aamne <- paste0("oecd_aamne/", aamne_version, "/")
 
 ##### OECD LABELS for VECTORS OF MATRICES
 vctr_aamne18_io_fnldmnd <- c("HFCE","NPISH","GGFC","GFCF","INVNT","P33")

@@ -56,13 +56,19 @@ The choice between versions depends on the researcher's judgment and specific re
    cd aamne_decompr
    ```
 
-2. Place the OECD Analytical AMNE data in the `0_data/` directory.
+2. Place the OECD Analytical AMNE data in the `0_data/` directory (under `0_data/oecd_aamne/aamne18/` or `0_data/oecd_aamne/aamne23/`). Copy the sector classification CSV from [`data_urls/`](data_urls) into `0_data/` (e.g., `codes_sector_oecd_aamneV23_classification.csv`); the `cousec` and indexed-transform scripts read it from there.
+
+   The scripts are configured through environment variables, with the defaults preserved in each script: `AAMNE_PROJECT_DIR` (project root), `AAMNE_PROJECT` (project folder name), `AAMNE_RAW_DATA` (raw-data folder), and `AAMNE_VERSION` (`aamne18` or `aamne23`). Set these to avoid editing the scripts, e.g.:
+   ```
+   export AAMNE_PROJECT_DIR="$HOME/projects"
+   export AAMNE_VERSION="aamne23"
+   ```
 
 3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.
 
    For single core processing:
    ```
-   Rscript -e 'source("src/1_prepdata_sngl.R"); source("src/cou/2_decompr_cou_sngl.R")'
+   Rscript -e 'source("src/1_prepdata_sngl.R"); source("src/cou/2_decompr_cou_sngl_all.R")'
    ```
    For parallel processing:
    ```
@@ -75,7 +81,7 @@ The choice between versions depends on the researcher's judgment and specific re
 
    - Alternatively, if you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). These scripts help reveal the VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. To accomplish this, these scripts modify the inputs feeding into `decompr`. Please look closely at the [example provided](src/0_ubuntu_example_run/example-decompr-cousec-readme.md).
 
-5. The main results will be saved in the `output/` directory.
+5. The main results are saved under `2_pipeline/<NAME>/out/`, where `<NAME>` is the pipeline name set in each script (e.g., `2_pipeline/R_aamne_decompr_cou/out/` for the country-level decomposition).
 
 ## Structure
 
@@ -85,10 +91,14 @@ The repository is structured as follows:
 .
 ├── src/                    # Source code
 │   ├── cou/
-│   │   ├── 1_decompr_sngl.R # Script
-│   │   └── ...    
+│   │   ├── 2_decompr_cou_sngl_all.R
+│   │   └── ...
+│   ├── cousec/
+│   ├── 1_transform_indexed_example/
+│   ├── 0_ubuntu_example_run/
 │   ├── 1_prepdata_sngl.R
-│   └── ...  
+│   └── ...
+├── data_urls/              # Data URLs and sector classification CSVs
 ├── README.md               # This file
 └── LICENSE                 # License file
 ```

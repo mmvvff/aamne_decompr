@@ -55,6 +55,12 @@ sudo find . -name '*.zip' -exec unzip -o {} \;
 # Remove all .zip files after extraction
 sudo find . -name '*.zip' -delete
 
+# Download sector classification CSVs into 0_data
+# (required by the cousec and indexed scripts, which read them from 0_data/)
+cd ~/"${project_name}"/0_data
+sudo wget -O codes_sector_oecd_aamneV18_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV18_classification.csv
+sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV23_classification.csv
+
 #
 cd ~
 # For GCP users: Sync local data to Google Cloud Storage bucket

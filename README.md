@@ -34,7 +34,7 @@ You need to setup in your local machine the following folder structure:
 
 ```
 .
-├── 1_data/                 # Raw data files
+├── 0_data/                 # Raw data files
 ├── 2_pipeline/             # Data processing pipelines
 ├── 3_output/               # Output files
 ```
@@ -43,7 +43,7 @@ If you prefer not to use your local machine, you may also explore setting up an 
 
 The above folder structure draws on [Ties de Kok's suggestions](https://towardsdatascience.com/how-to-keep-your-research-projects-organized-part-1-folder-structure-10bd56034d3a). The first lines of code in all scripts include these suggestions to facilitate the creation of subfolders.
 
-The data used in this project comes from the OECD's Analytical AMNE [database](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html). You will need to download this data separately and place it in the `1_data/` directory. Please refer to the OECD website for access and usage terms. For convenience, a [TSV file](data_urls) has been prepared with a list of static URLs for the latest aAMNE 2023 release (updated May 2024).
+The data used in this project comes from the OECD's Analytical AMNE [database](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html). You will need to download this data separately and place it in the `0_data/` directory. Please refer to the OECD website for access and usage terms. For convenience, a [TSV file](data_urls) has been prepared with a list of static URLs for the latest aAMNE 2023 release (updated May 2024).
 
 The scripts in this project can handle both the 2018 and 2023 versions of aAMNE.
 The choice between versions depends on the researcher's judgment and specific research needs.
@@ -56,7 +56,7 @@ The choice between versions depends on the researcher's judgment and specific re
    cd aamne_decompr
    ```
 
-2. Place the OECD Analytical AMNE data in the `1_data/` directory.
+2. Place the OECD Analytical AMNE data in the `0_data/` directory.
 
 3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.
 

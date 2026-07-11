@@ -22,7 +22,7 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_01_decompr_preparedata"
+NAME <- "R_aamne_decompr"
 PROJECT <- "r_aamne_wwz"
 PROJECT_DIR <- "/home/mmvvff_v1"
 RAW_DATA <- "0_data/"
@@ -65,7 +65,7 @@ vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2005:2016))
+vctr_allyears<-as.character(c(2000:2013))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)
@@ -471,34 +471,46 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
 
 # ##@## Save
 
+# countries_aamne
+saveRDS(countries_aamne,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_countries_",i,".rds"))
+
+# industries_aamne
+saveRDS(industries_aamne,
+  file=paste0(
+    file.path(pipeline, "tmp",""),
+    "data_aamne_industries_",i,".rds"))
+
 # aamne_z_i_matrix
 saveRDS(aamne_z_i_matrix,
   file=paste0(
-    file.path(pipeline, "store",""),
+    file.path(pipeline, "tmp",""),
     "data_aamne_z_",i,"_matrix.rds"))
 
 # aamne_f_i_matrix
 saveRDS(aamne_f_i_matrix,
   file=paste0(
-    file.path(pipeline, "store",""),
+    file.path(pipeline, "tmp",""),
     "data_aamne_f_",i,"_matrix.rds"))
 
 # aamne_go_i_vector
 saveRDS(aamne_go_i_vector,
   file=paste0(
-    file.path(pipeline, "store",""),
+    file.path(pipeline, "tmp",""),
     "data_aamne_go_",i,"_vector.rds"))
 
 # aamne_va_i_vector
 saveRDS(aamne_va_i_vector,
   file=paste0(
-    file.path(pipeline, "store",""),
+    file.path(pipeline, "tmp",""),
     "data_aamne_va_",i,"_vector.rds"))
 
 # aamne_gva_i_vector
 saveRDS(aamne_gva_i_vector,
   file=paste0(
-    file.path(pipeline, "store",""),
+    file.path(pipeline, "tmp",""),
     "data_aamne_gva_",i,"_vector.rds"))
 
 # ##$##

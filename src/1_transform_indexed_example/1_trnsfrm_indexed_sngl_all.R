@@ -26,22 +26,16 @@ library(conflicted)
 
 # ##@## PREAMBLE: Settings - MUST CHANGE NAME
 NAME <- "R_aamne_indexed"
-PROJECT <- Sys.getenv("AAMNE_PROJECT", "r_aamne_wwz")
-PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", "/home/mmvvff_v1")
+PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
+PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
-#PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 setwd(file.path(PROJECT_DIR, PROJECT))
 
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-if (dir.exists(file.path("empirical", "2_pipeline"))) {
-  pipeline <- file.path("empirical", "2_pipeline", NAME)
-} else {
-  pipeline <- file.path("2_pipeline", NAME)
-}
+pipeline <- file.path("2_pipeline", NAME)
 
 if (!dir.exists(pipeline)) {
   dir.create(pipeline)

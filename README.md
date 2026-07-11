@@ -58,10 +58,10 @@ The choice between versions depends on the researcher's judgment and specific re
 
 2. Place the OECD Analytical AMNE data in the `0_data/` directory (under `0_data/oecd_aamne/aamne18/` or `0_data/oecd_aamne/aamne23/`). Copy the sector classification CSV from [`data_urls/`](data_urls) into `0_data/` (e.g., `codes_sector_oecd_aamneV23_classification.csv`); the `cousec` and indexed-transform scripts read it from there.
 
-   The scripts are configured through environment variables, with the defaults preserved in each script: `AAMNE_PROJECT_DIR` (project root), `AAMNE_PROJECT` (project folder name), `AAMNE_RAW_DATA` (raw-data folder), and `AAMNE_VERSION` (`aamne18` or `aamne23`). Set these to avoid editing the scripts, e.g.:
+   The scripts are configured through environment variables, with sensible defaults: `AAMNE_PROJECT_DIR` (defaults to `.`, the current working directory), `AAMNE_PROJECT` (defaults to empty string), `AAMNE_RAW_DATA` (defaults to `0_data/`), and `AAMNE_VERSION` (defaults to `aamne23`). Set these to customize your setup, e.g.:
    ```
    export AAMNE_PROJECT_DIR="$HOME/projects"
-   export AAMNE_VERSION="aamne23"
+   export AAMNE_VERSION="aamne18"
    ```
 
 3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.

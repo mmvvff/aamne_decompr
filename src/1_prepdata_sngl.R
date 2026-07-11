@@ -23,11 +23,9 @@ library(conflicted)
 
 # ##@## PREAMBLE: 2 Settings ####
 NAME <- "R_aamne_decompr"
-PROJECT <- Sys.getenv("AAMNE_PROJECT", "r_aamne_wwz")
-PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", "/home/mmvvff_v1")
+PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
+PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
-#PROJECT_DIR <- "/Volumes/hd_mvf_datapipes/data_processing/icio_nrr/"
-#RAW_DATA <- "/Volumes/hd_mvf_datasets/data_raw/quant/1_large_datasets/oecd_datasets/"
 
 # Set working directory The code below will traverse the path upwards until it
 # finds the root folder of the project.
@@ -37,11 +35,7 @@ setwd(file.path(PROJECT_DIR, PROJECT))
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-if (dir.exists(file.path("empirical", "2_pipeline"))) {
-  pipeline <- file.path("empirical", "2_pipeline", NAME)
-} else {
-  pipeline <- file.path("2_pipeline", NAME)
-}
+pipeline <- file.path("2_pipeline", NAME)
 
 if (!dir.exists(pipeline)) {
   dir.create(pipeline)
@@ -52,7 +46,7 @@ if (!dir.exists(pipeline)) {
 # ##$##
 
 # aAMNE version: "aamne18" or "aamne23"; override via env var AAMNE_VERSION
-aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne18")
+aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
 path_data_aamne <- paste0("oecd_aamne/", aamne_version, "/")
 
 ##### OECD LABELS for VECTORS OF MATRICES

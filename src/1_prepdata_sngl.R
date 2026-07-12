@@ -64,7 +64,7 @@ vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2013))
+vctr_allyears<-as.character(c(2000:2020))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)

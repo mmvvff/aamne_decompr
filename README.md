@@ -83,6 +83,26 @@ The choice between versions depends on the researcher's judgment and specific re
 
 5. The main results are saved under `2_pipeline/<NAME>/out/`, where `<NAME>` is the pipeline name set in each script (e.g., `2_pipeline/R_aamne_decompr_cou/out/` for the country-level decomposition).
 
+## Notes for researchers
+
+- **Year coverage.** All single-core and parallel scripts (data prep, `cou`, `cousec`, and the indexed transform) now loop uniformly over 2000-2020. Every loop skips years whose raw CSV is absent from `0_data/`, so realized coverage depends on the files you download. Note: some indexed batch scripts under `bash_prll/` have narrower year ranges; use `1_trnsfrm_indexed_sngl_all.R` or `1_trnsfrm_indexed_prll.R` for the full 2000-2020 range.
+- **aAMNE version.** `AAMNE_VERSION` defaults to `aamne23` in every script; no script defaults to `aamne18`. The chosen version is auto-verified against the input table's dimensions at load time (v18: 4083x4443; v23: 6317x6777), so set `AAMNE_VERSION` to match the data you placed in `0_data/`.
+- **Working directory.** Each script resolves the project root from `AAMNE_PROJECT_DIR` / `AAMNE_PROJECT` (defaults `.` and empty) to an absolute path via `normalizePath()`. Unless you set these variables, scripts run relative to the current working directory; set them explicitly when sourcing scripts from elsewhere.
+- **Single-core vs. parallel.** Within each component the single-core and parallel scripts are equivalent: same outputs, same file paths, same year loop. They differ only in the loop backend (a `for` loop vs. a `foreach %dopar%` cluster) and the cores reserved (`detectCores()-1` for data prep, `detectCores()-2` elsewhere). Parallel indexed runs need a minimum of ~20GB RAM per year and are not advised on laptops.
+
+## Sector Aggregation Logic (`cousec`)
+
+The sector-focused decomposition (`cousec`) modifies the inputs fed into `decompr` to reveal the value-added contributions from (or excluding) specific subsets of origin sectors. This is achieved by zeroing out the corresponding entries in `decompr`'s value-added vector (`Vc`) before running the `wwz()` decomposition.
+
+The subsets are defined by boolean flags in the sector classification CSV (`codes_sector_oecd_aamneV23_classification.csv` or `V18`). By default, the `cousec` scripts estimate VA-trade content for four research-oriented sector aggregates:
+
+1. **`tradables_umxsx`**: Tradable sectors (manufacturing exporters `tradables_mx` and services exporters `tradables_sx`), *excluding* Natural Resource Related (NRR) value-chain producers (`nrr_vc_prdcrs`).
+2. **`nrrprd_upstrm`**: Natural Resource Related (NRR) upstream producers (`nrr_upstrm_prdcrs`).
+3. **`nrrprd_dwnstrm`**: Natural Resource Related (NRR) downstream producers (`nrr_dwnstrm_prdcrs`).
+4. **`tradables_techrnd`**: Tradable sectors (as defined in `tradables_umxsx`) intersected with high/medium-high technology R&D intensity (`techrnd_highmed`).
+
+For each aggregate, the script runs two decompositions per year: one *including* only the specified sectors as sources of VA (zeroing out all others), and one *excluding* the specified sectors (prefixing the output name with `x`).
+
 ## Methodological note
 
 Both decomposition components (`cou` and `cousec`) let `decompr` estimate gross output (`o`) and value added (`v`) from the supplied intermediate- and final-demand matrices, rather than passing aAMNE's own `GO` and `GVA` vectors. This is deliberate: aAMNE's supplied aggregates differ slightly from the values implied by the matrices (mean relative differences on the order of 2e-06 for output and 2e-08 for value added), which would otherwise fail `decompr`'s internal consistency checks. The rationale is documented inline in the decomposition scripts.
@@ -110,7 +130,7 @@ The repository is structured as follows:
 
 ## Contributing
 
-Contributions to this project are welcome, but keep in mind that this is **a work in progress**. For example, there is some data not fully explained that is used to aggregate sectors for my own research purposes.
+Contributions to this project are welcome. While the core framework and data pipelines are complete, the sector aggregation flags in the classification CSVs reflect specific research use cases (e.g., Global Value Chain analysis of NRR and tech-intensive sectors). Researchers are encouraged to adapt the boolean filters for their own analytical needs.
 
 Please fork the repository and submit a pull request with your changes.
 

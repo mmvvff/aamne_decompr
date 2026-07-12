@@ -83,6 +83,10 @@ The choice between versions depends on the researcher's judgment and specific re
 
 5. The main results are saved under `2_pipeline/<NAME>/out/`, where `<NAME>` is the pipeline name set in each script (e.g., `2_pipeline/R_aamne_decompr_cou/out/` for the country-level decomposition).
 
+## Methodological note
+
+Both decomposition components (`cou` and `cousec`) let `decompr` estimate gross output (`o`) and value added (`v`) from the supplied intermediate- and final-demand matrices, rather than passing aAMNE's own `GO` and `GVA` vectors. This is deliberate: aAMNE's supplied aggregates differ slightly from the values implied by the matrices (mean relative differences on the order of 2e-06 for output and 2e-08 for value added), which would otherwise fail `decompr`'s internal consistency checks. The rationale is documented inline in the decomposition scripts.
+
 ## Structure
 
 The repository is structured as follows:

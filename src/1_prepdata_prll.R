@@ -1,4 +1,4 @@
-# Introduction: Prepare AAMNE v18 data for decompr
+# Introduction: Prepare AAMNE data (v18 or v23) for decompr
 # clear the console
 cat("\f")
 # ##@## PREAMBLE: Environment ####
@@ -30,10 +30,14 @@ PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
 
-# Set working directory The code below will traverse the path upwards until it
-# finds the root folder of the project.
+# Set working directory. Resolve the project root to an absolute path so that
+# repeated setwd() calls (e.g. when scripts are chained via source()) stay
+# stable regardless of the current working directory.
 
-setwd(file.path(PROJECT_DIR, PROJECT))
+PROJECT_DIR <- normalizePath(file.path(PROJECT_DIR, PROJECT), mustWork = FALSE)
+PROJECT <- ""
+setwd(PROJECT_DIR)
+message("[", NAME, "] project root: ", PROJECT_DIR)
 
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.

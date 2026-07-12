@@ -29,7 +29,12 @@ PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
 
-setwd(file.path(PROJECT_DIR, PROJECT))
+# Resolve the project root to an absolute path so repeated setwd() calls stay
+# stable regardless of the current working directory.
+PROJECT_DIR <- normalizePath(file.path(PROJECT_DIR, PROJECT), mustWork = FALSE)
+PROJECT <- ""
+setwd(PROJECT_DIR)
+message("[", NAME, "] project root: ", PROJECT_DIR)
 
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
@@ -154,7 +159,7 @@ cl <- makeCluster(cores[1]-2)
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2013))
+vctr_allyears<-as.character(c(2000:2020))
 
 foreach(
   i=vctr_allyears,

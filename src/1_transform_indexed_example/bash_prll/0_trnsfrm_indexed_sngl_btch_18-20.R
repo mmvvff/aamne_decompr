@@ -20,6 +20,7 @@ library(readr)
 library(tidyr)
 library(dplyr)
 library(stringr)
+library(tibble)
 library(conflicted)
 # ##$##
 
@@ -152,7 +153,7 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2015:2017))
+vctr_allyears<-as.character(c(2018:2020))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)
@@ -591,7 +592,8 @@ stopifnot(exprs = {
   any(sapply(aamne_z_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
   })
 
-saveRDS(aamne_z_i_indxd,
+saveRDS(aamne_z_i_indxd %>%
+  tibble::add_column(year = factor(i), .before = "int_z"),
   file=paste0(file.path(pipeline, "out",""),"aamne_z_",i,"_indxd.rds"))
 # ##$##
 
@@ -599,7 +601,8 @@ saveRDS(aamne_z_i_indxd,
 stopifnot(exprs = {
   any(sapply(aamne_fnldmnd_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
   })
-saveRDS(aamne_fnldmnd_i_indxd,
+saveRDS(aamne_fnldmnd_i_indxd %>%
+  tibble::add_column(year = factor(i), .before = "value"),
   file=paste0(file.path(pipeline, "out",""),"aamne_fnldmnd_",i,"_indxd.rds"))
 # ##$##
 
@@ -609,13 +612,18 @@ aamne_prdctn_i_indxd <- dplyr::bind_rows(
   aamne_va_i %>% dplyr::mutate(matrix_compnnt=ifelse(
     matrix_compnnt %in% "GVA", "VA", matrix_compnnt)),
   aamne_gva_i) %>%
+  dplyr::mutate(across(where(is.character),as.factor)) %>%
+  dplyr::select(matrix_compnnt,!contains("fnldmnd")) %>% # exclude final demand components
+  tidyr::gather(k, "value", -(c(matrix_compnnt))) %>%
+  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j")) %>% #buyers
   dplyr::mutate(across(where(is.character),as.factor))
 
 stopifnot(exprs = {
   any(sapply(aamne_prdctn_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
   })
 #
-saveRDS(aamne_prdctn_i_indxd,
+saveRDS(aamne_prdctn_i_indxd %>%
+  tibble::add_column(year = factor(i), .after = "sctr_c_j"),
   file=paste0(file.path(pipeline, "out",""),"aamne_prdctn_",i,"_indxd.rds"))
 
 

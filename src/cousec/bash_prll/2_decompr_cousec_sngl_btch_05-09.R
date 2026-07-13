@@ -154,7 +154,7 @@ func_xstring <- function(original_string, char_insert="x") {
 }
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2007:2007))
+vctr_allyears<-as.character(c(2005:2009))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(1)
 cat("\n")

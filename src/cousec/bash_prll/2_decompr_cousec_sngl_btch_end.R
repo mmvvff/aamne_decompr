@@ -62,7 +62,7 @@ aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
 file_codes_sector <- paste0("codes_sector_oecd_aamne",
   ifelse(aamne_version == "aamne18", "V18", "V23"), "_classification.csv")
 
-codes_sector_aamne_all <- read_csv(file.path("0_data", file_codes_sector))
+codes_sector_aamne_all <- read_csv(paste0(RAW_DATA, file_codes_sector))
 #glimpse(codes_sector_aamne_all)
 
 # ##$##

@@ -160,6 +160,9 @@ saveRDS(decomp_aamne_i_wwz,
 
 }
 
+#stop cluster
+stopCluster(cl)
+
 ##### join and export
 
 # ##@## collect estimates: decomp_aamne_wwz

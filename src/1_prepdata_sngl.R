@@ -17,7 +17,6 @@ cat("\f")
 library(readr)
 library(tidyr)
 library(dplyr)
-library(decompr)
 library(conflicted)
 # ##$##
 
@@ -230,9 +229,6 @@ if (length(industries_f) == 68) {
 } else if (length(industries_f) == 82) {
   stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne23_io_fnldmnd))})
 } else {print("Not ICIO-AAMNE")}
-
-# output
-fnldmnd <- intersect(components_f,sort(vctr_aamne_io_fnldmnd))
 # ##$##
 
 # ##@## matrix: aamne_f_i_matrix

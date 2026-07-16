@@ -72,7 +72,7 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 #setup parallel backend to use many processors
 cores = detectCores()
 # substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-1)
+cl <- makeCluster(cores[1]-1, outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
@@ -96,7 +96,7 @@ aamne_io_i <- list.files(
 #
 if (length(aamne_io_i) == 0) {
     print(paste("Data unavailable for year",i))
-    next
+    return(NULL)
   }
 
 aamne_io_i_tbl<-readr::read_csv(aamne_io_i)

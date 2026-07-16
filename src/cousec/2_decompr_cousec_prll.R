@@ -157,7 +157,7 @@ func_xstring <- function(original_string, char_insert="x") {
 #setup parallel backend to use many processors
 cores = detectCores()
 # substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2)
+cl <- makeCluster(cores[1]-2, outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
@@ -177,7 +177,7 @@ data_avlblty_i <- list.files(
 #
 if (length(data_avlblty_i) == 0) {
     print(paste("Data unavailable for year",i))
-    next
+    return(NULL)
   }
 # ##$##
 

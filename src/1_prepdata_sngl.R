@@ -464,6 +464,21 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
 }
 # ##$##
 
+# ##@## TEST: supplied vs matrix-implied GO/GVA (map 7.1 L1 guard)
+# decompr derives o and v internally because aAMNE's supplied vectors differ
+# slightly from the matrices (observed mean rel. diff ~2.3e-06 GO, ~2.4e-08 GVA).
+# Warn if a future aAMNE release drifts past 1e-5 so that decision is revisited.
+go_implied <- rowSums(aamne_z_i_matrix) + rowSums(aamne_f_i_matrix)
+go_reldiff <- mean(abs(aamne_go_i_vector - go_implied)) / mean(abs(go_implied))
+gva_implied <- go_implied - colSums(aamne_z_i_matrix)
+gva_reldiff <- mean(abs(aamne_gva_i_vector - gva_implied)) / mean(abs(gva_implied))
+if (go_reldiff > 1e-5 || gva_reldiff > 1e-5) {
+  warning("aAMNE year ", i, ": supplied-vs-implied mean rel. diff exceeds 1e-5 ",
+    "(GO: ", signif(go_reldiff, 3), "; GVA: ", signif(gva_reldiff, 3), "). ",
+    "Revisit the commented o=/v= arguments to load_tables_vectors (map 7.1 L1).")
+}
+# ##$##
+
 # ##@## Save
 
 # countries_aamne

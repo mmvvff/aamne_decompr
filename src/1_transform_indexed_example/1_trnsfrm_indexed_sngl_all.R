@@ -50,16 +50,6 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-# ##@## vector years
-boomyears_vctr<-c(as.character(2000:2020))
-boomyears_range<-diff(range(c(as.numeric(boomyears_vctr))))
-boomyears_max<-max(c(as.numeric(boomyears_vctr)))
-boomyears_min<-min(c(as.numeric(boomyears_vctr)))
-median_boomyears<-as.character(ceiling(((boomyears_max-boomyears_min)/2)+boomyears_min))
-initlag_boomyears<-as.character(boomyears_min-1)
-
-# ##$##
-
 # ##@## CODES | VECTORS: codes and vectors for sectors
 
 # ##@## DATA: sector codes

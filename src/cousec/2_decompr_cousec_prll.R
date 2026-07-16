@@ -25,7 +25,7 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_decompr"
+NAME <- "R_aamne_decompr_cousec"
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")

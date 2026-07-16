@@ -24,7 +24,11 @@ library(conflicted)
 # ##$##
 
 # ##@## PREAMBLE: 2 Settings ####
-NAME <- "R_aamne_decompr"
+NAME <- "R_aamne_decompr_cousec"
+# NOTE: pipeline dir renamed from "R_aamne_decompr" (shared with data prep) on
+# 2026-07-15. Outputs produced before the rename remain under
+# 2_pipeline/R_aamne_decompr/{store,out}; this and all cousec scripts now
+# auto-create and use 2_pipeline/R_aamne_decompr_cousec/.
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")

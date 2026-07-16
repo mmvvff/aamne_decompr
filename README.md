@@ -103,6 +103,28 @@ The subsets are defined by boolean flags in the sector classification CSV (`code
 
 For each aggregate, the script runs two decompositions per year: one *including* only the specified sectors as sources of VA (zeroing out all others), and one *excluding* the specified sectors (prefixing the output name with `x`).
 
+### Classification-flag reference (draft)
+
+The remaining boolean flags in the classification CSVs are listed below with
+candidate definitions derived from the sector rows each flag marks (ISIC Rev.4
+divisions). Every row is a draft pending author confirmation.
+
+| Flag | Candidate definition (derived from flagged sectors) | Status |
+|------|-----------------------------------------------------|--------|
+| `mnfctrng_users` | All manufacturing divisions (C10–C33), treated as *users* of inputs; same sector set as `tradables_mx`. | NEEDS-AUTHOR-CONFIRMATION |
+| `mnfctrng_prdcrs` | Union of the three GVC case-study producer industries: textiles/apparel (C13T15), electronics (C26), automotive (C29). | NEEDS-AUTHOR-CONFIRMATION |
+| `apparel_prdcrs` | Apparel GVC producers: textiles, wearing apparel, leather (C13T15). | NEEDS-AUTHOR-CONFIRMATION |
+| `elctrncs_prdcrs` | Electronics GVC producers: computer, electronic and optical products (C26). | NEEDS-AUTHOR-CONFIRMATION |
+| `autmtv_prdcrs` | Automotive GVC producers: motor vehicles, trailers and semi-trailers (C29). | NEEDS-AUTHOR-CONFIRMATION |
+| `nontrdbls_cns` (V18 only) | Non-tradables, construction & utilities: electricity/gas/water (DTE), construction (F). | NEEDS-AUTHOR-CONFIRMATION |
+| `nontrdbls_sx` | Non-tradable services. V18: accommodation (I), real estate (L), arts/other services (RTS), households (T). V23 additionally absorbs V18's `nontrdbls_cns` and `nontrdbls_scl` sets (utilities, construction, postal, public admin, education, health). | NEEDS-AUTHOR-CONFIRMATION |
+| `nontrdbls_scl` (V18 only) | Non-tradable social services: public administration (O), education (P), health (Q). | NEEDS-AUTHOR-CONFIRMATION |
+| `techrnd_highmed` | High and medium-high R&D-intensity industries (OECD taxonomy): chemicals/pharma (C20–C21), electronics through other transport (C26–C30), IT services (J62T63; V23 also J58T60). | NEEDS-AUTHOR-CONFIRMATION |
+
+The flags used directly by the four default aggregates (`tradables_mx`,
+`tradables_sx`, `nrr_vc_prdcrs`, `nrr_upstrm_prdcrs`, `nrr_dwnstrm_prdcrs`)
+are defined in the aggregate list above.
+
 ## Methodological note
 
 Both decomposition components (`cou` and `cousec`) let `decompr` estimate gross output (`o`) and value added (`v`) from the supplied intermediate- and final-demand matrices, rather than passing aAMNE's own `GO` and `GVA` vectors. This is deliberate: aAMNE's supplied aggregates differ slightly from the values implied by the matrices (mean relative differences on the order of 2e-06 for output and 2e-08 for value added), which would otherwise fail `decompr`'s internal consistency checks. The rationale is documented inline in the decomposition scripts.

@@ -28,7 +28,7 @@ else
 fi
 
 # to copy individual file
-# gsutil cp ~/zipped/R_aamne_decompr_cou.tar.gz gs://zipped2download/
+# gsutil cp ~/zipped/R_aamne_indexed.tar.gz gs://zipped2download/
 
 # to sync all contents of folder
 # gsutil -m rsync -r ~/zipped/ gs://zipped2download/

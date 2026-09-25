@@ -1,6 +1,6 @@
 sector_code,sector_disaggrgt_name,sector_aggrgt_name_spplrs,sector_aggrgt_name_prdcrs,mnfctrng_users,nrr_vc_prdcrs,nrr_upstrm_prdcrs,nrr_dwnstrm_prdcrs,mnfctrng_prdcrs,apparel_prdcrs,elctrncs_prdcrs,autmtv_prdcrs,tradables_mx,tradables_sx,nontrdbls_cns,nontrdbls_sx,nontrdbls_scl,techrnd_highmed
 A,"Agriculture, forestry and fishing","Agriculture, forestry and fishing","Agriculture, forestry and fishing",,,,,,,,,,,,,,
-B,nrr_upstrm,Raw NRR inputs,Mining and Quarrying,,1,1,,,,,,,,,,,
+B,Mining and quarrying,Raw NRR inputs,Mining and Quarrying,,1,1,,,,,,,,,,,
 C10T12,"Food products, beverages and tobacco",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,
 C13T15,"Textiles, wearing apparel, leather and related products",Manufacturing-based inputs,"Textiles, wearing apparel, leather and related products",1,,,,1,1,,,1,,,,,
 C16,Wood and products of wood and cork,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,,,

@@ -48,3 +48,8 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 .DS_Store
+
+# Local project data and pipeline outputs (README "Folder structure and data")
+/0_data/
+/2_pipeline/
+/3_output/

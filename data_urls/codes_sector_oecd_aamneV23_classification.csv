@@ -9,17 +9,17 @@ C19,Coke and refined petroleum products,Beneficiated NRR inputs,Coke and refined
 C20,Chemicals and chemical products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
 C21,"Pharmaceuticals, medicinal chemical and botanical products",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
 C22,Rubber and plastic products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
-C23,Other non-metallic mineral products,Manufacturing-based inputs,Basic metals,1,,,,,,,,1,,,
-C24,Basic metals,Beneficiated NRR inputs,Manufacturing,1,1,,1,,,,,1,,,
-C25,Fabricated metal products,Manufacturing-based inputs,"Computers, electronics and optical products",1,,,,,,,,1,,,
-C26,"Computer, electronic and optical products",Manufacturing-based inputs,Manufacturing,1,,,,1,,1,,1,,,1
+C23,Other non-metallic mineral products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C24,Basic metals,Beneficiated NRR inputs,Basic metals,1,1,,1,,,,,1,,,
+C25,Fabricated metal products,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+C26,"Computer, electronic and optical products",Manufacturing-based inputs,"Computers, electronics and optical products",1,,,,1,,1,,1,,,1
 C27,Electrical equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
-C28,"Machinery and equipment, nec ",Manufacturing-based inputs,Motor vehicles and transport equipment (Automotives),1,,,,,,,,1,,,1
-C29,"Motor vehicles, trailers and semi-trailers",Manufacturing-based inputs,Manufacturing,1,,,,1,,,1,1,,,1
+C28,"Machinery and equipment, nec ",Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
+C29,"Motor vehicles, trailers and semi-trailers",Manufacturing-based inputs,Motor vehicles and transport equipment (Automotives),1,,,,1,,,1,1,,,1
 C30,Other transport equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,1
-C31T33,Other manufacturing; repair and installation of machinery and equipment,Manufacturing-based inputs,"Electricity, gas, water supply, sewerage, waste and remediation services",1,,,,,,,,1,,,
-D35_E36T39,"Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services",Construction,,,,,,,,,,,1,
-F41T43,Construction,Construction,Total business services,,,,,,,,,,,1,
+C31T33,Other manufacturing; repair and installation of machinery and equipment,Manufacturing-based inputs,Manufacturing,1,,,,,,,,1,,,
+D35_E36T39,"Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services","Electricity, gas, water supply, sewerage, waste and remediation services",,,,,,,,,,,1,
+F41T43,Construction,Construction,Construction,,,,,,,,,,,1,
 G45T47,Wholesale and retail trade; repair of motor vehicles,Business services inputs,Total business services,,,,,,,,,,1,,
 H49,Land transport and transport via pipelines,Business services inputs,Total business services,,,,,,,,,,1,,
 H50,Water transport,Business services inputs,Total business services,,,,,,,,,,1,,
@@ -39,4 +39,4 @@ P85,Education,"Public admin, education, health, defence, and other services","Pu
 Q86T88,Human health and social work,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
 R90T93,"Arts, entertainment and recreation","Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
 S94T96,Other service activities,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,
-T97T98,Private households with employed persons,"Public admin, education, health, defence, and other services",,,,,,,,,,,,1,
+T97T98,Private households with employed persons,"Public admin, education, health, defence, and other services","Public admin, education, health, defence, and other services",,,,,,,,,,,1,

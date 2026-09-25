@@ -119,7 +119,7 @@ if (all(dim(aamne_io_i_tbl) == dim_aamne18)) {
       into = c("cntry","ownrshp","sctr"),
       sep = "_")
 } else
-{print("not ICIO-AAMNE")}
+{stop("not ICIO-AAMNE: ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
 # ##$##
 

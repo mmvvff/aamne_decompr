@@ -21,11 +21,13 @@ This project requires R and the following R packages:
 - `dplyr`
 - `stringr`
 - `decompr`
+- `conflicted`
+- `foreach` and `doParallel` (parallel scripts only)
 
 You can install these packages using:
 
 ```R
-install.packages(c("decompr", "dplyr", "readr", "tidyr", "stringr"))
+install.packages(c("decompr", "dplyr", "readr", "tidyr", "stringr", "conflicted", "foreach", "doParallel"))
 ```
 
 ## Folder structure and data

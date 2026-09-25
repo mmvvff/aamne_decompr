@@ -43,7 +43,7 @@ cat "$file" | sudo xargs -n 1 sudo aria2c -c -x2 --summary-interval=0
 #   --summary-interval=0: suppress download progress summary
 
 # Change to the AAMNE 2023 data directory
-cd ~/0_data/oecd_aamne/aamne23
+cd ~/"${project_name}"/0_data/oecd_aamne/aamne23
 
 # Unzip all .zip files in the current directory and its subdirectories
 sudo find . -name '*.zip' -exec unzip -o {} \;
@@ -64,7 +64,7 @@ sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubuse
 #
 cd ~
 # For GCP users: Sync local data to Google Cloud Storage bucket
-gsutil -m rsync -r ~/0_data/oecd_aamne/aamne23 gs://data_oecd/aamne23/
+# gsutil -m rsync -r ~/"${project_name}"/0_data/oecd_aamne/aamne23 gs://data_oecd/aamne23/
 # -m: perform operations in parallel for improved performance
 # rsync: synchronize contents of directories
 # -r: recursively copy subdirectories

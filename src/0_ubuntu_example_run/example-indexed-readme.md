@@ -66,3 +66,4 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 - Always verify the contents of scripts before running them, especially when using `wget` to download and execute in one command.
 - Monitor the execution of background processes using log reports.
 - Choose the execution method based on your server capabilities and project requirements.
+- Wrappers start R from `~/r_aamne_wwz`, so the scripts' default project root (`AAMNE_PROJECT_DIR="."`) is the server project folder.

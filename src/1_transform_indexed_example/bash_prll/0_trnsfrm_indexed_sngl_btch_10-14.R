@@ -1,5 +1,5 @@
-# Introduction: we subset icio to ALL_NRR producers LOOP
-# WE create datafiles with NRR-producers as BUYERS and as SELLERS of inputs
+# Introduction: reshape aAMNE ICIO (z, final demand, production rows) into long
+# indexed tables (seller x buyer x year); full tables, sector vectors are not applied
 # ##@## PREAMBLE: Environment ####
 
 #.rs.restartR()
@@ -185,7 +185,7 @@ if (all(dim(aamne_io_i_tbl) == dim_aamne18)) {
       into = c("cntry","ownrshp","sctr"),
       sep = "_")
 } else
-{print("not ICIO-AAMNE")}
+{stop("not ICIO-AAMNE: ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
 # ##$##
 

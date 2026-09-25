@@ -9,6 +9,9 @@ scripts=(
     "2_decompr_cousec_sngl_btch_18-20.R"
 )
 
+# run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
+cd ~/r_aamne_wwz
+
 # Loop through the scripts and run them
 for script in "${scripts[@]}"; do
     echo "Starting $script"

@@ -20,6 +20,16 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 
 This script will install R and necessary dependencies.
 
+### 2. Preparing the data
+
+Both methods below read the decompr inputs written by `src/1_prepdata_sngl.R`. Run it once (use `sudo` if necessary); the cou and cousec walkthroughs share its output:
+
+```bash
+wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/1_ubuntu_eg_prepdata.bash | bash
+```
+
+After confirming via `~/0_scripts/1_prepdata_sngl_output.log` that it has finished, run one of the methods below.
+
 ## Running Scripts
 
 There are two methods to run the scripts:
@@ -76,3 +86,4 @@ sudo wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0
 - Always verify the contents of scripts before running them, especially when using `wget` to download and execute in one command.
 - Monitor the execution of background processes using log reports.
 - Choose the execution method based on your server capabilities and project requirements.
+- Wrappers start R from `~/r_aamne_wwz`, so the scripts' default project root (`AAMNE_PROJECT_DIR="."`) is the server project folder.

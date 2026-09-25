@@ -88,7 +88,7 @@ The choice between versions depends on the researcher's judgment and specific re
 ## Notes for researchers
 
 - **Year coverage.** All single-core and parallel scripts (data prep, `cou`, `cousec`, and the indexed transform) now loop uniformly over 2000-2020. Every loop skips years whose raw CSV is absent from `0_data/`, so realized coverage depends on the files you download. The indexed batch scripts under `bash_prll/` are split by year range (`00-04` through `18-20`) but together also cover 2000-2020 completely.
-- **aAMNE version.** `AAMNE_VERSION` defaults to `aamne23` in every script; no script defaults to `aamne18`. The chosen version is auto-verified against the input table's dimensions at load time (v18: 4083x4443; v23: 6317x6777), so set `AAMNE_VERSION` to match the data you placed in `0_data/`.
+- **aAMNE version.** `AAMNE_VERSION` defaults to `aamne23` in every script; no script defaults to `aamne18`. Data preparation and the indexed transform stop if the input table's dimensions do not match it (v18: 4083x4443; v23: 6317x6777), and `cousec` stops if the data-prep outputs do not match its classification CSV. Set `AAMNE_VERSION` to match the data you placed in `0_data/`, and use the same value for data prep and `cousec`.
 - **Working directory.** Each script resolves the project root from `AAMNE_PROJECT_DIR` / `AAMNE_PROJECT` (defaults `.` and empty) to an absolute path via `normalizePath()`. Unless you set these variables, scripts run relative to the current working directory; set them explicitly when sourcing scripts from elsewhere.
 - **Single-core vs. parallel.** Within each component the single-core and parallel scripts are equivalent: same outputs, same file paths, same year loop. They differ only in the loop backend (a `for` loop vs. a `foreach %dopar%` cluster) and the cores reserved (`detectCores()-1` for data prep, `detectCores()-2` elsewhere). Parallel indexed runs need a minimum of ~20GB RAM per year and are not advised on laptops.
 
@@ -123,9 +123,11 @@ divisions). Every row is a draft pending author confirmation.
 | `nontrdbls_scl` (V18 only) | Non-tradable social services: public administration (O), education (P), health (Q). | NEEDS-AUTHOR-CONFIRMATION |
 | `techrnd_highmed` | High and medium-high R&D-intensity industries (OECD taxonomy): chemicals/pharma (C20–C21), electronics through other transport (C26–C30), IT services (J62T63; V23 also J58T60). | NEEDS-AUTHOR-CONFIRMATION |
 
-The flags used directly by the four default aggregates (`tradables_mx`,
-`tradables_sx`, `nrr_vc_prdcrs`, `nrr_upstrm_prdcrs`, `nrr_dwnstrm_prdcrs`)
-are defined in the aggregate list above.
+The flags used directly by the four default aggregates are `tradables_mx`,
+`tradables_sx`, `nrr_vc_prdcrs`, `nrr_upstrm_prdcrs`, `nrr_dwnstrm_prdcrs`,
+and `techrnd_highmed`. All but `techrnd_highmed` are defined in the aggregate
+list above; `techrnd_highmed` is still a draft (table above), and so are the
+default outputs built from it (`tradables_techrnd`, `xtradables_techrnd`).
 
 ## Methodological note
 

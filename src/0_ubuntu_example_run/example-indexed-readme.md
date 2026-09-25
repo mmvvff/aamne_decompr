@@ -67,3 +67,4 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 - Monitor the execution of background processes using log reports.
 - Choose the execution method based on your server capabilities and project requirements.
 - Wrappers start R from `~/r_aamne_wwz`, so the scripts' default project root (`AAMNE_PROJECT_DIR="."`) is the server project folder.
+- Every wrapper and dispatcher runs R with `sudo`, so files under `~/r_aamne_wwz` are root-owned. Setup gives `~/0_scripts` to your user so your shell can write the logs; on a server set up earlier, run `sudo chown "$USER":"$USER" ~/0_scripts` once.

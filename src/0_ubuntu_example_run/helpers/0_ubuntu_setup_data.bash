@@ -18,6 +18,8 @@ project_name="r_aamne_wwz"
 
 # Create directory structure to download data
 cd ~ && sudo mkdir -p 0_scripts "${project_name}"
+# R runs via sudo (root owns the project); your shell writes the logs, so keep ~/0_scripts yours
+sudo chown "$USER":"$USER" ~/0_scripts
 cd ~/"${project_name}" && sudo mkdir 0_data 1_code 2_pipeline 3_output
 
 # Change to the data directory and create subdirectory for AAMNE 2023 data

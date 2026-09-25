@@ -189,6 +189,12 @@ countries_aamne <- readRDS(paste0(file.path(
 industries_aamne <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_industries_",i,".rds"))
+# A's tmp/ files carry no version tag: their sectors must match the CSV rows
+sectors_aamne <- unique(sub("^[A-Z]_", "", industries_aamne))
+if (length(sectors_aamne) != nrow(codes_sector_aamne_all)) {
+  stop("year ", i, ": ", length(sectors_aamne), " sectors in R_aamne_decompr/tmp/ vs ",
+    nrow(codes_sector_aamne_all), " in ", file_codes_sector,
+    "; run data prep and cousec with the same AAMNE_VERSION")}
 #
 aamne_z_i_matrix <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),

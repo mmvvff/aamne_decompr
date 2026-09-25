@@ -180,10 +180,10 @@ aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
 dim_aamne18 <- c(4083, 4443)
 dim_aamne23 <- c(6317, 6777)
 
-if (all(dim(aamne_io_i_tbl) == dim_aamne18)) {
+if (aamne_version == "aamne18" && all(dim(aamne_io_i_tbl) == dim_aamne18)) {
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     rename(cntry=cou,ownrshp=own,sctr=ind)
-} else if (all(dim(aamne_io_i_tbl) == dim_aamne23)) {
+} else if (aamne_version == "aamne23" && all(dim(aamne_io_i_tbl) == dim_aamne23)) {
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     rename(cntry_own_sctr="...1") %>%
     tidyr::separate(
@@ -191,7 +191,7 @@ if (all(dim(aamne_io_i_tbl) == dim_aamne18)) {
       into = c("cntry","ownrshp","sctr"),
       sep = "_")
 } else
-{stop("not ICIO-AAMNE: ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
+{stop("not ICIO-AAMNE ", aamne_version, " (AAMNE_VERSION): ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
 # ##$##
 
@@ -349,6 +349,7 @@ aamne_fnldmnd_i_indxd <- aamne_f_i %>%
 # ##@## prepare
 if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
   aamne_go_i <- aamne_io_i_tbl %>%
+    dplyr::select(!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(sctr %in% c("GO")) %>% # focus on go
     dplyr::select(!c(cntry,ownrshp)) %>%
     dplyr::select(sctr,sort(names(.))) %>% # sort columns
@@ -356,6 +357,7 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
     .cols = where(is.character))
 } else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
   aamne_go_i <- aamne_io_i_tbl %>%
+    dplyr::select(!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(cntry %in% c("GO")) %>% # focus on go
     dplyr::select(!c(sctr,ownrshp)) %>%
     dplyr::select(cntry,sort(names(.))) %>% # sort columns
@@ -510,22 +512,15 @@ aamne_gva_i_vector <- aamne_gva_i %>%
 
 # ##@## TEST decompr requirements: order and size of countries and industries
 
-# size of countries and industries
+# countries and industries identical across z, f, GO, VA, GVA
+# (setdiff drops the NA that label columns yield)
 stopifnot(exprs = {
-  all.equal(
-    countries_z,
-    countries_f,
-    countries_go,
-    countries_va,
-    countries_gva
-  )
-  all.equal(
-    industries_z,
-    industries_f,
-    industries_go,
-    industries_va,
-    industries_gva
-  )
+  length(unique(lapply(
+    list(countries_z, countries_f, countries_go, countries_va, countries_gva),
+    setdiff, NA))) == 1
+  length(unique(lapply(
+    list(industries_z, industries_f, industries_go, industries_va, industries_gva),
+    setdiff, NA))) == 1
 })
 
 countries_aamne <-Reduce(
@@ -548,20 +543,15 @@ industries_aamne <- Reduce(
 # ##$##
 
 # ##@## TEST decompr requirements: size of matrices and vectors
+# z is square; f rows and GO/VA/GVA entries: one per country-industry
 stopifnot(exprs = {
-  all.equal(
-    dim(aamne_z_i_matrix)[1],
-    dim(aamne_f_i_matrix)[1],
+  length(unique(c(
+    dim(aamne_z_i_matrix),
+    nrow(aamne_f_i_matrix),
     length(aamne_go_i_vector),
     length(aamne_va_i_vector),
-    length(aamne_gva_i_vector)
-  )
-  all.equal(
-    dim(aamne_z_i_matrix)[2],
-    length(aamne_go_i_vector),
-    length(aamne_va_i_vector),
-    length(aamne_gva_i_vector)
-  )
+    length(aamne_gva_i_vector),
+    length(countries_aamne) * length(industries_aamne)))) == 1
 })
 
 if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
@@ -585,7 +575,7 @@ if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
 
 # ##@## aamne_z_i_indxd
 stopifnot(exprs = {
-  any(sapply(aamne_z_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  !anyNA(aamne_z_i_indxd) # no column contains NA
   })
 
 saveRDS(aamne_z_i_indxd %>%
@@ -595,7 +585,7 @@ saveRDS(aamne_z_i_indxd %>%
 
 # ##@## aamne_fnldmnd_i_indxd
 stopifnot(exprs = {
-  any(sapply(aamne_fnldmnd_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  !anyNA(aamne_fnldmnd_i_indxd) # no column contains NA
   })
 saveRDS(aamne_fnldmnd_i_indxd %>%
   tibble::add_column(year = factor(i), .before = "value"),
@@ -615,7 +605,7 @@ aamne_prdctn_i_indxd <- dplyr::bind_rows(
   dplyr::mutate(across(where(is.character),as.factor))
 
 stopifnot(exprs = {
-  any(sapply(aamne_prdctn_i_indxd, function(x)any(is.na(x))) %in% "FALSE") # TRUE so all cols do not have NA (FALSE)
+  !anyNA(aamne_prdctn_i_indxd) # no column contains NA
   })
 #
 saveRDS(aamne_prdctn_i_indxd %>%

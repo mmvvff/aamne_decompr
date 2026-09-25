@@ -121,7 +121,7 @@ decomp_aamne_i <- decompr::load_tables_vectors(
   i=industries_aamne,
   # Error: o supplied is different from rowSums(x) + rowSums(y).
   # Mean relative difference: 2.296809e-06
-  # Interpretation: the gva vector from aamne is not identical to
+  # Interpretation: the go vector from aamne is not identical to
   # calculation based on provided matrices
   # Solution: we estimate GO based on provided matrices
   # o = aamne_go_i_vector,

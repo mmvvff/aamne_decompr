@@ -4,12 +4,12 @@
 
 - Repository: local clone at `prgrmmng/git_repos/econ/aamne_decompr` (GitHub: `mmvvff/aamne_decompr`, per README.md "Usage" step 1)
 - Subject: `src_sngl/`, the single-core subset of `src/` (21 R scripts) and the repository-root files it depends on (`README.md`, `data_urls/`, `LICENSE`, `.gitignore`)
-- Derived from: `aamne_decompr-map.md` (parent map of the whole repository, verified at HEAD `6a51095`)
+- Derived from: `aamne_decompr-map.md`, the parent map of the whole repository (verified at HEAD `6a51095`); supplied outside the repository, not tracked
 - Verified against: HEAD `6a51095` plus `src_sngl/` (22 files: 21 R scripts and this map)
 - Last verified: 2026-11-05
 - Audience: maintainers of this repository (human and AI). Researcher-facing setup guidance lives in README.md.
-- Scope: files inside the repository only (code, README, walkthroughs, data_urls). Do not follow external links or papers.
-- Conventions: Sections 1-4 and 7 describe the current state. Section 5 lists open limitations (L#). Section 6 is history only: resolved repository items (R#) and map revisions (M#).
+- Scope: files inside the repository only (code, README, data_urls; the `src/0_ubuntu_example_run/example-*-readme.md` walkthroughs are cited for runtimes only). Do not follow external links or papers.
+- Conventions: Sections 1-4 and 7 describe the current state. Section 5 lists open limitations (L#). Section 6 is history only: resolved repository items (R#), map revisions (M#), and applied map evaluation items (E#).
 - Format: Markdown headings and tables; one fact per row or bullet; paths relative to the repository root unless they start with `~`.
 
 ## 1. Purpose
@@ -103,7 +103,8 @@
 | `bash_prll/2_decompr_cousec_sngl_btch_18-20.R` | Batch 2018:2020, per-year files only |
 | `bash_prll/2_decompr_cousec_sngl_btch_end.R` | Consolidator: re-reads the classification CSV, binds `store/` files into the 8 `out/` files |
 
-- The 5 batch files are identical to each other except for the year line; they omit the consolidation block.
+- The 5 batch files are identical to each other except for the year line.
+- Versus `2_decompr_cousec_sngl_all.R`, the batches omit the consolidation block, clear the console at line 3 instead of after `gc()`, add `Sys.sleep(1)` after `gc()`, add the commented lines `# library(foreach)` / `# library(doParallel)` (L20), and start each loop pass with `Sys.sleep(1)` and `cat("\n")` instead of `Sys.sleep(0.5)`.
 
 ### 2.7 Excluded from src_sngl/ (kept in src/)
 
@@ -248,10 +249,11 @@
 |---|---|---|---|---|
 | L1 | Low (guarded, documented) | `src_sngl/1_prepdata_sngl.R` lines 457-470 (drift guard); 12 cou/cousec decomposing scripts (commented `o=`/`v=`, e.g. `src_sngl/cou/2_decompr_cou_sngl_all.R` lines 122-133); README.md "Methodological note" | aAMNE's supplied GO and GVA differ slightly from matrix-implied values (commented mean relative differences 2.296809e-06 for GO, 2.436384e-08 for VA). decompr stops with an error when supplied `o`/`v` are inconsistent (error text quoted in all 12 scripts), so `o=`/`v=` stay commented out. | decompr's GO/VA are matrix-implied, not aAMNE's published values. `1_prepdata_sngl.R` calls `warning()` per year if either difference exceeds 1e-5. Open because the inconsistency is in OECD source data. |
 | L2 | Medium (metadata) | `data_urls/codes_sector_oecd_aamneV18_classification.csv`, `data_urls/codes_sector_oecd_aamneV23_classification.csv`; README.md "Sector Aggregation Logic" item 4 and "Classification-flag reference (draft)"; `src_sngl/cousec/2_decompr_cousec_sngl_all.R` line 137 | 9 flags (`mnfctrng_users`, `mnfctrng_prdcrs`, `apparel_prdcrs`, `elctrncs_prdcrs`, `autmtv_prdcrs`, `nontrdbls_cns`, `nontrdbls_sx`, `nontrdbls_scl`, `techrnd_highmed`) have only draft definitions; all 9 README rows are marked NEEDS-AUTHOR-CONFIRMATION. `techrnd_highmed` feeds the default aggregate `tradables_techrnd` (README states this since R29). | Default outputs `tradables_techrnd` and `xtradables_techrnd`, and any custom cousec or indexed aggregate built from these flags, rest on unconfirmed definitions until the author confirms them. |
-| L18 | Low (custom aggregates only) | `data_urls/codes_sector_oecd_aamneV23_classification.csv` row `D35_E36T39`; v23 label parsing in `src_sngl/1_prepdata_sngl.R` lines 104-107 and industry regex lines 161-167; cousec `Vc` filter `(<code>)$` in `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 272, 313 (same in the 5 cousec batches); indexed `tidyr::separate()` in `src_sngl/1_transform_indexed_example/1_trnsfrm_indexed_sngl_all.R` lines 260-262, 598 (same in the 5 indexed batches) | V23 sector code `D35_E36T39` contains `_`. A splits v23 row labels on `_` into 3 fields (country, ownership, sector), and its `stopifnot()` checks accept only industry labels of the form `<one letter>_<[0-9A-Z]+>`, so no A industry label can end in `D35_E36T39`. Indexed `separate()` calls also split on `_` into fixed fields, so no `sctr_s_i` / `sctr_c_j` value can equal it. In V23, the row is flagged only `nontrdbls_sx`. | The 4 default cousec aggregates are unaffected. A custom V23 aggregate that includes `D35_E36T39` (e.g. one built from `nontrdbls_sx`) silently zeroes that sector's `Vc` in INCLUDE runs and leaves it in EXCLUDE runs. Joining indexed outputs to the CSV on `sector_code` misses that sector. |
-| L19 | Low (documentation) | README.md "Notes for researchers", "Year coverage" bullet (line 90); year-skip check in the 12 cou/cousec decomposing scripts, e.g. `src_sngl/cou/2_decompr_cou_sngl_all.R` lines 70-79 and `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 164-173 | README states that every loop skips years whose raw CSV is absent from `0_data/`. cou and cousec instead skip a year when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (Sections 3.B, 3.C); only components A and D check for the raw CSV. | cou/cousec coverage follows the years A has written, not the raw files present: a year with raw data but no A run is skipped, and a year whose raw CSV was removed after A ran is still decomposed from A's existing `tmp/` files. |
+| L18 | Low (custom aggregates only) | `data_urls/codes_sector_oecd_aamneV23_classification.csv` row `D35_E36T39`; `src_sngl/1_prepdata_sngl.R` v23 label parsing lines 104-107 and industry regex `[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)` lines 164, 279, 328, 383; cousec `Vc` filter `(<code>)$` in `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 272, 313 (same in the 5 cousec batches); `src_sngl/1_transform_indexed_example/1_trnsfrm_indexed_sngl_all.R` v23 label parsing lines 183-186, industry regex lines 243, 381, 435, 494, and `tidyr::separate()` lines 260, 262, 332, 598 (same in the 5 indexed batches) | V23 sector code `D35_E36T39` contains `_`. A splits v23 row labels on `_` into 3 fields (country, ownership, sector), and its `stopifnot()` checks accept only industry labels of the form `<one letter>_<[0-9A-Z]+>`, so no A industry label can end in `D35_E36T39`. Indexed `separate()` calls also split on `_` into fixed fields, so no `sctr_s_i` / `sctr_c_j` value can equal it. In V23, the row is flagged only `nontrdbls_sx`. | The 4 default cousec aggregates are unaffected. A custom V23 aggregate that includes `D35_E36T39` (e.g. one built from `nontrdbls_sx`) silently zeroes that sector's `Vc` in INCLUDE runs and leaves it in EXCLUDE runs. Joining indexed outputs to the CSV on `sector_code` misses that sector. |
+| L19 | Low (documentation) | README.md "Notes for researchers", "Year coverage" bullet (line 90); year-skip check and message in the 12 cou/cousec decomposing scripts, e.g. `src_sngl/cou/2_decompr_cou_sngl_all.R` lines 70-79 and `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 164-173 | README states that every loop skips years whose raw CSV is absent from `0_data/`. In `src_sngl/`, the cou and cousec skip message `Data unavailable for year <i>` (cou line 77, cousec line 171) does not name the folder checked. cou and cousec skip a year when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (Sections 3.B, 3.C); only components A and D check for the raw CSV. | cou/cousec coverage follows the years A has written, not the raw files present: a year with raw data but no A run is skipped, and a year whose raw CSV was removed after A ran is still decomposed from A's existing `tmp/` files. |
+| L20 | Low (scope residue) | `src_sngl/cou/bash_prll/2_decompr_cou_sngl_btch_end.R` lines 21-22; `src_sngl/cousec/bash_prll/2_decompr_cousec_sngl_btch_{00-04,05-09,10-14,15-17,18-20}.R` and `..._end.R` lines 21-22 | 7 scripts keep the commented-out multi-processor imports `# library(foreach)` and `# library(doParallel)`, copied from `src/` | No runtime effect; contradicts the single-core scope of `src_sngl/` (Section 1) and points readers to a parallel backend that the subset excludes (Section 2.7). |
 
-- IDs L3-L17 are not reused because they appear as former IDs of resolved items (Section 6.1). New IDs start at L20.
+- IDs L3-L17 are not reused because they appear as former IDs of resolved items (Section 6.1). New IDs start at L21.
 
 ## 6. Change log (history only)
 
@@ -286,6 +288,9 @@
 
 ### 6.2 Map revisions
 
+- M1-M12 are revisions of the parent map; their section numbers refer to the parent map's layout (e.g. its 2.7 Ubuntu files, 7.2 system tools).
+
+
 | ID | Date | HEAD | Change |
 |---|---|---|---|
 | M1 | 2026-09-24 | d885b1f | Re-verified loops, NAMEs, clusters, skip logic, CSV read sites and shapes, dispatchers, consolidators, zip targets, dependencies, drift guard, stopifnot counts, cousec aggregates, indexed schema; recorded R14 and R15 |
@@ -301,6 +306,19 @@
 | M11 | 2026-09-25 | 70b9a9c (uncommitted edits) | Recorded R30-R31 (former L16, L17) and removed them from Section 5; updated Sections 0, 2.1, 2.2, 5 (ID note). L1 (OECD source data) and L2 (awaiting author confirmation; author chose to keep it open) remain open |
 | M12 | 2026-09-25 | 6a51095 | HEAD advanced to 6a51095 and R30-R31 marked committed; README row in Section 2.1 lists all 11 README sections; Section 2.5 batch note adds the `# END of loop` comment difference; Section 2.7 `_sngl_2` rows add log path and stale-log `rm` location; added L18 (V23 code `D35_E36T39` unmatchable by cousec and indexed sector labels) and L19 (README year-skip rule differs from cou/cousec code); Section 5 ID note advanced to L20. Re-verified by script: dependency and config counts (7.1, 7.5), loops and NAMEs (2.8, 7.5), clusters, `stopifnot` counts, function signatures (4.7), CSV shapes and flags (2.2), URL files, 56/56 tracked files named in Section 2 |
 | M13 | 2026-11-05 | 6a51095 (uncommitted `src_sngl/`) | Derived this map from the parent for `src_sngl/`: scope and metadata (Section 0); Section 2 lists the 21 copied scripts and the excluded `src/` files; parallel settings, component E, its outputs, the system-tools table, and the parallel-cluster table removed; counts re-derived for `src_sngl/` (7 cou, 7 cousec, 6 indexed, 12 decomposing scripts); L1, L2, L18, L19 locations re-pointed to `src_sngl/`; 6.1 keeps the 20 items that touch `src_sngl/` or repository-root files |
+| M14 | 2026-11-05 | 6a51095 + `src_sngl/` (PR mmvvff/aamne_decompr#3) | Applied evaluation items E1-E7 (Section 6.3); added L20; Section 5 ID note advanced to L21. Re-verified by script: 21/21 copies byte-identical to `src/`, batch-vs-`sngl_all` differences, CSV shapes, flags, suffixes and `_` codes, URL counts, `stopifnot`/`stop()` sites, `func_*` and decompr call sites, `year` columns, `AAMNE_VERSION`/`AAMNE_RAW_DATA` readers; no cosmetic indentation or prose-only blocks found |
+
+### 6.3 Map evaluation items (applied in M14)
+
+| ID | Section | Finding | Evidence (file path) | Required change |
+|---|---|---|---|---|
+| E1 | 0 | "Derived from" named `aamne_decompr-map.md` as if it were a repository file | `git ls-files` (56 tracked files; no map file) | State that the parent map is supplied outside the repository |
+| E2 | 6.2 | M1-M12 cite parent-map section numbers that differ here (parent 2.7 = Ubuntu files, 7.2 = system tools) | `src_sngl/aamne_decompr-map-sngl.md` Sections 2.7, 7.2 | Add a note that M1-M12 refer to the parent map's layout |
+| E3 | 5 (L18) | Location omitted the industry regex at prepdata lines 279, 328, 383 and indexed lines 243, 381, 435, 494, the indexed v23 label parsing (lines 183-186), and the indexed final-demand `separate()` (line 332) | `src_sngl/1_prepdata_sngl.R`; `src_sngl/1_transform_indexed_example/1_trnsfrm_indexed_sngl_all.R` | List every site |
+| E4 | 5, 7.1 | Commented-out `# library(foreach)` / `# library(doParallel)` in 7 scripts were noted only as a dependency fact | `src_sngl/cou/bash_prll/2_decompr_cou_sngl_btch_end.R` lines 21-22; `src_sngl/cousec/bash_prll/*.R` lines 21-22 | Add as limitation L20 |
+| E5 | 5 (L19) | L19 described only the README side; in `src_sngl/` the cou/cousec skip message does not name the folder it checks | `src_sngl/cou/2_decompr_cou_sngl_all.R` line 77; `src_sngl/cousec/2_decompr_cousec_sngl_all.R` line 171 | Add the message to L19's Location and Issue |
+| E6 | 0 | Scope listed walkthroughs, which are not in `src_sngl/` | `src/0_ubuntu_example_run/example-*-readme.md` (cited in Sections 3.B-3.D) | Say they are cited for runtimes only |
+| E7 | 2.6 | Batch note did not state how cousec batches differ from `sngl_all` (2.4 and 2.5 do) | `src_sngl/cousec/2_decompr_cousec_sngl_all.R` vs `src_sngl/cousec/bash_prll/2_decompr_cousec_sngl_btch_00-04.R` | List the differences |
 
 ## 7. Other relevant aspects
 
@@ -313,7 +331,7 @@
 | decompr | `library()` | 14 cou/cousec scripts; the 2 `_end.R` call no decompr function |
 | conflicted | `library()` (no `conflict_prefer` calls) | all 21 scripts |
 | tibble | `library()` in the 6 indexed scripts; the other 15 call it only as `tibble::` | all 21 scripts |
-| foreach, doParallel | not loaded; commented-out `# library()` lines remain in 7 scripts (cou `_end.R`, cousec 5 batches and `_end.R`) | none |
+| foreach, doParallel | not loaded; commented-out `# library()` lines remain in 7 scripts (cou `_end.R`, cousec 5 batches and `_end.R`; L20) | none |
 
 - Install: `install.packages(c("readr", "tidyr", "dplyr", "stringr", "tibble", "decompr", "conflicted"))`. README.md "Dependencies" also lists `foreach` and `doParallel`, marked parallel-only (R21); `src_sngl/` does not need them.
 - The repository itself is not installed; scripts are sourced directly.

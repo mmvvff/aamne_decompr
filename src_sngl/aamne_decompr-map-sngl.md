@@ -5,7 +5,7 @@
 - Repository: local clone at `prgrmmng/git_repos/econ/aamne_decompr` (GitHub: `mmvvff/aamne_decompr`, per README.md "Usage" step 1)
 - Subject: `src_sngl/`, the single-core subset of `src/` (21 R scripts) and the repository-root files it depends on (`README.md`, `data_urls/`, `LICENSE`, `.gitignore`)
 - Derived from: `aamne_decompr-map.md`, the parent map of the whole repository (verified at HEAD `6a51095`); supplied outside the repository, not tracked
-- Verified against: HEAD `6a51095` plus `src_sngl/` (22 files: 21 R scripts and this map)
+- Verified against: branch `mmvvff/affectionate-keller-8bmxk8` at `a3144fc` (base `6a51095`), PR mmvvff/aamne_decompr#3; `src_sngl/` holds 22 files (21 R scripts and this map)
 - Last verified: 2026-11-05
 - Audience: maintainers of this repository (human and AI). Researcher-facing setup guidance lives in README.md.
 - Scope: files inside the repository only (code, README, data_urls; the `src/0_ubuntu_example_run/example-*-readme.md` walkthroughs are cited for runtimes only). Do not follow external links or papers.
@@ -49,7 +49,7 @@
 - V18-only columns: `nontrdbls_cns`, `nontrdbls_scl`.
 - Flag values: `1` or blank (no `0` cells); blanks read as NA, and `dplyr::filter(<flag>==1)` drops them.
 - No sector code is a suffix of another code in either CSV (relevant to cousec's suffix regex `(<code>)$`, Section 3.C).
-- Only V23 code `D35_E36T39` contains `_` (L18).
+- Only V23 code `D35_E36T39` contains `_`; `src_sngl/` keeps it whole in every label (R32).
 - Label columns (`sector_disaggrgt_name`, `sector_aggrgt_name_spplrs`, `sector_aggrgt_name_prdcrs`) are read by no script. V23 `sector_aggrgt_name_prdcrs` equals the V18 label of the corresponding sector in all 41 rows; V18 row B is named "Mining and quarrying" (R30).
 - No URL list is provided for aAMNE v18.
 - Read location: cousec and indexed scripts read the CSV from `AAMNE_RAW_DATA` (default `0_data/`), not from `data_urls/`.
@@ -61,7 +61,7 @@
 | `1_prepdata_sngl.R` | Component A, single-core, 2000:2020 |
 | `aamne_decompr-map-sngl.md` | This map |
 
-- Provenance: every R script in `src_sngl/` is a byte-identical copy of `src/<same relative path>` at HEAD `6a51095` (checked with `cmp`); `src/` is unchanged.
+- Provenance: every R script in `src_sngl/` was copied byte-identical from `src/<same relative path>` at HEAD `6a51095` (checked with `cmp`), then edited in place by R32-R34 (Section 6.1); all 21 now differ from `src/` at those lines only. `src/` is unchanged.
 - Layout: the `src/` relative paths are kept, including the folder name `bash_prll/`. No dispatcher is copied, so `src_sngl/` batch files run one after another (Section 7.6).
 
 ### 2.4 src_sngl/1_transform_indexed_example/ (Component D)
@@ -104,7 +104,7 @@
 | `bash_prll/2_decompr_cousec_sngl_btch_end.R` | Consolidator: re-reads the classification CSV, binds `store/` files into the 8 `out/` files |
 
 - The 5 batch files are identical to each other except for the year line.
-- Versus `2_decompr_cousec_sngl_all.R`, the batches omit the consolidation block, clear the console at line 3 instead of after `gc()`, add `Sys.sleep(1)` after `gc()`, add the commented lines `# library(foreach)` / `# library(doParallel)` (L20), and start each loop pass with `Sys.sleep(1)` and `cat("\n")` instead of `Sys.sleep(0.5)`.
+- Versus `2_decompr_cousec_sngl_all.R`, the batches omit the consolidation block, clear the console at line 3 instead of after `gc()`, add `Sys.sleep(1)` after `gc()`, and start each loop pass with `Sys.sleep(1)` and `cat("\n")` instead of `Sys.sleep(0.5)`.
 
 ### 2.7 Excluded from src_sngl/ (kept in src/)
 
@@ -138,6 +138,7 @@
 - Pipeline NAME: `R_aamne_decompr` (writes `2_pipeline/R_aamne_decompr/tmp/`)
 - Year loop: 2000:2020. A missing year prints "Data unavailable for year <i>" and is skipped with `next`. The same applies to components B, C, D.
 - Processing: ownership (`own`) and sector (`ind`) are concatenated into one `own_sctr` dimension, so decompr "industries" = ownership x sector (68 in v18, 82 in v23).
+- Labels: v23 row labels are split with `tidyr::separate(sep = "_", extra = "merge")`, and industries are read from column names with `[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)`, so sector `D35_E36T39` stays whole (R32). The 3 aggregate rows (GVA, TAXSUB, GO) still raise tidyr's "Missing pieces filled with `NA`" warning.
 - Checks: 9 `stopifnot()` sites. The 2-argument checks (z and f country/industry order, final-demand components, f column count) compare both arguments. The countries/industries block requires the 5 country and the 5 industry vectors (z, f, GO, VA, GVA) to be identical after `setdiff(., NA)`, which drops the NA that label columns yield. The size block requires `dim(z)`, `nrow(f)`, the GO/VA/GVA lengths, and countries x industries to be equal (R25).
 - GO/GVA drift guard: implied GO = `rowSums(z) + rowSums(f)`, compared with the GO vector (`data_aamne_go`); implied VA = implied GO - `colSums(z)`, compared with the GVA + TAX/TAXSUB vector (`data_aamne_gva`), not the GVA-row vector (`data_aamne_va`). Calls `warning()` when either mean relative difference exceeds 1e-5 (L1).
 - Version: `AAMNE_VERSION` selects the input folder, and the load-time branch requires the table dimensions to match it (v18: 4083x4443; v23: 6317x6777). Otherwise it stops with `not ICIO-AAMNE <version> (AAMNE_VERSION): <file> is <rows>x<cols>` (R22, R27). Four later checks keep a `print()` in their unreachable `else`: the final-demand component check keyed on 68/82 industries (`print("Not ICIO-AAMNE")`) and the 3 GO/VA/GVA row-count checks (`print("not ICIO-AAMNE")`). The same applies to component D.
@@ -150,7 +151,7 @@
 - Key files: `src_sngl/cou/2_decompr_cou_sngl_all.R`, `src_sngl/cou/bash_prll/*`
 - Key functions: `decompr::load_tables_vectors()`, `decompr::wwz()`
 - Pipeline NAME: `R_aamne_decompr_cou` in all 7 cou scripts
-- Year loop: 2000:2020 (sngl_all); batches per Section 2.8. A year is skipped when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (A's output), not when the raw CSV is absent.
+- Year loop: 2000:2020 (sngl_all); batches per Section 2.8. A year is skipped when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (A's output), not when the raw CSV is absent; it prints `Data unavailable for year <i>: no data-prep output in 2_pipeline/R_aamne_decompr/tmp/` (R33).
 - Processing: `load_tables_vectors(x=z, y=f, k=countries, i=industries, null_inventory=FALSE)`, then `wwz(..., verbose=TRUE)`. The `o=` and `v=` arguments are commented out, so decompr derives GO and VA from the matrices (L1).
 - Version: none of the 7 cou scripts reads `AAMNE_VERSION`; they consume component A's `.rds` files and are version-agnostic.
 - Resources (`src/0_ubuntu_example_run/example-decompr-cou-readme.md`, batch method): ~120 min per year.
@@ -161,7 +162,7 @@
 - Key files: `src_sngl/cousec/2_decompr_cousec_sngl_all.R`, `src_sngl/cousec/bash_prll/*`
 - Key functions: `decompr::load_tables_vectors()`, `decompr::wwz()`, helpers `func_getvarname()`, `func_xstring()` (Section 4.6)
 - Pipeline NAME: `R_aamne_decompr_cousec` in all 7 cousec scripts (own directory since R11)
-- Year loop: 2000:2020 (sngl_all); batches per Section 2.8. Skip rule as in component B (no A `.rds` for the year).
+- Year loop: 2000:2020 (sngl_all); batches per Section 2.8. Skip rule and message as in component B (R33).
 - Sector vectors (from classification-CSV flags via `dplyr::filter(<flag>==1)`): `codes_nrrprd_vc`, `codes_nrrprd_upstrm`, `codes_nrrprd_dwnstrm`, `codes_tradables_mx`, `codes_tradables_sx`, `codes_mnfctrng_usrs`, `codes_mnfctrng_gvc`, `codes_mnfctrng_apprl`, `codes_mnfctrng_atmtv`, `codes_mnfctrng_elctrncs`, `codes_techrnd_highmed`.
 - Combined vectors: `codes_tradables_umxsx = setdiff(union(mx, sx), nrrprd_vc)`; `codes_tradables_techrnd = intersect(techrnd_highmed, tradables_umxsx)`.
 - Aggregates run (`vctr_sctr_aggregates`): `tradables_umxsx`, `nrrprd_upstrm`, `nrrprd_dwnstrm`, `tradables_techrnd`.
@@ -176,7 +177,7 @@
 - Key functions: `readr::read_csv()`, `tidyr::gather()`, `tidyr::separate()`, `dplyr::bind_rows()` (production rows), `tibble::add_column()`, `saveRDS()`
 - Pipeline NAME: `R_aamne_indexed` in all 6 scripts
 - Year loop: 2000:2020 (sngl_all); batches per Section 2.8.
-- Processing: repeats component A's preparation logic internally (does not read A's `.rds`); `gather`/`separate` reshape; `year` added with `tibble::add_column(year = factor(i))` at all 3 `saveRDS` sites in all 6 scripts.
+- Processing: repeats component A's preparation logic internally (does not read A's `.rds`), including R32's label parsing; `gather`/`separate` reshape, with `extra = "merge"` on the 4 `separate()` calls whose last field is a sector; `year` added with `tibble::add_column(year = factor(i))` at all 3 `saveRDS` sites in all 6 scripts.
 - Checks: 12 `stopifnot()` sites: A's 9 (R25) plus 3 `!anyNA(<table>)` checks before saving (R26).
 - Classification CSV: loaded and the same sector vectors as component C are built, but no output uses them; saved tables are full, not subset. The header (lines 1-2) states this (R23).
 - Version: `AAMNE_VERSION` selects both the raw-data folder and the classification CSV; the load-time dimension branch must match it (R27).
@@ -205,6 +206,7 @@
 | `data_aamne_va_<i>_vector.rds` | Value added (GVA row) |
 | `data_aamne_gva_<i>_vector.rds` | GVA + TAX (v18) or GVA + TAXSUB (v23), summed |
 
+- V23 industries end in `D35_E36T39` since R32 (before: `D_D35`, `F_D35`). The R27 sector count is 41 either way, so cousec does not detect `tmp/` files written before R32; rerun A to refresh them.
 - File names carry no aAMNE version tag; a run with another `AAMNE_VERSION` overwrites same-year files. cousec stops on a version mismatch with these files (R27); cou does not depend on the version.
 - B and C load all 7 files; with `o=`/`v=` commented out, the GO, VA, and GVA vectors are not passed to decompr (L1).
 
@@ -249,11 +251,9 @@
 |---|---|---|---|---|
 | L1 | Low (guarded, documented) | `src_sngl/1_prepdata_sngl.R` lines 457-470 (drift guard); 12 cou/cousec decomposing scripts (commented `o=`/`v=`, e.g. `src_sngl/cou/2_decompr_cou_sngl_all.R` lines 122-133); README.md "Methodological note" | aAMNE's supplied GO and GVA differ slightly from matrix-implied values (commented mean relative differences 2.296809e-06 for GO, 2.436384e-08 for VA). decompr stops with an error when supplied `o`/`v` are inconsistent (error text quoted in all 12 scripts), so `o=`/`v=` stay commented out. | decompr's GO/VA are matrix-implied, not aAMNE's published values. `1_prepdata_sngl.R` calls `warning()` per year if either difference exceeds 1e-5. Open because the inconsistency is in OECD source data. |
 | L2 | Medium (metadata) | `data_urls/codes_sector_oecd_aamneV18_classification.csv`, `data_urls/codes_sector_oecd_aamneV23_classification.csv`; README.md "Sector Aggregation Logic" item 4 and "Classification-flag reference (draft)"; `src_sngl/cousec/2_decompr_cousec_sngl_all.R` line 137 | 9 flags (`mnfctrng_users`, `mnfctrng_prdcrs`, `apparel_prdcrs`, `elctrncs_prdcrs`, `autmtv_prdcrs`, `nontrdbls_cns`, `nontrdbls_sx`, `nontrdbls_scl`, `techrnd_highmed`) have only draft definitions; all 9 README rows are marked NEEDS-AUTHOR-CONFIRMATION. `techrnd_highmed` feeds the default aggregate `tradables_techrnd` (README states this since R29). | Default outputs `tradables_techrnd` and `xtradables_techrnd`, and any custom cousec or indexed aggregate built from these flags, rest on unconfirmed definitions until the author confirms them. |
-| L18 | Low (custom aggregates only) | `data_urls/codes_sector_oecd_aamneV23_classification.csv` row `D35_E36T39`; `src_sngl/1_prepdata_sngl.R` v23 label parsing lines 104-107 and industry regex `[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)` lines 164, 279, 328, 383; cousec `Vc` filter `(<code>)$` in `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 272, 313 (same in the 5 cousec batches); `src_sngl/1_transform_indexed_example/1_trnsfrm_indexed_sngl_all.R` v23 label parsing lines 183-186, industry regex lines 243, 381, 435, 494, and `tidyr::separate()` lines 260, 262, 332, 598 (same in the 5 indexed batches) | V23 sector code `D35_E36T39` contains `_`. A splits v23 row labels on `_` into 3 fields (country, ownership, sector), and its `stopifnot()` checks accept only industry labels of the form `<one letter>_<[0-9A-Z]+>`, so no A industry label can end in `D35_E36T39`. Indexed `separate()` calls also split on `_` into fixed fields, so no `sctr_s_i` / `sctr_c_j` value can equal it. In V23, the row is flagged only `nontrdbls_sx`. | The 4 default cousec aggregates are unaffected. A custom V23 aggregate that includes `D35_E36T39` (e.g. one built from `nontrdbls_sx`) silently zeroes that sector's `Vc` in INCLUDE runs and leaves it in EXCLUDE runs. Joining indexed outputs to the CSV on `sector_code` misses that sector. |
-| L19 | Low (documentation) | README.md "Notes for researchers", "Year coverage" bullet (line 90); year-skip check and message in the 12 cou/cousec decomposing scripts, e.g. `src_sngl/cou/2_decompr_cou_sngl_all.R` lines 70-79 and `src_sngl/cousec/2_decompr_cousec_sngl_all.R` lines 164-173 | README states that every loop skips years whose raw CSV is absent from `0_data/`. In `src_sngl/`, the cou and cousec skip message `Data unavailable for year <i>` (cou line 77, cousec line 171) does not name the folder checked. cou and cousec skip a year when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (Sections 3.B, 3.C); only components A and D check for the raw CSV. | cou/cousec coverage follows the years A has written, not the raw files present: a year with raw data but no A run is skipped, and a year whose raw CSV was removed after A ran is still decomposed from A's existing `tmp/` files. |
-| L20 | Low (scope residue) | `src_sngl/cou/bash_prll/2_decompr_cou_sngl_btch_end.R` lines 21-22; `src_sngl/cousec/bash_prll/2_decompr_cousec_sngl_btch_{00-04,05-09,10-14,15-17,18-20}.R` and `..._end.R` lines 21-22 | 7 scripts keep the commented-out multi-processor imports `# library(foreach)` and `# library(doParallel)`, copied from `src/` | No runtime effect; contradicts the single-core scope of `src_sngl/` (Section 1) and points readers to a parallel backend that the subset excludes (Section 2.7). |
+| L19 | Low (documentation) | README.md "Notes for researchers", "Year coverage" bullet (line 90) | README states that every loop skips years whose raw CSV is absent from `0_data/`. cou and cousec instead skip a year when `2_pipeline/R_aamne_decompr/tmp/` has no `.rds` file whose name ends in the year (Sections 3.B, 3.C); only components A and D check for the raw CSV. README.md lies outside `src_sngl/`, where fixes for this map are applied; the `src_sngl/` side was resolved by R33. | cou/cousec coverage follows the years A has written, not the raw files present: a year with raw data but no A run is skipped, and a year whose raw CSV was removed after A ran is still decomposed from A's existing `tmp/` files. `src_sngl/` runs now say so in the log; README readers are still misled. |
 
-- IDs L3-L17 are not reused because they appear as former IDs of resolved items (Section 6.1). New IDs start at L21.
+- IDs L3-L17 are not reused because they appear as former IDs of resolved items (Section 6.1). L18 and L20 are resolved (R32, R34). New IDs start at L21.
 
 ## 6. Change log (history only)
 
@@ -281,8 +281,11 @@
 | R29 | 2026-09-25 | 70b9a9c | sub-defect of L2 | README.md "Classification-flag reference (draft)", closing paragraph | List of flags used by the default aggregates omitted `techrnd_highmed` | Paragraph lists it and states that `tradables_techrnd` / `xtradables_techrnd` share its draft status; draft definitions unchanged, so L2 stays open |
 | R30 | 2026-09-25 | 6a51095 | L16 | `data_urls/codes_sector_oecd_aamneV23_classification.csv` column `sector_aggrgt_name_prdcrs`; `data_urls/codes_sector_oecd_aamneV18_classification.csv` row `B` | V23 producer labels at C23, C24, C25, C26, C28, C29, C31T33, D35_E36T39, F41T43 held the V18 label of the next row's sector; T97T98 was blank; V18 row B `sector_disaggrgt_name` was the placeholder `nrr_upstrm` | The 10 V23 cells now hold the V18 label of the same sector (D35_E36T39 from DTE, F41T43 from F, T97T98 from T); all 41 V23 producer labels equal V18's for the corresponding sector. V18 row B renamed "Mining and quarrying" (ISIC Rev.4 section B). Only these 11 cells changed: sector codes, flags, shapes (34x18, 41x16), and the missing trailing newline are unchanged, so pipeline outputs are unaffected |
 | R31 | 2026-09-25 | 6a51095 | L17 | `.gitignore` | No entries for `0_data/`, `2_pipeline/`, `3_output/`; raw aAMNE CSVs and pipeline `.rds` outputs showed as untracked, and `git add -A` staged them | Root-anchored `/0_data/`, `/2_pipeline/`, `/3_output/` appended under a comment citing README "Folder structure and data". Root anchoring matches README "Usage" (folders at the clone root); `data_urls/` stays tracked, and no tracked file lies under the new paths |
+| R32 | 2026-11-05 | a3144fc | L18 | `src_sngl/1_prepdata_sngl.R` lines 107, 164, 279, 328, 383; 6 indexed scripts, lines 186, 243, 260, 262, 332, 381, 435, 494, 598 | V23 code `D35_E36T39` contains `_`: A's v23 label split dropped `E36T39` (tidyr: "Additional pieces discarded in 154 rows"), so A labeled the sector `D_D35`/`F_D35`, cousec's `(<code>)$` filter never matched it, and indexed `separate()` wrote `D35` | `extra = "merge"` on the v23 label split (A and D) and on the 4 indexed `separate()` calls whose last field is a sector; industry regex `[0-9A-Z]+` widened to `[0-9A-Z_]+` at its 4 sites per script; indexed line 334 (final-demand components) unchanged. Synthetic V23 table at 6317x6777: z, f, GO, VA, GVA identical before and after; only the 2 labels change; a `nontrdbls_sx` cousec filter matches 1694/1694 `Vc` names (was 1540); default aggregates unchanged. Rerun A to refresh older V23 `tmp/` files (Section 4.2) |
+| R33 | 2026-11-05 | a3144fc | L19 (src_sngl side) | 12 cou/cousec decomposing scripts in `src_sngl/` (cou line 77, cousec line 171 in `sngl_all`; same line in the batches) | Skip message `Data unavailable for year <i>` did not say that cou/cousec check A's `tmp/` folder, not the raw CSV that README.md describes | Message now ends `: no data-prep output in 2_pipeline/R_aamne_decompr/tmp/`; skip logic unchanged. README.md (outside `src_sngl/`) unchanged, so L19 stays open for it |
+| R34 | 2026-11-05 | a3144fc | L20 | `src_sngl/cou/bash_prll/2_decompr_cou_sngl_btch_end.R`; 5 cousec batches and `src_sngl/cousec/bash_prll/2_decompr_cousec_sngl_btch_end.R` (lines 21-22) | Commented-out `# library(foreach)` / `# library(doParallel)` remained in the single-core subset | Both lines deleted in the 7 scripts; no `foreach`/`doParallel` text remains in `src_sngl/` |
 
-- Inherited from the parent map. Locations name the `src/` originals as fixed at the time; the `src_sngl/` copies carry every fix.
+- R1-R31 (except those omitted below) are inherited from the parent map; R32-R34 were made in `src_sngl/` only. Inherited locations name the `src/` originals as fixed at the time; the `src_sngl/` copies carry every fix.
 - Omitted because they touch only files excluded from `src_sngl/` (Section 2.7): R4, R5, R6, R12, R13, R14, R15, R18, R19, R20, R28. Their IDs are not reused.
 - Commit for each item is the latest commit whose diff contains the fixed text (`git log -S`/`-G`).
 
@@ -307,6 +310,7 @@
 | M12 | 2026-09-25 | 6a51095 | HEAD advanced to 6a51095 and R30-R31 marked committed; README row in Section 2.1 lists all 11 README sections; Section 2.5 batch note adds the `# END of loop` comment difference; Section 2.7 `_sngl_2` rows add log path and stale-log `rm` location; added L18 (V23 code `D35_E36T39` unmatchable by cousec and indexed sector labels) and L19 (README year-skip rule differs from cou/cousec code); Section 5 ID note advanced to L20. Re-verified by script: dependency and config counts (7.1, 7.5), loops and NAMEs (2.8, 7.5), clusters, `stopifnot` counts, function signatures (4.7), CSV shapes and flags (2.2), URL files, 56/56 tracked files named in Section 2 |
 | M13 | 2026-11-05 | 6a51095 (uncommitted `src_sngl/`) | Derived this map from the parent for `src_sngl/`: scope and metadata (Section 0); Section 2 lists the 21 copied scripts and the excluded `src/` files; parallel settings, component E, its outputs, the system-tools table, and the parallel-cluster table removed; counts re-derived for `src_sngl/` (7 cou, 7 cousec, 6 indexed, 12 decomposing scripts); L1, L2, L18, L19 locations re-pointed to `src_sngl/`; 6.1 keeps the 20 items that touch `src_sngl/` or repository-root files |
 | M14 | 2026-11-05 | 6a51095 + `src_sngl/` (PR mmvvff/aamne_decompr#3) | Applied evaluation items E1-E7 (Section 6.3); added L20; Section 5 ID note advanced to L21. Re-verified by script: 21/21 copies byte-identical to `src/`, batch-vs-`sngl_all` differences, CSV shapes, flags, suffixes and `_` codes, URL counts, `stopifnot`/`stop()` sites, `func_*` and decompr call sites, `year` columns, `AAMNE_VERSION`/`AAMNE_RAW_DATA` readers; no cosmetic indentation or prose-only blocks found |
+| M15 | 2026-11-05 | a3144fc | Recorded R32-R34 (former L18, L19 src_sngl side, L20) and removed L18, L20 from Section 5; L19 narrowed to README.md; updated Sections 0, 2.2, 2.3, 2.6, 3.A-3.D, 4.2, 7.1, 7.6 |
 
 ### 6.3 Map evaluation items (applied in M14)
 
@@ -331,7 +335,7 @@
 | decompr | `library()` | 14 cou/cousec scripts; the 2 `_end.R` call no decompr function |
 | conflicted | `library()` (no `conflict_prefer` calls) | all 21 scripts |
 | tibble | `library()` in the 6 indexed scripts; the other 15 call it only as `tibble::` | all 21 scripts |
-| foreach, doParallel | not loaded; commented-out `# library()` lines remain in 7 scripts (cou `_end.R`, cousec 5 batches and `_end.R`; L20) | none |
+| foreach, doParallel | not used (commented-out lines removed by R34) | none |
 
 - Install: `install.packages(c("readr", "tidyr", "dplyr", "stringr", "tibble", "decompr", "conflicted"))`. README.md "Dependencies" also lists `foreach` and `doParallel`, marked parallel-only (R21); `src_sngl/` does not need them.
 - The repository itself is not installed; scripts are sourced directly.
@@ -378,7 +382,7 @@
 4. Run a decomposition, either in one script (`src_sngl/cou/2_decompr_cou_sngl_all.R` or `src_sngl/cousec/2_decompr_cousec_sngl_all.R`) or as the 5 batch files of `bash_prll/` one after another followed by that folder's `_end.R`. The indexed transform (`src_sngl/1_transform_indexed_example/`, `sngl_all` or its 5 batches) is independent of step 3 and has no `_end.R`.
 5. Read results from `2_pipeline/<NAME>/out/` (Section 4).
 
-- The README.md single-core command (`source("src/1_prepdata_sngl.R"); source("src/cou/2_decompr_cou_sngl_all.R")`) runs the identical `src/` originals.
+- The README.md single-core command (`source("src/1_prepdata_sngl.R"); source("src/cou/2_decompr_cou_sngl_all.R")`) runs the `src/` originals, which lack R32-R34.
 
 ### 7.7 Citations requested (README.md "Citation")
 

@@ -18,8 +18,6 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(decompr)
-# library(foreach)
-# library(doParallel)
 library(conflicted)
 # ##$##
 

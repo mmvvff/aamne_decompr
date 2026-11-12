@@ -58,7 +58,11 @@ if (!dir.exists(pipeline)) {
 
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2010:2014))
+# batch years: first and last year, passed as Rscript arguments by the dispatcher
+# e.g. Rscript <this script> 2000 2002
+args_years <- as.integer(commandArgs(trailingOnly = TRUE))
+stopifnot(length(args_years) == 2, !anyNA(args_years))
+vctr_allyears<-as.character(args_years[1]:args_years[2])
 for(i in vctr_allyears){ # START of loop
 cat("\f")
 Sys.sleep(0.5)
@@ -74,7 +78,7 @@ data_avlblty_i <- list.files(
   full.names = TRUE)
 #
 if (length(data_avlblty_i) == 0) {
-    print(paste("Data unavailable for year",i))
+    print(paste0("Data unavailable for year ", i, ": no data-prep output in 2_pipeline/R_aamne_decompr/tmp/"))
     next
   }
 # ##$##

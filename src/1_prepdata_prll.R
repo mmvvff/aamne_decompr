@@ -69,14 +69,19 @@ vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
 vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-1, outfile="")
+#setup parallel backend: one worker per 10 GB of RAM, after reserving 2 GB (at least 1)
+ram_gb <- if (file.exists("/proc/meminfo")) {
+  as.numeric(gsub("\\D", "", grep("MemTotal", readLines("/proc/meminfo"), value = TRUE))) / 1024^2
+} else {
+  as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
+}
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years available in the raw CSV data
+vctr_allyears <- sort(unique(sub("^.*([0-9]{4})\\.csv$", "\\1", list.files(
+  path = paste0(RAW_DATA, path_data_aamne), pattern = "[0-9]{4}\\.csv$"))))
 
 foreach(
   i=vctr_allyears,
@@ -117,7 +122,7 @@ if (aamne_version == "aamne18" && all(dim(aamne_io_i_tbl) == dim_aamne18)) {
     tidyr::separate(
       cntry_own_sctr,
       into = c("cntry","ownrshp","sctr"),
-      sep = "_")
+      sep = "_", extra = "merge")
 } else
 {stop("not ICIO-AAMNE ", aamne_version, " (AAMNE_VERSION): ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
@@ -174,7 +179,7 @@ industries_z_source <- unique(aamne_z_i$own_sctr)
 industries_z_dest <- unique(
   stringr::str_match(
     names(aamne_z_i[,!names(aamne_z_i) %in% c("cntry","own_sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 #
 stopifnot(exprs = {all.equal(industries_z_source, industries_z_dest)})
@@ -288,7 +293,7 @@ countries_go <- unique(
 industries_go <- unique(
   stringr::str_match(
     names(aamne_go_i[,!names(aamne_go_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -338,7 +343,7 @@ countries_va <- unique(
 industries_va <- unique(
   stringr::str_match(
     names(aamne_va_i[,!names(aamne_va_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -393,7 +398,7 @@ countries_gva <- unique(
 industries_gva <- unique(
   stringr::str_match(
     names(aamne_gva_i[,!names(aamne_gva_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##

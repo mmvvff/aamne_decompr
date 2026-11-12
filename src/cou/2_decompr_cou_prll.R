@@ -51,14 +51,19 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2, outfile="")
+#setup parallel backend: one worker per 10 GB of RAM, after reserving 2 GB (at least 1)
+ram_gb <- if (file.exists("/proc/meminfo")) {
+  as.numeric(gsub("\\D", "", grep("MemTotal", readLines("/proc/meminfo"), value = TRUE))) / 1024^2
+} else {
+  as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
+}
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years available in the raw CSV data
+vctr_allyears <- sort(unique(sub("^.*([0-9]{4})\\.csv$", "\\1", list.files(
+  path = paste0(RAW_DATA, "oecd_aamne/", Sys.getenv("AAMNE_VERSION", "aamne23")), pattern = "[0-9]{4}\\.csv$"))))
 
 foreach(
   i=vctr_allyears,
@@ -73,7 +78,7 @@ data_avlblty_i <- list.files(
   full.names = TRUE)
 #
 if (length(data_avlblty_i) == 0) {
-    print(paste("Data unavailable for year",i))
+    print(paste0("Data unavailable for year ", i, ": no data-prep output in 2_pipeline/R_aamne_decompr/tmp/"))
     return(NULL)
   }
 # ##$##

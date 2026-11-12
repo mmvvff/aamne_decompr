@@ -142,14 +142,19 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
 ###### INITIATE LOOP
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2, outfile="")
+#setup parallel backend: one worker per 20 GB of RAM, after reserving 2 GB (at least 1)
+ram_gb <- if (file.exists("/proc/meminfo")) {
+  as.numeric(gsub("\\D", "", grep("MemTotal", readLines("/proc/meminfo"), value = TRUE))) / 1024^2
+} else {
+  as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
+}
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 20)), outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years available in the raw CSV data
+vctr_allyears <- sort(unique(sub("^.*([0-9]{4})\\.csv$", "\\1", list.files(
+  path = paste0(RAW_DATA, path_data_aamne), pattern = "[0-9]{4}\\.csv$"))))
 
 foreach(
   i=vctr_allyears,
@@ -189,7 +194,7 @@ if (aamne_version == "aamne18" && all(dim(aamne_io_i_tbl) == dim_aamne18)) {
     tidyr::separate(
       cntry_own_sctr,
       into = c("cntry","ownrshp","sctr"),
-      sep = "_")
+      sep = "_", extra = "merge")
 } else
 {stop("not ICIO-AAMNE ", aamne_version, " (AAMNE_VERSION): ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
@@ -246,7 +251,7 @@ industries_z_source <- unique(aamne_z_i$own_sctr)
 industries_z_dest <- unique(
   stringr::str_match(
     names(aamne_z_i[,!names(aamne_z_i) %in% c("cntry","own_sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 #
 stopifnot(exprs = {all.equal(industries_z_source, industries_z_dest)})
@@ -263,9 +268,9 @@ aamne_z_i_matrix <- aamne_z_i %>%
 
 # ##@##  output: aamne_z_i_indxd
 aamne_z_i_indxd <- aamne_z_i %>%
-  tidyr::separate(own_sctr, c("ownrshp","sctr")) %>%
+  tidyr::separate(own_sctr, c("ownrshp","sctr"), extra = "merge") %>%
   tidyr::gather(k, "int_z", -(c(cntry,ownrshp,sctr))) %>%
-  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j")) %>% #buyers
+  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j"), extra = "merge") %>% #buyers
   dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
   dplyr::mutate(across(where(is.character),as.factor))
 
@@ -335,7 +340,7 @@ dim(aamne_f_i_matrix)
 # ##@## indexed: aamne_fnldmnd_i_indxd
 
 aamne_fnldmnd_i_indxd <- aamne_f_i %>%
-  tidyr::separate(own_sctr, c("ownrshp","sctr")) %>%
+  tidyr::separate(own_sctr, c("ownrshp","sctr"), extra = "merge") %>%
   tidyr::gather(k, "value", -(c(cntry,ownrshp,sctr))) %>%
   tidyr::separate(k, c("cntry_c","matrix","matrix_compnnt")) %>% #buyers
   dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
@@ -384,7 +389,7 @@ countries_go <- unique(
 industries_go <- unique(
   stringr::str_match(
     names(aamne_go_i[,!names(aamne_go_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -438,7 +443,7 @@ countries_va <- unique(
 industries_va <- unique(
   stringr::str_match(
     names(aamne_va_i[,!names(aamne_va_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -497,7 +502,7 @@ countries_gva <- unique(
 industries_gva <- unique(
   stringr::str_match(
     names(aamne_gva_i[,!names(aamne_gva_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -601,7 +606,7 @@ aamne_prdctn_i_indxd <- dplyr::bind_rows(
   dplyr::mutate(across(where(is.character),as.factor)) %>%
   dplyr::select(matrix_compnnt,!contains("fnldmnd")) %>% # exclude final demand components
   tidyr::gather(k, "value", -(c(matrix_compnnt))) %>%
-  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j")) %>% #buyers
+  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j"), extra = "merge") %>% #buyers
   dplyr::mutate(across(where(is.character),as.factor))
 
 stopifnot(exprs = {

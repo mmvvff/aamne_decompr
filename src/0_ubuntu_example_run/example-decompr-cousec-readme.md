@@ -46,7 +46,7 @@ wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubun
 
 ### Method 2: Single Core Processing with Bash
 
-This method runs individual scripts in parallel using bash. It's done in two steps:
+This method runs one single-core script per batch of years, in parallel, using bash. It's done in two steps:
 
 #### Step 1: Run Individual Scripts
 
@@ -60,8 +60,10 @@ These scripts will run in the background. You can check their individual executi
 E.g.:
 ```
 cd ~/0_scripts
-nano 2_decompr_cousec_sngl_btch_00-04_output.log
+nano 2_decompr_cousec_sngl_btch_2000-2002_output.log
 ```
+
+Batches are sized on the server: the years come from the raw CSV files, `(RAM GB - 2) / 10` batches run at a time (at least 1), and each batch covers the years divided evenly over those slots, capped at 3. Remaining batches are queued. Each log is named after the first and last year of its batch.
 
 These scripts take ~120 minutes per year, so plan accordingly.
 

@@ -143,7 +143,11 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2010:2014))
+# batch years: first and last year, passed as Rscript arguments by the dispatcher
+# e.g. Rscript <this script> 2000 2002
+args_years <- as.integer(commandArgs(trailingOnly = TRUE))
+stopifnot(length(args_years) == 2, !anyNA(args_years))
+vctr_allyears<-as.character(args_years[1]:args_years[2])
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)

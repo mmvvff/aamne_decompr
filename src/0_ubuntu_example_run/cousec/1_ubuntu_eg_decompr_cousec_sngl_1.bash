@@ -9,19 +9,15 @@ sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubuse
 # download scripts
 cd ~/0_scripts && sudo mkdir -p sngl_btch && cd ~/0_scripts/sngl_btch &&
 sudo find . -maxdepth 1 -type f -name '*decompr*cousec*btch_[0-9][0-9]-[0-9][0-9].R' -delete -print
-sudo wget -O 2_decompr_cousec_sngl_btch_00-04.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_00-04.R
-sudo wget -O 2_decompr_cousec_sngl_btch_05-09.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_05-09.R
-sudo wget -O 2_decompr_cousec_sngl_btch_10-14.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_10-14.R
-sudo wget -O 2_decompr_cousec_sngl_btch_15-17.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_15-17.R
-sudo wget -O 2_decompr_cousec_sngl_btch_18-20.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch_18-20.R
+sudo wget -O 2_decompr_cousec_sngl_btch.R https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/cousec/bash_prll/2_decompr_cousec_sngl_btch.R
 
-# run scripts in parallel: minimum requiered CPU with 6 cores
+# run year batches in parallel: the dispatcher sizes them from the raw CSV years and the RAM
 cd ~/0_scripts
-[ -f 2_run_decompr_cousec_scripts.sh ] && sudo rm 2_run_decompr_cousec_scripts.sh
-sudo wget -O 2_run_decompr_cousec_scripts.sh https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/helpers/2_run_decompr_cousec_scripts.sh
-sudo chmod +x 2_run_decompr_cousec_scripts.sh
+[ -f 2_run_sngl_btch.sh ] && sudo rm 2_run_sngl_btch.sh
+sudo wget -O 2_run_sngl_btch.sh https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/helpers/2_run_sngl_btch.sh
+sudo chmod +x 2_run_sngl_btch.sh
 
 cd ~
-echo "Starting 2_run_decompr_cousec_scripts.sh"
-~/0_scripts/2_run_decompr_cousec_scripts.sh
-echo "scripts associated with 2_run_decompr_cousec_scripts.sh started in background"
+echo "Starting 2_run_sngl_btch.sh"
+~/0_scripts/2_run_sngl_btch.sh 2_decompr_cousec_sngl_btch.R
+echo "scripts associated with 2_run_sngl_btch.sh started in background"

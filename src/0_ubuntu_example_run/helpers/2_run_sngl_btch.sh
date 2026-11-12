@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# usage: 2_run_sngl_btch.sh <batch script in ~/0_scripts/sngl_btch>
+# usage: 2_run_sngl_btch.sh <batch script in ~/0_scripts/sngl_btch> [GB of RAM per year, default 10]
 script=$1
+gb_per_year=${2:-10}
 
 # run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
 cd ~/r_aamne_wwz
@@ -10,9 +11,9 @@ cd ~/r_aamne_wwz
 years=($(ls 0_data/oecd_aamne/aamne23 | grep -oE '[0-9]{4}\.csv$' | cut -c1-4 | sort -u))
 n=${#years[@]}
 
-# parallel batches: (RAM GB - 2) / 10 GB per year, at least 1
+# parallel batches: (RAM GB - 2) / GB per year, at least 1
 ram_gb=$(awk '/MemTotal/ {print int($2 / 1024 / 1024 + 0.999)}' /proc/meminfo)
-slots=$(( (ram_gb - 2) / 10 )); (( slots < 1 )) && slots=1
+slots=$(( (ram_gb - 2) / gb_per_year )); (( slots < 1 )) && slots=1
 
 # years per batch: spread evenly over the slots, capped at 3
 size=$(( (n + slots - 1) / slots )); (( size > 3 )) && size=3

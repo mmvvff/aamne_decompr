@@ -10,7 +10,7 @@ sudo wget -O 0_trnsfrm_indexed_sngl_btch.R https://raw.githubusercontent.com/mmv
 cd ~
 sudo chmod u+rwx ~/r_aamne_wwz
 
-# run year batches in parallel: the dispatcher sizes them from the raw CSV years and the RAM
+# run year batches in parallel: the dispatcher sizes them from the raw CSV years and the RAM (20 GB per year)
 cd ~/0_scripts
 [ -f 2_run_sngl_btch.sh ] && sudo rm 2_run_sngl_btch.sh
 sudo wget -O 2_run_sngl_btch.sh https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/helpers/2_run_sngl_btch.sh
@@ -18,5 +18,5 @@ sudo chmod +x 2_run_sngl_btch.sh
 
 cd ~
 echo "Starting 2_run_sngl_btch.sh"
-~/0_scripts/2_run_sngl_btch.sh 0_trnsfrm_indexed_sngl_btch.R
+~/0_scripts/2_run_sngl_btch.sh 0_trnsfrm_indexed_sngl_btch.R 20
 echo "scripts associated with 2_run_sngl_btch.sh started in background"

@@ -122,7 +122,7 @@ if (aamne_version == "aamne18" && all(dim(aamne_io_i_tbl) == dim_aamne18)) {
     tidyr::separate(
       cntry_own_sctr,
       into = c("cntry","ownrshp","sctr"),
-      sep = "_")
+      sep = "_", extra = "merge")
 } else
 {stop("not ICIO-AAMNE ", aamne_version, " (AAMNE_VERSION): ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
 
@@ -179,7 +179,7 @@ industries_z_source <- unique(aamne_z_i$own_sctr)
 industries_z_dest <- unique(
   stringr::str_match(
     names(aamne_z_i[,!names(aamne_z_i) %in% c("cntry","own_sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 #
 stopifnot(exprs = {all.equal(industries_z_source, industries_z_dest)})
@@ -293,7 +293,7 @@ countries_go <- unique(
 industries_go <- unique(
   stringr::str_match(
     names(aamne_go_i[,!names(aamne_go_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -343,7 +343,7 @@ countries_va <- unique(
 industries_va <- unique(
   stringr::str_match(
     names(aamne_va_i[,!names(aamne_va_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -398,7 +398,7 @@ countries_gva <- unique(
 industries_gva <- unique(
   stringr::str_match(
     names(aamne_gva_i[,!names(aamne_gva_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z]+)")[,2]
+    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
   )
 
 # ##$##

@@ -78,7 +78,7 @@ data_avlblty_i <- list.files(
   full.names = TRUE)
 #
 if (length(data_avlblty_i) == 0) {
-    print(paste("Data unavailable for year",i))
+    print(paste0("Data unavailable for year ", i, ": no data-prep output in 2_pipeline/R_aamne_decompr/tmp/"))
     return(NULL)
   }
 # ##$##

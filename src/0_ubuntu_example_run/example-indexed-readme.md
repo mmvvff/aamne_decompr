@@ -26,7 +26,7 @@ There are two methods to run the scripts:
 
 ### Method 1: Parallel Execution using R
 
-This approach employs R's `parallel` package to run scripts simultaneously. However, be aware that this method might face challenges based on your specific server setup. Each year processed requires a minimum of 20GB of RAM. On macOS systems, if physical available RAM is insufficient, the operating system typically compensates by using hard disk space as virtual RAM. Given these memory requirements, parallel execution is  not advised for most users. The high RAM demand can lead to performance issues or system instability.
+This approach employs R's `parallel` package to run scripts simultaneously. The cluster runs one worker (one year) per 10 GB of RAM after reserving 2 GB, at least 1, over the years found in the raw CSV files. However, be aware that this method might face challenges based on your specific server setup. Each year processed requires a minimum of 20GB of RAM. On macOS systems, if physical available RAM is insufficient, the operating system typically compensates by using hard disk space as virtual RAM. Given these memory requirements, parallel execution is  not advised for most users. The high RAM demand can lead to performance issues or system instability.
 
 To run scripts in parallel (use `sudo` if necessary):
 

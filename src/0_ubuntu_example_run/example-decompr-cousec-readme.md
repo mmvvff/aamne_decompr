@@ -36,7 +36,7 @@ There are two methods to run the scripts:
 
 ### Method 1: Parallel Execution using R
 
-This method uses R's `parallel` package to run scripts in parallel. Note that this might yield issues depending on your server configuration.
+This method uses R's `parallel` package to run scripts in parallel. Note that this might yield issues depending on your server configuration. The cluster runs one worker (one year) per 10 GB of RAM after reserving 2 GB, at least 1, over the years found in the raw CSV files.
 
 To run scripts in parallel (use `sudo` if necessary):
 

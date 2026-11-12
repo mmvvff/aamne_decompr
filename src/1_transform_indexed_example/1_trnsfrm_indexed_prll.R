@@ -142,14 +142,19 @@ vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
 # ##$##
 
 ###### INITIATE LOOP
-#setup parallel backend to use many processors
-cores = detectCores()
-# substract n processors to avoid overloading
-cl <- makeCluster(cores[1]-2, outfile="")
+#setup parallel backend: one worker per 10 GB of RAM, after reserving 2 GB (at least 1)
+ram_gb <- if (file.exists("/proc/meminfo")) {
+  as.numeric(gsub("\\D", "", grep("MemTotal", readLines("/proc/meminfo"), value = TRUE))) / 1024^2
+} else {
+  as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
+}
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years available in the raw CSV data
+vctr_allyears <- sort(unique(sub("^.*([0-9]{4})\\.csv$", "\\1", list.files(
+  path = paste0(RAW_DATA, path_data_aamne), pattern = "[0-9]{4}\\.csv$"))))
 
 foreach(
   i=vctr_allyears,

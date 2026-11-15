@@ -32,6 +32,10 @@ cd ~ && sudo mkdir -p 0_scripts "${project_name}"
 sudo chown "$USER":"$USER" ~/0_scripts
 cd ~/"${project_name}" && sudo mkdir 0_data 1_code 2_pipeline 3_output
 
+# Data inputs: downloaded from the URL list (default), or read in place from AAMNE_DATA_SOURCES
+# when AAMNE_DATA_FROM_SOURCES=TRUE (nothing is downloaded)
+if [ "${AAMNE_DATA_FROM_SOURCES:-FALSE}" != "TRUE" ]; then
+
 # Change to the data directory and create subdirectory for the data of the selected version
 cd ./0_data && sudo mkdir -p ./"${data_dir}" && cd ./"${data_dir}"
 # -p: create parent directories if they don't exist
@@ -66,6 +70,8 @@ sudo find . -name '*.zip' -exec unzip -j -o {} "${csv_members[@]}" \;
 
 # Remove all .zip files after extraction
 sudo find . -name '*.zip' -delete
+
+fi
 
 # Download sector classification CSVs into 0_data
 # (required by the cousec and indexed scripts, which read them from 0_data/)

@@ -66,10 +66,17 @@ The choice between versions depends on the researcher's judgment and specific re
    | `aamne26` | `0_data/oecd_aamne/aamne26/` | `AAMNE_ICIO<YYYY>.csv` | 2000-2023 | `codes_sector_oecd_aamneV23_classification.csv` |
    | `icio2026` | `0_data/oecd_icio/icio2026/` | `<YYYY>_SML.csv` (1995-2022), `<YYYY>_PROJECTED.csv` (2023-2024), from the release's `CurrentPrices` folder | 1995-2024 | `codes_sector_oecd_icio2026_classification.csv` |
 
-   The scripts are configured through environment variables, with sensible defaults: `AAMNE_PROJECT_DIR` (defaults to `.`, the current working directory), `AAMNE_PROJECT` (defaults to empty string), `AAMNE_RAW_DATA` (defaults to `0_data/`), and `AAMNE_VERSION` (defaults to `aamne23`). Set these to customize your setup, e.g.:
+   The scripts are configured through environment variables, with sensible defaults: `AAMNE_PROJECT_DIR` (defaults to `.`, the current working directory), `AAMNE_PROJECT` (defaults to empty string), `AAMNE_RAW_DATA` (defaults to `0_data/`), `AAMNE_VERSION` (defaults to `aamne23`), `AAMNE_DATA_FROM_SOURCES` (defaults to `FALSE`), `AAMNE_DATA_SOURCES` (defaults to empty string), and `AAMNE_PIPELINE_DIR` (defaults to `2_pipeline`). Set these once, before running any script, to customize your setup, e.g.:
    ```
    export AAMNE_PROJECT_DIR="$HOME/projects"
    export AAMNE_VERSION="aamne26"
+   ```
+
+   To read the yearly CSV files in place from a folder that keeps the layout of the OECD downloads, instead of copying them into `0_data/`, set `AAMNE_DATA_FROM_SOURCES` to `TRUE` and `AAMNE_DATA_SOURCES` to that folder (absolute path, with trailing slash). The scripts then read `<AAMNE_DATA_SOURCES>oecd_aamne/<version>/gmrio/` (`aamne23`, `aamne26`) or `<AAMNE_DATA_SOURCES>oecd_icio/icio2026/gmrio/CurrentPrices/` (`icio2026`). The classification CSV is still read from `0_data/`. To write the outputs elsewhere, set `AAMNE_PIPELINE_DIR`; the folder keeps its structure (`<AAMNE_PIPELINE_DIR>/<NAME>/{out,store,tmp}`) and is created if missing:
+   ```
+   export AAMNE_DATA_FROM_SOURCES="TRUE"
+   export AAMNE_DATA_SOURCES="/Volumes/my_drive/oecd_datasets/"
+   export AAMNE_PIPELINE_DIR="/Volumes/my_drive/aamne_pipeline"
    ```
 
 3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.
@@ -89,7 +96,7 @@ The choice between versions depends on the researcher's judgment and specific re
 
    - Alternatively, if you are interested in revealing the VA content via backward linkages with a special focus on certain sectors (e.g., only tradable sectors), choose this [subset of scripts](https://github.com/mmvvff/aamne_decompr/tree/main/src/cousec). These scripts help reveal the VA contributions from a specific sector of origin (source of VA) to each of the sectors of destination (users of VA) covered in the aAMNE database. To accomplish this, these scripts modify the inputs feeding into `decompr`. Please look closely at the [example provided](src/0_ubuntu_example_run/example-decompr-cousec-readme.md).
 
-5. The main results are saved under `2_pipeline/<NAME>/out/`, where `<NAME>` is the pipeline name set in each script (e.g., `2_pipeline/R_aamne_decompr_cou/out/` for the country-level decomposition).
+5. The main results are saved under `2_pipeline/<NAME>/out/` (or `<AAMNE_PIPELINE_DIR>/<NAME>/out/`), where `<NAME>` is the pipeline name set in each script (e.g., `2_pipeline/R_aamne_decompr_cou/out/` for the country-level decomposition).
 
 ## Notes for researchers
 

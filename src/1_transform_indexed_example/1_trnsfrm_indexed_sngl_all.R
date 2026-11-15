@@ -54,11 +54,12 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-# aAMNE version: "aamne18" or "aamne23"; override via env var AAMNE_VERSION
+# version: "aamne23", "aamne26" (aAMNE) or "icio2026" (ICIO, no ownership split); override via env var AAMNE_VERSION
 # copy the matching classification CSV from data_urls/ into 0_data/
 aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
-file_codes_sector <- paste0("codes_sector_oecd_aamne",
-  ifelse(aamne_version == "aamne18", "V18", "V23"), "_classification.csv")
+# aamne23 and aamne26 share the V23 classification (same 41 sector codes)
+file_codes_sector <- paste0("codes_sector_oecd_",
+  ifelse(aamne_version == "icio2026", "icio2026", "aamneV23"), "_classification.csv")
 
 codes_sector_aamne_all <- readr::read_csv(paste0(RAW_DATA, file_codes_sector))
 #glimpse(codes_sector_aamne_all)
@@ -127,23 +128,34 @@ codes_tradables_techrnd<-intersect(codes_techrnd_highmed,codes_tradables_umxsx)
 
 # ##$##
 
-path_data_aamne <- paste0("oecd_aamne/", aamne_version, "/")
+path_data_aamne <- paste0(ifelse(aamne_version == "icio2026", "oecd_icio/", "oecd_aamne/"), aamne_version, "/")
 
 # ##@## OECD LABELS for VECTORS OF MATRICES
-# ##@## aamne18
-vctr_aamne18_io_fnldmnd <- c("HFCE","NPISH","GGFC","GFCF","INVNT","P33")
-vctr_aamne18_io_govatax <- c("GVA","TAX","GO")
-# ##$##
 # ##@## aamne23
 vctr_aamne23_io_fnldmnd <- c("HFCE","NONRES","NPISH","GGFC","GFCF","INVNT")
 vctr_aamne23_io_govatax <- c("GVA","TAXSUB","GO")
 # ##$##
-vctr_aamne_io_fnldmnd <- union(vctr_aamne18_io_fnldmnd, vctr_aamne23_io_fnldmnd)
-vctr_aamne_io_govatax <- union(vctr_aamne18_io_govatax, vctr_aamne23_io_govatax)
+# ##@## aamne26
+vctr_aamne26_io_fnldmnd <- c("HFCE","NPISH","GGFC","GFCF","INVNT","DPABR")
+vctr_aamne26_io_govatax <- c("GVA","TAXSUB","GO")
+# ##$##
+vctr_aamne_io_fnldmnd <- union(vctr_aamne23_io_fnldmnd, vctr_aamne26_io_fnldmnd)
+vctr_aamne_io_govatax <- union(vctr_aamne23_io_govatax, vctr_aamne26_io_govatax)
+# final demand labels of the selected version (icio2026 has the aamne26 labels)
+vctr_aamne_vrsn_io_fnldmnd <- if (aamne_version == "aamne23") vctr_aamne23_io_fnldmnd else vctr_aamne26_io_fnldmnd
+# label pieces of sellers (rows) and buyers (columns); no ownership piece in ICIO
+if (aamne_version == "icio2026") {
+  vctr_aamne_io_lbl_s <- c("sctr")
+  vctr_aamne_io_lbl_c <- c("cntry_c","sctr_c_j")
+} else {
+  vctr_aamne_io_lbl_s <- c("ownrshp","sctr")
+  vctr_aamne_io_lbl_c <- c("cntry_c","ownrshp_c_j","sctr_c_j")
+}
 # ##$##
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years: aamne23 2000-2020; aamne26 2000-2023; icio2026 1995-2024 (years without data are skipped)
+vctr_allyears<-as.character(c(1995:2024))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)
@@ -157,7 +169,7 @@ cat("\n")
 
 aamne_io_i <- list.files(
   path = paste0(RAW_DATA, path_data_aamne),
-  pattern = paste0("^.*", i, "\\.csv$"),
+  pattern = paste0("^(AAMNE_ICIO)?", i, "(_SML|_PROJECTED)?\\.csv$"),
   full.names = TRUE)
 #
 if (length(aamne_io_i) == 0) {
@@ -171,18 +183,32 @@ aamne_io_i_tbl<-readr::read_csv(aamne_io_i)
 
 ##### Expected dimensions of each version
 
-dim_aamne18 <- c(4083, 4443)
-dim_aamne23 <- c(6317, 6777)
+# rows: countries x 2 ownership types x 41 sectors (ICIO: countries x 50 sectors), plus 3 aggregate rows
+# columns: row names, one per sector row, countries x 6 final demand components (ICIO: plus total output)
+dim_aamne <- switch(aamne_version,
+  aamne23 = c(6317, 6777), # 77 countries
+  aamne26 = c(6645, 7129), # 81 countries
+  icio2026 = c(4053, 4538)) # 81 countries
 
-if (aamne_version == "aamne18" && all(dim(aamne_io_i_tbl) == dim_aamne18)) {
-  aamne_io_i_tbl <- aamne_io_i_tbl %>%
-    rename(cntry=cou,ownrshp=own,sctr=ind)
-} else if (aamne_version == "aamne23" && all(dim(aamne_io_i_tbl) == dim_aamne23)) {
+if (aamne_version %in% c("aamne23","aamne26") && all(dim(aamne_io_i_tbl) == dim_aamne)) {
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     rename(cntry_own_sctr="...1") %>%
     tidyr::separate(
       cntry_own_sctr,
       into = c("cntry","ownrshp","sctr"),
+      sep = "_", extra = "merge")
+} else if (aamne_version == "icio2026" && all(dim(aamne_io_i_tbl) == dim_aamne)) {
+  # ICIO: no ownership split; row names in "V1" (SML) or "id" (PROJECTED);
+  # the last row and column report total output: "OUT" (SML) or "TOTAL" (PROJECTED)
+  # aggregate rows take the aAMNE labels: TLS = TAXSUB, VA = GVA, OUT/TOTAL = GO
+  aamne_io_i_tbl <- aamne_io_i_tbl %>%
+    dplyr::rename_with(~ "cntry_sctr", .cols = any_of(c("V1","id"))) %>%
+    dplyr::select(!any_of(c("OUT","TOTAL"))) %>%
+    dplyr::mutate(cntry_sctr = dplyr::recode(cntry_sctr,
+      TLS = "TAXSUB", VA = "GVA", OUT = "GO", TOTAL = "GO")) %>%
+    tidyr::separate(
+      cntry_sctr,
+      into = c("cntry","sctr"),
       sep = "_", extra = "merge")
 } else
 {stop("not ICIO-AAMNE ", aamne_version, " (AAMNE_VERSION): ", basename(aamne_io_i), " is ", paste(dim(aamne_io_i_tbl), collapse = "x"))}
@@ -212,8 +238,8 @@ aamne_z_i <- aamne_io_i_tbl %>%
   # the above two are equivalent to drop_na(), but preferred for readability
   # tidyr::drop_na() %>%
   # combine ownership and industry into single industry
-  dplyr::mutate(own_sctr = stringr::str_c(ownrshp,sctr,sep = "_")) %>%
-  dplyr::select(!c(ownrshp,sctr)) %>%
+  # (ICIO has no ownership: the industry is the sector alone)
+  tidyr::unite("own_sctr", any_of(c("ownrshp","sctr")), sep = "_") %>%
   dplyr::relocate(cntry,own_sctr) %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
@@ -240,7 +266,7 @@ industries_z_source <- unique(aamne_z_i$own_sctr)
 industries_z_dest <- unique(
   stringr::str_match(
     names(aamne_z_i[,!names(aamne_z_i) %in% c("cntry","own_sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
+    "[A-Z]{3}_([0-9A-Z_]+)")[,2]
   )
 #
 stopifnot(exprs = {all.equal(industries_z_source, industries_z_dest)})
@@ -257,10 +283,10 @@ aamne_z_i_matrix <- aamne_z_i %>%
 
 # ##@##  output: aamne_z_i_indxd
 aamne_z_i_indxd <- aamne_z_i %>%
-  tidyr::separate(own_sctr, c("ownrshp","sctr"), extra = "merge") %>%
-  tidyr::gather(k, "int_z", -(c(cntry,ownrshp,sctr))) %>%
-  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j"), extra = "merge") %>% #buyers
-  dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
+  tidyr::separate(own_sctr, vctr_aamne_io_lbl_s, extra = "merge") %>%
+  tidyr::gather(k, "int_z", -(c(cntry,any_of("ownrshp"),sctr))) %>%
+  tidyr::separate(k, vctr_aamne_io_lbl_c, extra = "merge") %>% #buyers
+  dplyr::rename(cntry_s=cntry,any_of(c(ownrshp_s_i="ownrshp")),sctr_s_i=sctr) %>% #sellers
   dplyr::mutate(across(where(is.character),as.factor))
 
 # ##$##
@@ -271,14 +297,14 @@ aamne_z_i_indxd <- aamne_z_i %>%
 
 # ##@## prepare
 aamne_f_i <- aamne_io_i_tbl %>%
-  dplyr::select(cntry,ownrshp,sctr,contains("fnldmnd")) %>% # include final demand components
+  dplyr::select(cntry,any_of("ownrshp"),sctr,contains("fnldmnd")) %>% # include final demand components
   dplyr::filter(!sctr %in% vctr_aamne_io_govatax) %>% # remove aggregates
   dplyr::filter(!cntry %in% vctr_aamne_io_govatax) %>% # remove aggregates
   # although the above two are equivalent to drop_na(), they more readable
   # tidyr::drop_na() %>%
   # combine ownership and industry into single industry
-  dplyr::mutate(own_sctr = stringr::str_c(ownrshp,sctr,sep = "_")) %>%
-  dplyr::select(!c(ownrshp,sctr)) %>%
+  # (ICIO has no ownership: the industry is the sector alone)
+  tidyr::unite("own_sctr", any_of(c("ownrshp","sctr")), sep = "_") %>%
   dplyr::relocate(cntry,own_sctr) %>%
   dplyr::arrange(cntry,own_sctr) %>% # sort rows to match order in columns
   dplyr::select(cntry,own_sctr,sort(names(.))) # sort columns to match order in rows
@@ -312,11 +338,7 @@ components_f <- unique(
     "[a-z]+_([0-9A-Z]+)")[,2]
   )
 # test
-if (length(industries_f) == 68) {
-  stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne18_io_fnldmnd))})
-} else if (length(industries_f) == 82) {
-  stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne23_io_fnldmnd))})
-} else {print("Not ICIO-AAMNE")}
+stopifnot(exprs = {all.equal(components_f, sort(vctr_aamne_vrsn_io_fnldmnd))})
 # ##$##
 
 # ##@## matrix: aamne_f_i_matrix
@@ -329,10 +351,10 @@ dim(aamne_f_i_matrix)
 # ##@## indexed: aamne_fnldmnd_i_indxd
 
 aamne_fnldmnd_i_indxd <- aamne_f_i %>%
-  tidyr::separate(own_sctr, c("ownrshp","sctr"), extra = "merge") %>%
-  tidyr::gather(k, "value", -(c(cntry,ownrshp,sctr))) %>%
+  tidyr::separate(own_sctr, vctr_aamne_io_lbl_s, extra = "merge") %>%
+  tidyr::gather(k, "value", -(c(cntry,any_of("ownrshp"),sctr))) %>%
   tidyr::separate(k, c("cntry_c","matrix","matrix_compnnt")) %>% #buyers
-  dplyr::rename(cntry_s=cntry,ownrshp_s_i=ownrshp,sctr_s_i=sctr) %>% #sellers
+  dplyr::rename(cntry_s=cntry,any_of(c(ownrshp_s_i="ownrshp")),sctr_s_i=sctr) %>% #sellers
   dplyr::mutate(across(where(is.character),as.factor)) #sellers
 # ##$##
 
@@ -341,19 +363,11 @@ aamne_fnldmnd_i_indxd <- aamne_f_i %>%
 # ##@## gross output vector: go
 
 # ##@## prepare
-if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
-  aamne_go_i <- aamne_io_i_tbl %>%
-    dplyr::select(!contains("fnldmnd")) %>% # remove final demand components
-    dplyr::filter(sctr %in% c("GO")) %>% # focus on go
-    dplyr::select(!c(cntry,ownrshp)) %>%
-    dplyr::select(sctr,sort(names(.))) %>% # sort columns
-    dplyr::rename_with(~ "matrix_compnnt",
-    .cols = where(is.character))
-} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne[1])) {
   aamne_go_i <- aamne_io_i_tbl %>%
     dplyr::select(!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(cntry %in% c("GO")) %>% # focus on go
-    dplyr::select(!c(sctr,ownrshp)) %>%
+    dplyr::select(!any_of(c("sctr","ownrshp"))) %>%
     dplyr::select(cntry,sort(names(.))) %>% # sort columns
     dplyr::rename_with(~ "matrix_compnnt",
     .cols = where(is.character))
@@ -378,7 +392,7 @@ countries_go <- unique(
 industries_go <- unique(
   stringr::str_match(
     names(aamne_go_i[,!names(aamne_go_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
+    "[A-Z]{3}_([0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -395,19 +409,11 @@ aamne_go_i_vector <- aamne_go_i %>%
 # ##@## gross output vector: va
 
 # ##@## prepare
-if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
-  aamne_va_i <- aamne_io_i_tbl %>%
-    dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
-    dplyr::filter(sctr %in% c("GVA")) %>% # focus on go
-    dplyr::select(!c(cntry,ownrshp)) %>%
-    dplyr::select(sctr,sort(names(.))) %>% # sort columns
-    dplyr::rename_with(~ "matrix_compnnt",
-    .cols = where(is.character))
-} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne[1])) {
   aamne_va_i <- aamne_io_i_tbl %>%
     dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(cntry %in% c("GVA")) %>% # focus on go
-    dplyr::select(!c(sctr,ownrshp)) %>%
+    dplyr::select(!any_of(c("sctr","ownrshp"))) %>%
     dplyr::select(cntry,sort(names(.))) %>% # sort columns
     dplyr::rename_with(~ "matrix_compnnt",
     .cols = where(is.character))
@@ -432,7 +438,7 @@ countries_va <- unique(
 industries_va <- unique(
   stringr::str_match(
     names(aamne_va_i[,!names(aamne_va_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
+    "[A-Z]{3}_([0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -448,21 +454,11 @@ aamne_va_i_vector <- aamne_va_i %>%
 # ##@## gross output vector: gva
 
 # ##@## prepare
-if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
-  aamne_gva_i <- aamne_io_i_tbl %>%
-    dplyr::select(sctr,!contains("fnldmnd")) %>% # remove final demand components
-    dplyr::filter(sctr %in% c("GVA","TAX")) %>% # focus on VA
-    dplyr::select(!c(cntry,ownrshp,sctr)) %>%
-    dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
-    tibble::add_column(sctr=c("GVA"), .before = 1) %>%
-    dplyr::select(sctr,sort(names(.))) %>% # sort columns
-    dplyr::rename_with(~ "matrix_compnnt",
-    .cols = where(is.character))
-} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne[1])) {
   aamne_gva_i <- aamne_io_i_tbl %>%
     dplyr::select(cntry,!contains("fnldmnd")) %>% # remove final demand components
     dplyr::filter(cntry %in% c("GVA","TAXSUB")) %>% # focus on VA
-    dplyr::select(!c(cntry,ownrshp,sctr)) %>%
+    dplyr::select(!any_of(c("cntry","ownrshp","sctr"))) %>%
     dplyr::summarize(across(.cols = where(is.numeric),.fns = sum)) %>%
     tibble::add_column(sctr=c("GVA"), .before = 1) %>%
     dplyr::select(sctr,sort(names(.))) %>% # sort columns
@@ -491,7 +487,7 @@ countries_gva <- unique(
 industries_gva <- unique(
   stringr::str_match(
     names(aamne_gva_i[,!names(aamne_gva_i) %in% c("sctr")]),
-    "[A-Z]{3}_([A-Z]{1}_[0-9A-Z_]+)")[,2]
+    "[A-Z]{3}_([0-9A-Z_]+)")[,2]
   )
 
 # ##$##
@@ -548,18 +544,11 @@ stopifnot(exprs = {
     length(countries_aamne) * length(industries_aamne)))) == 1
 })
 
-if (all(dim(aamne_io_i_tbl)[1] == dim_aamne18[1])) {
+if (all(dim(aamne_io_i_tbl)[1] == dim_aamne[1])) {
   stopifnot(exprs = {
     all.equal(
       dim(aamne_f_i_matrix)[2],
-      length(countries_aamne)*length(vctr_aamne18_io_fnldmnd)
-    )
-  })
-} else if (all(dim(aamne_io_i_tbl)[1] == dim_aamne23[1])) {
-  stopifnot(exprs = {
-    all.equal(
-      dim(aamne_f_i_matrix)[2],
-      length(countries_aamne)*length(vctr_aamne23_io_fnldmnd)
+      length(countries_aamne)*length(vctr_aamne_vrsn_io_fnldmnd)
     )
   })
 }
@@ -595,7 +584,7 @@ aamne_prdctn_i_indxd <- dplyr::bind_rows(
   dplyr::mutate(across(where(is.character),as.factor)) %>%
   dplyr::select(matrix_compnnt,!contains("fnldmnd")) %>% # exclude final demand components
   tidyr::gather(k, "value", -(c(matrix_compnnt))) %>%
-  tidyr::separate(k, c("cntry_c","ownrshp_c_j","sctr_c_j"), extra = "merge") %>% #buyers
+  tidyr::separate(k, vctr_aamne_io_lbl_c, extra = "merge") %>% #buyers
   dplyr::mutate(across(where(is.character),as.factor))
 
 stopifnot(exprs = {

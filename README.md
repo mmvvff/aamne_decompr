@@ -47,7 +47,7 @@ The above folder structure draws on [Ties de Kok's suggestions](https://towardsd
 
 The data used in this project comes from the OECD's Analytical AMNE [database](https://www.oecd.org/en/data/datasets/multinational-enterprises-and-global-value-chains.html). You will need to download this data separately and place it in the `0_data/` directory. Please refer to the OECD website for access and usage terms. For convenience, a [TSV file](data_urls) has been prepared with a list of static URLs for the latest aAMNE 2023 release (updated May 2024).
 
-The scripts in this project can handle both the 2018 and 2023 versions of aAMNE.
+The scripts in this project can handle the 2023 and 2026 releases of aAMNE (`aamne23`, `aamne26`) and the 2026 release of the OECD ICIO tables in current prices (`icio2026`), which has no ownership split.
 The choice between versions depends on the researcher's judgment and specific research needs.
 
 ## Usage
@@ -58,12 +58,18 @@ The choice between versions depends on the researcher's judgment and specific re
    cd aamne_decompr
    ```
 
-2. Place the OECD Analytical AMNE data in the `0_data/` directory (under `0_data/oecd_aamne/aamne18/` or `0_data/oecd_aamne/aamne23/`). Copy the sector classification CSV from [`data_urls/`](data_urls) into `0_data/` (e.g., `codes_sector_oecd_aamneV23_classification.csv`); the `cousec` and indexed-transform scripts read it from there.
+2. Place the yearly CSV files directly in the folder of their version under `0_data/`. Copy the matching sector classification CSV from [`data_urls/`](data_urls) into `0_data/`; the `cousec` and indexed-transform scripts read it from there.
+
+   | `AAMNE_VERSION` | Folder | Yearly files | Years | Classification CSV |
+   |---|---|---|---|---|
+   | `aamne23` | `0_data/oecd_aamne/aamne23/` | `AAMNE_ICIO<YYYY>.csv` | 2000-2020 | `codes_sector_oecd_aamneV23_classification.csv` |
+   | `aamne26` | `0_data/oecd_aamne/aamne26/` | `AAMNE_ICIO<YYYY>.csv` | 2000-2023 | `codes_sector_oecd_aamneV23_classification.csv` |
+   | `icio2026` | `0_data/oecd_icio/icio2026/` | `<YYYY>_SML.csv` (1995-2022), `<YYYY>_PROJECTED.csv` (2023-2024), from the release's `CurrentPrices` folder | 1995-2024 | `codes_sector_oecd_icio2026_classification.csv` |
 
    The scripts are configured through environment variables, with sensible defaults: `AAMNE_PROJECT_DIR` (defaults to `.`, the current working directory), `AAMNE_PROJECT` (defaults to empty string), `AAMNE_RAW_DATA` (defaults to `0_data/`), and `AAMNE_VERSION` (defaults to `aamne23`). Set these to customize your setup, e.g.:
    ```
    export AAMNE_PROJECT_DIR="$HOME/projects"
-   export AAMNE_VERSION="aamne18"
+   export AAMNE_VERSION="aamne26"
    ```
 
 3. There are two main subsets of R scripts: single core and parallel processing. I strongly suggest to use the latter for faster processing times.
@@ -87,8 +93,9 @@ The choice between versions depends on the researcher's judgment and specific re
 
 ## Notes for researchers
 
-- **Year coverage.** The single-core scripts (`*_sngl.R`, `*_sngl_all.R`) loop over 2000-2020; the parallel scripts (`*_prll.R`) loop over the years found in the raw CSV file names under `0_data/oecd_aamne/<AAMNE_VERSION>/`. Data prep and the indexed transform skip years whose raw CSV is absent from `0_data/`; `cou` and `cousec` skip years without data-prep output in `2_pipeline/R_aamne_decompr/tmp/`. Realized coverage therefore depends on the files you download and on the years data prep has written. The batch scripts under `bash_prll/` (`*_sngl_btch.R`) take the first and last year as arguments, e.g. `Rscript src/cou/bash_prll/2_decompr_cou_sngl_btch.R 2000 2002`; on Ubuntu, `helpers/2_run_sngl_btch.sh` derives the ranges from the raw CSV files and the machine's RAM (10 GB per parallel batch; 20 GB for the indexed transform).
-- **aAMNE version.** `AAMNE_VERSION` defaults to `aamne23` in every script; no script defaults to `aamne18`. Data preparation and the indexed transform stop if the input table's dimensions do not match it (v18: 4083x4443; v23: 6317x6777), and `cousec` stops if the data-prep outputs do not match its classification CSV. Set `AAMNE_VERSION` to match the data you placed in `0_data/`, and use the same value for data prep and `cousec`.
+- **Year coverage.** The single-core scripts (`*_sngl.R`, `*_sngl_all.R`) loop over 1995-2024, the span of all supported versions; the parallel scripts (`*_prll.R`) loop over the years found in the raw CSV file names under `0_data/oecd_aamne/<AAMNE_VERSION>/`. Data prep and the indexed transform skip years whose raw CSV is absent from `0_data/`; `cou` and `cousec` skip years without data-prep output in `2_pipeline/R_aamne_decompr/tmp/`. Realized coverage therefore depends on the files you download and on the years data prep has written. The batch scripts under `bash_prll/` (`*_sngl_btch.R`) take the first and last year as arguments, e.g. `Rscript src/cou/bash_prll/2_decompr_cou_sngl_btch.R 2000 2002`; on Ubuntu, `helpers/2_run_sngl_btch.sh` derives the ranges from the raw CSV files and the machine's RAM (10 GB per parallel batch; 20 GB for the indexed transform).
+- **Data version.** `AAMNE_VERSION` (`aamne23`, `aamne26`, or `icio2026`) defaults to `aamne23` in every script. Data preparation and the indexed transform stop if the input table's dimensions do not match it (`aamne23`: 6317x6777; `aamne26`: 6645x7129; `icio2026`: 4053x4538), and `cousec` stops if the data-prep outputs do not match its classification CSV. Set `AAMNE_VERSION` to match the data you placed in `0_data/`, and use the same value for data prep and `cousec`.
+- **ICIO tables (`icio2026`).** The ICIO tables have 50 industries per country and no domestic/foreign ownership split, so industries are sector codes without the `D_`/`F_` prefix and the indexed tables have no ownership columns. Their aggregate rows are read as the aAMNE ones (`TLS` as `TAXSUB`, `VA` as `GVA`, `OUT`/`TOTAL` as `GO`), and the total-output column (`OUT`/`TOTAL`) is dropped. Output file names and pipeline folders are the same for every version, so use a separate project folder (or clear `2_pipeline/`) per version.
 - **Working directory.** Each script resolves the project root from `AAMNE_PROJECT_DIR` / `AAMNE_PROJECT` (defaults `.` and empty) to an absolute path via `normalizePath()`. Unless you set these variables, scripts run relative to the current working directory; set them explicitly when sourcing scripts from elsewhere.
 - **Single-core vs. parallel.** Within each component the single-core and parallel scripts are equivalent: same outputs, same file paths, same per-year processing. They differ in the loop backend (a `for` loop vs. a `foreach %dopar%` cluster), the source of the year list (see above), and the cluster size: one worker per 10 GB of RAM after reserving 2 GB, at least 1 (e.g. 24 GB gives 2 workers); the indexed transform uses 20 GB per worker. Parallel indexed runs need a minimum of ~20GB RAM per year and are not advised on laptops.
 
@@ -96,7 +103,7 @@ The choice between versions depends on the researcher's judgment and specific re
 
 The sector-focused decomposition (`cousec`) modifies the inputs fed into `decompr` to reveal the value-added contributions from (or excluding) specific subsets of origin sectors. This is achieved by zeroing out the corresponding entries in `decompr`'s value-added vector (`Vc`) before running the `wwz()` decomposition.
 
-The subsets are defined by boolean flags in the sector classification CSV (`codes_sector_oecd_aamneV23_classification.csv` or `V18`). By default, the `cousec` scripts estimate VA-trade content for four research-oriented sector aggregates:
+The subsets are defined by boolean flags in the sector classification CSV (`codes_sector_oecd_aamneV23_classification.csv` for `aamne23` and `aamne26`; `codes_sector_oecd_icio2026_classification.csv` for `icio2026`). By default, the `cousec` scripts estimate VA-trade content for four research-oriented sector aggregates:
 
 1. **`tradables_umxsx`**: Tradable sectors (manufacturing exporters `tradables_mx` and services exporters `tradables_sx`), *excluding* Natural Resource Related (NRR) value-chain producers (`nrr_vc_prdcrs`).
 2. **`nrrprd_upstrm`**: Natural Resource Related (NRR) upstream producers (`nrr_upstrm_prdcrs`).
@@ -118,16 +125,40 @@ divisions). Every row is a draft pending author confirmation.
 | `apparel_prdcrs` | Apparel GVC producers: textiles, wearing apparel, leather (C13T15). | NEEDS-AUTHOR-CONFIRMATION |
 | `elctrncs_prdcrs` | Electronics GVC producers: computer, electronic and optical products (C26). | NEEDS-AUTHOR-CONFIRMATION |
 | `autmtv_prdcrs` | Automotive GVC producers: motor vehicles, trailers and semi-trailers (C29). | NEEDS-AUTHOR-CONFIRMATION |
-| `nontrdbls_cns` (V18 only) | Non-tradables, construction & utilities: electricity/gas/water (DTE), construction (F). | NEEDS-AUTHOR-CONFIRMATION |
-| `nontrdbls_sx` | Non-tradable services. V18: accommodation (I), real estate (L), arts/other services (RTS), households (T). V23 additionally absorbs V18's `nontrdbls_cns` (utilities, construction) and `nontrdbls_scl` (public admin, education, health) sets, plus postal services (H53), which V18 kept inside `H` under `tradables_sx`. | NEEDS-AUTHOR-CONFIRMATION |
-| `nontrdbls_scl` (V18 only) | Non-tradable social services: public administration (O), education (P), health (Q). | NEEDS-AUTHOR-CONFIRMATION |
-| `techrnd_highmed` | High and medium-high R&D-intensity industries (OECD taxonomy): chemicals/pharma (C20–C21), electronics through other transport (C26–C30), IT services (J62T63; V23 also J58T60). | NEEDS-AUTHOR-CONFIRMATION |
+| `nontrdbls_sx` | Non-tradable services: utilities (D35E36T39), construction (F41T43), postal services (H53), accommodation (I55T56), real estate (L68), public admin, education, health (O84, P85, Q86T88), arts/other services (R90T93, S94T96), households (T97T98). | NEEDS-AUTHOR-CONFIRMATION |
+| `techrnd_highmed` | High and medium-high R&D-intensity industries (OECD taxonomy): chemicals/pharma (C20–C21), electronics through other transport (C26–C30), publishing/audiovisual and IT services (J58T60, J62T63). | NEEDS-AUTHOR-CONFIRMATION |
 
 The flags used directly by the four default aggregates are `tradables_mx`,
 `tradables_sx`, `nrr_vc_prdcrs`, `nrr_upstrm_prdcrs`, `nrr_dwnstrm_prdcrs`,
 and `techrnd_highmed`. All but `techrnd_highmed` are defined in the aggregate
 list above; `techrnd_highmed` is still a draft (table above), and so are the
 default outputs built from it (`tradables_techrnd`, `xtradables_techrnd`).
+
+### ICIO 2026 classification (draft)
+
+`codes_sector_oecd_icio2026_classification.csv` is a draft: it has the V23
+columns and one row per ICIO industry (50; each country has 50 sector columns
+in the table headers). Each ICIO industry takes the aggregate names and flags
+of the V23 sector covering the same ISIC Rev.4 divisions. Every flag is a
+draft pending author confirmation, including the six used by the default
+aggregates.
+
+| Flag | ICIO 2026 industries flagged (inherited from V23) | Status |
+|------|---------------------------------------------------|--------|
+| `mnfctrng_users` | C10T12, C13T15, C16, C17_18, C19, C20, C21, C22, C23, C24A, C24B, C25, C26, C27, C28, C29, C301, C302T309, C31T33 | NEEDS-AUTHOR-CONFIRMATION |
+| `nrr_vc_prdcrs` | B05, B06, B07, B08, B09, C19, C24A, C24B | NEEDS-AUTHOR-CONFIRMATION |
+| `nrr_upstrm_prdcrs` | B05, B06, B07, B08, B09 | NEEDS-AUTHOR-CONFIRMATION |
+| `nrr_dwnstrm_prdcrs` | C19, C24A, C24B | NEEDS-AUTHOR-CONFIRMATION |
+| `mnfctrng_prdcrs` | C13T15, C26, C29 | NEEDS-AUTHOR-CONFIRMATION |
+| `apparel_prdcrs` | C13T15 | NEEDS-AUTHOR-CONFIRMATION |
+| `elctrncs_prdcrs` | C26 | NEEDS-AUTHOR-CONFIRMATION |
+| `autmtv_prdcrs` | C29 | NEEDS-AUTHOR-CONFIRMATION |
+| `tradables_mx` | same industries as `mnfctrng_users` | NEEDS-AUTHOR-CONFIRMATION |
+| `tradables_sx` | G, H49, H50, H51, H52, J58T60, J61, J62_63, K, M, N | NEEDS-AUTHOR-CONFIRMATION |
+| `nontrdbls_sx` | D, E, F, H53, I, L, O, P, Q, R, S, T | NEEDS-AUTHOR-CONFIRMATION |
+| `techrnd_highmed` | C20, C21, C26, C27, C28, C29, C301, C302T309, J58T60, J62_63 | NEEDS-AUTHOR-CONFIRMATION |
+
+A01, A02 and A03 carry no flag, as V23's A01T03.
 
 ## Methodological note
 

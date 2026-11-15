@@ -58,7 +58,8 @@ if (!dir.exists(pipeline)) {
 
 
 ###### INITIATE LOOP
-vctr_allyears<-as.character(c(2000:2020))
+# years: aamne23 2000-2020; aamne26 2000-2023; icio2026 1995-2024 (years without data are skipped)
+vctr_allyears<-as.character(c(1995:2024))
 for(i in vctr_allyears){ # START of loop
 cat("\f")
 Sys.sleep(0.5)

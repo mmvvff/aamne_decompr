@@ -9,4 +9,5 @@ sudo wget -O 1_prepdata_sngl.R https://raw.githubusercontent.com/mmvvff/aamne_de
 # run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
 cd ~/r_aamne_wwz
 # to avoid that the r script stops because it loses connection:
-sudo nohup Rscript ~/0_scripts/1_prepdata_sngl.R > ~/0_scripts/1_prepdata_sngl_output.log 2>&1 &
+# sudo resets the environment: pass the data version (AAMNE_VERSION, default aamne23) to R
+sudo env AAMNE_VERSION="${AAMNE_VERSION:-aamne23}" nohup Rscript ~/0_scripts/1_prepdata_sngl.R > ~/0_scripts/1_prepdata_sngl_output.log 2>&1 &

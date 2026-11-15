@@ -56,11 +56,12 @@ if (!dir.exists(pipeline)) {
 
 # ##@## DATA: sector codes
 
-# aAMNE version: "aamne18" or "aamne23"; override via env var AAMNE_VERSION
+# version: "aamne23", "aamne26" (aAMNE) or "icio2026" (ICIO, no ownership split); override via env var AAMNE_VERSION
 # copy the matching classification CSV from data_urls/ into 0_data/
 aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
-file_codes_sector <- paste0("codes_sector_oecd_aamne",
-  ifelse(aamne_version == "aamne18", "V18", "V23"), "_classification.csv")
+# aamne23 and aamne26 share the V23 classification (same 41 sector codes)
+file_codes_sector <- paste0("codes_sector_oecd_",
+  ifelse(aamne_version == "icio2026", "icio2026", "aamneV23"), "_classification.csv")
 
 codes_sector_aamne_all <- read_csv(paste0(RAW_DATA, file_codes_sector))
 #glimpse(codes_sector_aamne_all)
@@ -188,6 +189,7 @@ industries_aamne <- readRDS(paste0(file.path(
   "2_pipeline","R_aamne_decompr","tmp",""),
   "data_aamne_industries_",i,".rds"))
 # A's tmp/ files carry no version tag: their sectors must match the CSV rows
+# (ICIO industries have no ownership prefix, so sub() leaves them as they are)
 sectors_aamne <- unique(sub("^[A-Z]_", "", industries_aamne))
 if (length(sectors_aamne) != nrow(codes_sector_aamne_all)) {
   stop("year ", i, ": ", length(sectors_aamne), " sectors in R_aamne_decompr/tmp/ vs ",

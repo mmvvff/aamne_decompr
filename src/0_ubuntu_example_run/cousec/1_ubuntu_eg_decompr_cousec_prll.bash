@@ -2,8 +2,8 @@
 
 # sector definitions aggregates for sector-sector relations
 cd ~/r_aamne_wwz/0_data
-sudo wget -O codes_sector_oecd_aamneV18_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV18_classification.csv
 sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV23_classification.csv
+sudo wget -O codes_sector_oecd_icio2026_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_icio2026_classification.csv
 
 # for parallel processing
 cd ~/0_scripts
@@ -14,4 +14,5 @@ sudo wget -O 2_decompr_cousec_prll.R https://raw.githubusercontent.com/mmvvff/aa
 # run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
 cd ~/r_aamne_wwz
 # to avoid that the r scripts stops becuase it looses connection:
-sudo nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R > ~/0_scripts/2_decompr_cousec_prll_output.log 2>&1 &
+# sudo resets the environment: pass the data version (AAMNE_VERSION, default aamne23) to R
+sudo env AAMNE_VERSION="${AAMNE_VERSION:-aamne23}" nohup Rscript ~/0_scripts/2_decompr_cousec_prll.R > ~/0_scripts/2_decompr_cousec_prll_output.log 2>&1 &

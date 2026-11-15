@@ -2,8 +2,8 @@
 
 # sector definitions aggregates for sector-sector relations
 cd ~/r_aamne_wwz/0_data
-sudo wget -O codes_sector_oecd_aamneV18_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV18_classification.csv
 sudo wget -O codes_sector_oecd_aamneV23_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_aamneV23_classification.csv
+sudo wget -O codes_sector_oecd_icio2026_classification.csv https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/data_urls/codes_sector_oecd_icio2026_classification.csv
 
 # for single batch processing
 # download scripts

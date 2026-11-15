@@ -27,6 +27,8 @@ NAME <- "R_aamne_decompr_cou"
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
+# destination of the pipeline folder (intermediate and final outputs); relative paths start at the project root
+PIPELINE_DIR <- Sys.getenv("AAMNE_PIPELINE_DIR", "2_pipeline")
 
 
 # Set working directory. Resolve the project root to an absolute path so that
@@ -41,10 +43,10 @@ message("[", NAME, "] project root: ", PROJECT_DIR)
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-pipeline <- file.path("2_pipeline", NAME)
+pipeline <- file.path(PIPELINE_DIR, NAME)
 
 if (!dir.exists(pipeline)) {
-  dir.create(pipeline)
+  dir.create(pipeline, recursive = TRUE)
   for (folder in c("out", "store", "tmp")) {
     dir.create(file.path(pipeline, folder))
   }
@@ -70,43 +72,43 @@ cat("\n")
 
 # ##@## check data availability
 data_avlblty_i <- list.files(
-  path = paste0(file.path("2_pipeline","R_aamne_decompr","tmp")),
+  path = paste0(file.path(PIPELINE_DIR,"R_aamne_decompr","tmp")),
   pattern = paste0("^.*", i, "\\.rds$"),
   full.names = TRUE)
 #
 if (length(data_avlblty_i) == 0) {
-    print(paste0("Data unavailable for year ", i, ": no data-prep output in 2_pipeline/R_aamne_decompr/tmp/"))
+    print(paste0("Data unavailable for year ", i, ": no data-prep output in ", file.path(PIPELINE_DIR,"R_aamne_decompr","tmp","")))
     next
   }
 # ##$##
 
 # ##@## Load data
 countries_aamne <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_countries_",i,".rds"))
 #
 industries_aamne <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_industries_",i,".rds"))
 #
 aamne_z_i_matrix <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_z_",i,"_matrix.rds"))
 #
 aamne_f_i_matrix <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_f_",i,"_matrix.rds"))
 #
 aamne_go_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_go_",i,"_vector.rds"))
 #
 aamne_va_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_va_",i,"_vector.rds"))
 #
 aamne_gva_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_gva_",i,"_vector.rds"))
 
 # ##$##
@@ -165,7 +167,7 @@ saveRDS(decomp_aamne_i_wwz,
 ##### join and export
 
 # ##@## collect estimates: decomp_aamne_wwz
-setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+setwd(file.path(pipeline, "store"))
 decomp_aamne_wwz_data2load=list.files(pattern=paste0("decomp_aamne_[0-9]{4}_wwz.rds"))
 decomp_aamne_wwz_list=lapply(decomp_aamne_wwz_data2load,readRDS)
 

@@ -29,6 +29,11 @@ NAME <- "R_aamne_indexed"
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
+# source of the yearly CSVs: FALSE = downloaded from the URL lists into RAW_DATA; TRUE = read in place from DATA_SOURCES
+DATA_FROM_SOURCES <- as.logical(Sys.getenv("AAMNE_DATA_FROM_SOURCES", "FALSE"))
+DATA_SOURCES <- Sys.getenv("AAMNE_DATA_SOURCES", "")
+# destination of the pipeline folder (intermediate and final outputs); relative paths start at the project root
+PIPELINE_DIR <- Sys.getenv("AAMNE_PIPELINE_DIR", "2_pipeline")
 
 # Resolve the project root to an absolute path so repeated setwd() calls stay
 # stable regardless of the current working directory.
@@ -40,10 +45,10 @@ message("[", NAME, "] project root: ", PROJECT_DIR)
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-pipeline <- file.path("2_pipeline", NAME)
+pipeline <- file.path(PIPELINE_DIR, NAME)
 
 if (!dir.exists(pipeline)) {
-  dir.create(pipeline)
+  dir.create(pipeline, recursive = TRUE)
   for (folder in c("out", "store", "tmp")) {
     dir.create(file.path(pipeline, folder))
   }
@@ -129,6 +134,10 @@ codes_tradables_techrnd<-intersect(codes_techrnd_highmed,codes_tradables_umxsx)
 # ##$##
 
 path_data_aamne <- paste0(ifelse(aamne_version == "icio2026", "oecd_icio/", "oecd_aamne/"), aamne_version, "/")
+# folder of the yearly CSVs: flat under RAW_DATA; DATA_SOURCES keeps the layout of the OECD downloads (gmrio/, ICIO: gmrio/CurrentPrices/)
+path_data_aamne <- if (DATA_FROM_SOURCES) {
+  paste0(DATA_SOURCES, path_data_aamne, "gmrio/", ifelse(aamne_version == "icio2026", "CurrentPrices/", ""))
+} else paste0(RAW_DATA, path_data_aamne)
 
 # ##@## OECD LABELS for VECTORS OF MATRICES
 # ##@## aamne23
@@ -168,7 +177,7 @@ cat("\n")
 # ICIO
 
 aamne_io_i <- list.files(
-  path = paste0(RAW_DATA, path_data_aamne),
+  path = path_data_aamne,
   pattern = paste0("^(AAMNE_ICIO)?", i, "(_SML|_PROJECTED)?\\.csv$"),
   full.names = TRUE)
 #

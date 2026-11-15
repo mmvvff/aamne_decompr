@@ -32,6 +32,8 @@ NAME <- "R_aamne_decompr_cousec"
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
+# destination of the pipeline folder (intermediate and final outputs); relative paths start at the project root
+PIPELINE_DIR <- Sys.getenv("AAMNE_PIPELINE_DIR", "2_pipeline")
 
 
 # Set working directory. Resolve the project root to an absolute path so that
@@ -46,10 +48,10 @@ message("[", NAME, "] project root: ", PROJECT_DIR)
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-pipeline <- file.path("2_pipeline", NAME)
+pipeline <- file.path(PIPELINE_DIR, NAME)
 
 if (!dir.exists(pipeline)) {
-  dir.create(pipeline)
+  dir.create(pipeline, recursive = TRUE)
   for (folder in c("out", "store", "tmp")) {
     dir.create(file.path(pipeline, folder))
   }
@@ -182,7 +184,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   name_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"names"[[1]]
 
   # ##@## decomp_aamne_name_sctr_aggregates_wwz
-  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  setwd(file.path(pipeline, "store"))
   decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
   decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
 
@@ -214,7 +216,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   name_sctr_aggregates <- func_xstring(vctr_sctr_aggregates[idx,]$"names"[[1]])
 
   # ##@## decomp_aamne_name_sctr_aggregates_wwz
-  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  setwd(file.path(pipeline, "store"))
   decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
   decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
 

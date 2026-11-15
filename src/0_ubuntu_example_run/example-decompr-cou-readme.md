@@ -24,6 +24,14 @@ This script will install R and necessary dependencies. It also downloads the dat
 export AAMNE_VERSION="aamne26"   # or "icio2026"
 ```
 
+Two more settings work the same way (export them once, before the first command; values without spaces). With `AAMNE_DATA_FROM_SOURCES="TRUE"` nothing is downloaded: the yearly CSVs are read in place from `AAMNE_DATA_SOURCES`, which keeps the layout of the OECD downloads (`<oecd_aamne|oecd_icio>/<version>/gmrio/`, plus `CurrentPrices/` for `icio2026`). `AAMNE_PIPELINE_DIR` moves the pipeline folder (default `~/r_aamne_wwz/2_pipeline`):
+
+```bash
+export AAMNE_DATA_FROM_SOURCES="TRUE"
+export AAMNE_DATA_SOURCES="/mnt/oecd_datasets/"   # with trailing slash
+export AAMNE_PIPELINE_DIR="/mnt/aamne_pipeline"
+```
+
 ### 2. Preparing the data
 
 Both methods below read the decompr inputs written by `src/1_prepdata_sngl.R`. Run it once (use `sudo` if necessary); the cou and cousec walkthroughs share its output:

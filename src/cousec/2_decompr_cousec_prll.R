@@ -29,6 +29,11 @@ NAME <- "R_aamne_decompr_cousec"
 PROJECT <- Sys.getenv("AAMNE_PROJECT", "")
 PROJECT_DIR <- Sys.getenv("AAMNE_PROJECT_DIR", ".")
 RAW_DATA <- Sys.getenv("AAMNE_RAW_DATA", "0_data/")
+# source of the yearly CSVs: FALSE = downloaded from the URL lists into RAW_DATA; TRUE = read in place from DATA_SOURCES
+DATA_FROM_SOURCES <- as.logical(Sys.getenv("AAMNE_DATA_FROM_SOURCES", "FALSE"))
+DATA_SOURCES <- Sys.getenv("AAMNE_DATA_SOURCES", "")
+# destination of the pipeline folder (intermediate and final outputs); relative paths start at the project root
+PIPELINE_DIR <- Sys.getenv("AAMNE_PIPELINE_DIR", "2_pipeline")
 
 
 # Set working directory. Resolve the project root to an absolute path so that
@@ -43,10 +48,10 @@ message("[", NAME, "] project root: ", PROJECT_DIR)
 # Set up pipeline folder if missing The code below will automatically create a
 # pipeline folder for this code file if it does not exist.
 
-pipeline <- file.path("2_pipeline", NAME)
+pipeline <- file.path(PIPELINE_DIR, NAME)
 
 if (!dir.exists(pipeline)) {
-  dir.create(pipeline)
+  dir.create(pipeline, recursive = TRUE)
   for (folder in c("out", "store", "tmp")) {
     dir.create(file.path(pipeline, folder))
   }
@@ -164,10 +169,16 @@ ram_gb <- if (file.exists("/proc/meminfo")) {
 cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
 registerDoParallel(cl)
 
+path_data_aamne <- paste0(ifelse(aamne_version == "icio2026", "oecd_icio/", "oecd_aamne/"), aamne_version, "/")
+# folder of the yearly CSVs: flat under RAW_DATA; DATA_SOURCES keeps the layout of the OECD downloads (gmrio/, ICIO: gmrio/CurrentPrices/)
+path_data_aamne <- if (DATA_FROM_SOURCES) {
+  paste0(DATA_SOURCES, path_data_aamne, "gmrio/", ifelse(aamne_version == "icio2026", "CurrentPrices/", ""))
+} else paste0(RAW_DATA, path_data_aamne)
+
 ###### INITIATE LOOP
 # years available in the raw CSV data: AAMNE_ICIO<YYYY>.csv, <YYYY>_SML.csv, <YYYY>_PROJECTED.csv
 vctr_allyears <- sort(unique(sub("^(AAMNE_ICIO)?([0-9]{4}).*$", "\\2", list.files(
-  path = paste0(RAW_DATA, ifelse(aamne_version == "icio2026", "oecd_icio/", "oecd_aamne/"), aamne_version), pattern = "^(AAMNE_ICIO)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"))))
+  path = path_data_aamne, pattern = "^(AAMNE_ICIO)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"))))
 
 foreach(
   i=vctr_allyears,
@@ -177,23 +188,23 @@ foreach(
 
 # ##@## check data availability
 data_avlblty_i <- list.files(
-  path = paste0(file.path("2_pipeline","R_aamne_decompr","tmp")),
+  path = paste0(file.path(PIPELINE_DIR,"R_aamne_decompr","tmp")),
   pattern = paste0("^.*", i, "\\.rds$"),
   full.names = TRUE)
 #
 if (length(data_avlblty_i) == 0) {
-    print(paste0("Data unavailable for year ", i, ": no data-prep output in 2_pipeline/R_aamne_decompr/tmp/"))
+    print(paste0("Data unavailable for year ", i, ": no data-prep output in ", file.path(PIPELINE_DIR,"R_aamne_decompr","tmp","")))
     return(NULL)
   }
 # ##$##
 
 # ##@## Load data
 countries_aamne <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_countries_",i,".rds"))
 #
 industries_aamne <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_industries_",i,".rds"))
 # A's tmp/ files carry no version tag: their sectors must match the CSV rows
 # (ICIO industries have no ownership prefix, so sub() leaves them as they are)
@@ -204,23 +215,23 @@ if (length(sectors_aamne) != nrow(codes_sector_aamne_all)) {
     "; run data prep and cousec with the same AAMNE_VERSION")}
 #
 aamne_z_i_matrix <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_z_",i,"_matrix.rds"))
 #
 aamne_f_i_matrix <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_f_",i,"_matrix.rds"))
 #
 aamne_go_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_go_",i,"_vector.rds"))
 #
 aamne_va_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_va_",i,"_vector.rds"))
 #
 aamne_gva_i_vector <- readRDS(paste0(file.path(
-  "2_pipeline","R_aamne_decompr","tmp",""),
+  PIPELINE_DIR,"R_aamne_decompr","tmp",""),
   "data_aamne_gva_",i,"_vector.rds"))
 
 # ##$##
@@ -377,7 +388,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   name_sctr_aggregates <- vctr_sctr_aggregates[idx,]$"names"[[1]]
 
   # ##@## decomp_aamne_name_sctr_aggregates_wwz
-  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  setwd(file.path(pipeline, "store"))
   decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
   decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
 
@@ -405,7 +416,7 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
   name_sctr_aggregates <- func_xstring(vctr_sctr_aggregates[idx,]$"names"[[1]])
 
   # ##@## decomp_aamne_name_sctr_aggregates_wwz
-  setwd(file.path(PROJECT_DIR, PROJECT, pipeline, "store"))
+  setwd(file.path(pipeline, "store"))
   decomp_aamne_name_sctr_aggregates_wwz_data2load=list.files(pattern=paste0("decomp_aamne_",name_sctr_aggregates,"_[0-9]{4}_wwz.rds"))
   decomp_aamne_name_sctr_aggregates_wwz_list=lapply(decomp_aamne_name_sctr_aggregates_wwz_data2load,readRDS)
 

@@ -15,9 +15,12 @@ cd ~/zipped
 # Remove any existing compressed file with the same name
 [ -f R_aamne_decompr_cousec.tar.gz ] && sudo rm R_aamne_decompr_cousec.tar.gz
 
+# pipeline folder: AAMNE_PIPELINE_DIR (default 2_pipeline); relative paths start at the project root
+pipeline_dir=$(cd ~/r_aamne_wwz && realpath -m "${AAMNE_PIPELINE_DIR:-2_pipeline}")
+
 # Compress the project directory using tar and pigz (parallel gzip)
 # The -9 flag sets maximum compression, and -p $cores specifies the number of cores to use
-tar cf - ~/r_aamne_wwz/2_pipeline/R_aamne_decompr_cousec | pigz -9 -p $cores > R_aamne_decompr_cousec.tar.gz
+tar cf - "$pipeline_dir"/R_aamne_decompr_cousec | pigz -9 -p $cores > R_aamne_decompr_cousec.tar.gz
 
 # Check if the compressed file exists and has content
 if [ -s R_aamne_decompr_cousec.tar.gz ]; then

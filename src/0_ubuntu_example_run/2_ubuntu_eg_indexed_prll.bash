@@ -13,4 +13,5 @@ sudo chmod u+rwx ~/r_aamne_wwz
 # run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
 cd ~/r_aamne_wwz
 # to avoid that the r scripts stops becuase it looses connection:
-sudo nohup Rscript ~/0_scripts/1_trnsfrm_indexed_prll.R > ~/0_scripts/1_trnsfrm_indexed_prll.log 2>&1 &
+# sudo resets the environment: pass the data version (AAMNE_VERSION, default aamne23) to R
+sudo env AAMNE_VERSION="${AAMNE_VERSION:-aamne23}" nohup Rscript ~/0_scripts/1_trnsfrm_indexed_prll.R > ~/0_scripts/1_trnsfrm_indexed_prll.log 2>&1 &

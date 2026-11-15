@@ -18,7 +18,11 @@ To set up R in Ubuntu, you can run the following script directly (use `sudo` if 
 wget -O - https://raw.githubusercontent.com/mmvvff/aamne_decompr/main/src/0_ubuntu_example_run/0_ubuntu_setup_rserver.bash | bash
 ```
 
-This script will install R and necessary dependencies.
+This script will install R and necessary dependencies. It also downloads the data of one version: aAMNE 2023 (`aamne23`) by default. For aAMNE 2026 or the ICIO 2026 tables in current prices, set `AAMNE_VERSION` in your shell before this command and keep it set for every command below; the wrappers pass it on to R:
+
+```bash
+export AAMNE_VERSION="aamne26"   # or "icio2026"
+```
 
 ## Running Scripts
 

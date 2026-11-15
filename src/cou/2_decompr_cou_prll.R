@@ -60,10 +60,14 @@ ram_gb <- if (file.exists("/proc/meminfo")) {
 cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
 registerDoParallel(cl)
 
+# version: "aamne23", "aamne26" (aAMNE) or "icio2026" (ICIO, no ownership split); override via env var AAMNE_VERSION
+aamne_version <- Sys.getenv("AAMNE_VERSION", "aamne23")
+path_data_aamne <- paste0(ifelse(aamne_version == "icio2026", "oecd_icio/", "oecd_aamne/"), aamne_version, "/")
+
 ###### INITIATE LOOP
-# years available in the raw CSV data
-vctr_allyears <- sort(unique(sub("^.*([0-9]{4})\\.csv$", "\\1", list.files(
-  path = paste0(RAW_DATA, "oecd_aamne/", Sys.getenv("AAMNE_VERSION", "aamne23")), pattern = "[0-9]{4}\\.csv$"))))
+# years available in the raw CSV data: AAMNE_ICIO<YYYY>.csv, <YYYY>_SML.csv, <YYYY>_PROJECTED.csv
+vctr_allyears <- sort(unique(sub("^(AAMNE_ICIO)?([0-9]{4}).*$", "\\2", list.files(
+  path = paste0(RAW_DATA, path_data_aamne), pattern = "^(AAMNE_ICIO)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"))))
 
 foreach(
   i=vctr_allyears,

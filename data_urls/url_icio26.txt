@@ -1,0 +1,7 @@
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/icio-pyp-readme.xlsx
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/1995-2000.zip
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/2001-2005.zip
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/2006-2010.zip
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/2011-2015.zip
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/2016-2020.zip
+https://www.oecd.org/content/dam/oecd/en/data/datasets/global-value-chain-data-across-trade-multinationals-and-services/icio-pyp/2021-2024.zip

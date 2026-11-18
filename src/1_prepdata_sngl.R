@@ -115,6 +115,8 @@ dim_aamne <- switch(aamne_version,
 if (aamne_version %in% c("aamne23","aamne26") && all(dim(aamne_io_i_tbl) == dim_aamne)) {
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     rename(cntry_own_sctr="...1") %>%
+    dplyr::rename_with(~ stringr::str_replace_all(.x, "D35_E36T39", "D35TE36T39")) %>%
+    dplyr::mutate(cntry_own_sctr = stringr::str_replace_all(cntry_own_sctr, "D35_E36T39", "D35TE36T39")) %>%
     tidyr::separate(
       cntry_own_sctr,
       into = c("cntry","ownrshp","sctr"),

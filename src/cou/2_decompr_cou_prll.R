@@ -57,13 +57,13 @@ if (!dir.exists(pipeline)) {
 }
 # ##$##
 
-#setup parallel backend: one worker per 10 GB of RAM, after reserving 2 GB (at least 1)
+#setup parallel backend: one worker per 7 GB of RAM, after reserving 2 GB (at least 1)
 ram_gb <- if (file.exists("/proc/meminfo")) {
   as.numeric(gsub("\\D", "", grep("MemTotal", readLines("/proc/meminfo"), value = TRUE))) / 1024^2
 } else {
   as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
 }
-cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 10)), outfile="")
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 7)), outfile="")
 registerDoParallel(cl)
 
 # version: "aamne23", "aamne26" (aAMNE) or "icio2026" (ICIO, no ownership split); override via env var AAMNE_VERSION

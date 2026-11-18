@@ -125,8 +125,14 @@ if (aamne_version %in% c("aamne23","aamne26") && all(dim(aamne_io_i_tbl) == dim_
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     dplyr::rename_with(~ "cntry_sctr", .cols = any_of(c("V1","id"))) %>%
     dplyr::select(!any_of(c("OUT","TOTAL"))) %>%
+    dplyr::rename_with(~ stringr::str_replace_all(.x, c(
+      "J62_63" = "J62T63",
+      "C17_18" = "C17T18"))) %>%
     dplyr::mutate(cntry_sctr = dplyr::recode(cntry_sctr,
       TLS = "TAXSUB", VA = "GVA", OUT = "GO", TOTAL = "GO")) %>%
+    dplyr::mutate(cntry_sctr = stringr::str_replace_all(cntry_sctr, c(
+      "J62_63" = "J62T63",
+      "C17_18" = "C17T18"))) %>%
     tidyr::separate(
       cntry_sctr,
       into = c("cntry","sctr"),

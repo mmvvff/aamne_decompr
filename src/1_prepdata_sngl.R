@@ -74,8 +74,9 @@ vctr_aamne_io_govatax <- union(vctr_aamne23_io_govatax, vctr_aamne26_io_govatax)
 vctr_aamne_vrsn_io_fnldmnd <- if (aamne_version == "aamne23") vctr_aamne23_io_fnldmnd else vctr_aamne26_io_fnldmnd
 
 ###### INITIATE LOOP
-# years: aamne23 2000-2020; aamne26 2000-2023; icio2026 1995-2024 (years without data are skipped)
-vctr_allyears<-as.character(c(1995:2024))
+# years available in the raw CSV data: AAMNE_ICIO<YYYY>.csv, <YYYY>_SML.csv, <YYYY>_PROJECTED.csv
+vctr_allyears <- sort(unique(sub("^(AAMNE_ICIO)?([0-9]{4}).*$", "\\2", list.files(
+  path = path_data_aamne, pattern = "^(AAMNE_ICIO)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"))))
 for(i in vctr_allyears){ # START of loop
 Sys.sleep(0.5)
 print(i)

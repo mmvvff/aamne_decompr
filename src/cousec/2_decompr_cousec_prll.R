@@ -230,7 +230,17 @@ vctr_allyears <- sort(unique(sub(
   )
 )))
 
-foreach(
+message(
+  "[",
+  NAME,
+  "] ",
+  length(vctr_allyears),
+  " years on ",
+  length(cl),
+  " workers"
+)
+
+invisible(foreach(
   i = vctr_allyears,
   .packages = c("readr", "tidyr", "dplyr", "stringr")
 ) %dopar%
@@ -238,6 +248,7 @@ foreach(
     # START of loop
 
     #i<-c("2010")
+    message("[", i, "] start")
 
     # ##@## check data availability
     data_avlblty_i <- list.files(
@@ -247,12 +258,12 @@ foreach(
     )
     #
     if (length(data_avlblty_i) == 0) {
-      print(paste0(
+      message(
         "Data unavailable for year ",
         i,
         ": no data-prep output in ",
         file.path(PIPELINE_DIR, "R_aamne_decompr", "tmp", "")
-      ))
+      )
       return(NULL)
     }
     # ##$##
@@ -441,7 +452,7 @@ foreach(
       # ##$##
 
       decomp_aamne_sctr_aggregates_i_wwz <- tibble::tibble(
-        decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = TRUE)
+        decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = FALSE)
       ) %>%
         tibble::add_column(year = factor(i)) %>%
         dplyr::relocate(year, .after = 3) %>%
@@ -499,7 +510,7 @@ foreach(
       # ##$##
 
       decomp_aamne_sctr_aggregates_i_wwz <- tibble::tibble(
-        decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = TRUE)
+        decompr::wwz(decomp_aamne_sctr_aggregates_i, verbose = FALSE)
       ) %>%
         tibble::add_column(year = factor(i)) %>%
         dplyr::relocate(year, .after = 3) %>%
@@ -525,10 +536,12 @@ foreach(
     # ##$##
 
     # ##$##
-  }
+    message("[", i, "] done")
+  })
 
 #stop cluster
 stopCluster(cl)
+message("[", NAME, "] decomposition finished; joining years")
 
 ##### join and export
 

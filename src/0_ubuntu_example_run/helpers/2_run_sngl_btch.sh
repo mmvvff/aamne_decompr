@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# usage: 2_run_sngl_btch.sh <batch script in ~/0_scripts/sngl_btch> [GB of RAM per year, default 7]
+# usage: 2_run_sngl_btch.sh <batch script in ~/0_scripts/sngl_btch> [GB of RAM per year, default 5]
 script=$1
-gb_per_year=${2:-7}
+gb_per_year=${2:-5}
 
 # run from the project root: scripts resolve AAMNE_PROJECT_DIR (default ".") against it
 cd ~/r_aamne_wwz

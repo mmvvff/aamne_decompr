@@ -188,7 +188,7 @@ func_xstring <- function(original_string, char_insert = "x") {
   return(new_string)
 }
 
-#setup parallel backend: one worker per 7 GB of RAM, after reserving 2 GB (at least 1)
+#setup parallel backend: one worker per 5 GB of RAM, after reserving 2 GB (at least 1)
 ram_gb <- if (file.exists("/proc/meminfo")) {
   as.numeric(gsub(
     "\\D",
@@ -199,7 +199,7 @@ ram_gb <- if (file.exists("/proc/meminfo")) {
 } else {
   as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
 }
-cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 7)), outfile = "")
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 5)), outfile = "")
 registerDoParallel(cl)
 
 path_data_aamne <- paste0(

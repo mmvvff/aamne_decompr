@@ -113,6 +113,8 @@ dim_aamne <- switch(aamne_version,
   icio2026 = c(4053, 4538)) # 81 countries
 
 if (aamne_version %in% c("aamne23","aamne26") && all(dim(aamne_io_i_tbl) == dim_aamne)) {
+  # sector codes with an underscore are renamed (D35_E36T39 = D35TE36T39) in column names and
+  # row labels, so that separate() below does not split them
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     rename(cntry_own_sctr="...1") %>%
     dplyr::rename_with(~ stringr::str_replace_all(.x, "D35_E36T39", "D35TE36T39")) %>%
@@ -125,6 +127,8 @@ if (aamne_version %in% c("aamne23","aamne26") && all(dim(aamne_io_i_tbl) == dim_
   # ICIO: no ownership split; row names in "V1" (SML) or "id" (PROJECTED);
   # the last row and column report total output: "OUT" (SML) or "TOTAL" (PROJECTED)
   # aggregate rows take the aAMNE labels: TLS = TAXSUB, VA = GVA, OUT/TOTAL = GO
+  # sector codes with an underscore are renamed (J62_63 = J62T63, C17_18 = C17T18) in column names and
+  # row labels, so that separate() below does not split them
   aamne_io_i_tbl <- aamne_io_i_tbl %>%
     dplyr::rename_with(~ "cntry_sctr", .cols = any_of(c("V1","id"))) %>%
     dplyr::select(!any_of(c("OUT","TOTAL"))) %>%

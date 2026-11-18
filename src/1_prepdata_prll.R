@@ -96,7 +96,7 @@ vctr_aamne_vrsn_io_fnldmnd <- if (aamne_version == "aamne23") {
 }
 # ##$##
 
-#setup parallel backend: one worker per 5 GB of RAM, after reserving 2 GB (at least 1)
+#setup parallel backend: one worker per 4 GB of RAM, after reserving 2 GB (at least 1)
 ram_gb <- if (file.exists("/proc/meminfo")) {
   as.numeric(gsub(
     "\\D",
@@ -107,7 +107,7 @@ ram_gb <- if (file.exists("/proc/meminfo")) {
 } else {
   as.numeric(system("sysctl -n hw.memsize", intern = TRUE)) / 1024^3
 }
-cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 5)), outfile = "")
+cl <- makeCluster(max(1, floor((ceiling(ram_gb) - 2) / 4)), outfile = "")
 registerDoParallel(cl)
 
 ###### INITIATE LOOP

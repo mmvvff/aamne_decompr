@@ -77,17 +77,17 @@ codes_sector_aamne_all <- read_csv(paste0(RAW_DATA, file_codes_sector))
 # we create a vector of codes of nrr vc, sectors and segments
 # nrrprd  producers
 codes_sector_aamne_all_nrrprd_vc <- dplyr::filter(codes_sector_aamne_all,
-  nrr_vc_prdcrs==1)
+  nrrprd_vc==1)
 codes_nrrprd_vc <- paste(codes_sector_aamne_all_nrrprd_vc$sector_code)
 unique(codes_nrrprd_vc)
 
 codes_sector_aamne_all_nrrprd_upstrm <- dplyr::filter(codes_sector_aamne_all,
-  nrr_upstrm_prdcrs==1)
+  nrrprd_upstrm==1)
 codes_nrrprd_upstrm <- paste(codes_sector_aamne_all_nrrprd_upstrm$sector_code)
 unique(codes_nrrprd_upstrm)
 
 codes_sector_aamne_all_nrrprd_dwnstrm <- dplyr::filter(codes_sector_aamne_all,
-  nrr_dwnstrm_prdcrs==1)
+  nrrprd_dwnstrm==1)
 codes_nrrprd_dwnstrm <- paste(codes_sector_aamne_all_nrrprd_dwnstrm$sector_code)
 unique(codes_nrrprd_dwnstrm)
 
@@ -103,12 +103,6 @@ codes_tradables_sx <- paste(codes_sector_aamne_all_tradables_sx$sector_code)
 unique(codes_tradables_sx)
 
 codes_tradables_umxsx <- setdiff(union(codes_tradables_mx,codes_tradables_sx), codes_nrrprd_vc)
-
-# manfucaturing users of end-products
-codes_sector_aamne_all_mnfctrng_usrs <- dplyr::filter(codes_sector_aamne_all,
-  mnfctrng_users==1)
-codes_mnfctrng_usrs <- paste(codes_sector_aamne_all_mnfctrng_usrs$sector_code)
-unique(codes_mnfctrng_usrs)
 
 
 # manufacturing producers

@@ -37,6 +37,7 @@ PIPELINE_DIR <- Sys.getenv("AAMNE_PIPELINE_DIR", "2_pipeline")
 
 PROJECT_DIR <- normalizePath(file.path(PROJECT_DIR, PROJECT), mustWork = FALSE)
 PROJECT <- ""
+WD_ORIG <- getwd() # original working directory, restored at the end of the script
 setwd(PROJECT_DIR)
 message("[", NAME, "] project root: ", PROJECT_DIR)
 
@@ -412,3 +413,6 @@ for (idx in seq(nrow(vctr_sctr_aggregates))) {
 }
 
 # ##$##
+
+# restore the original working directory (changed in PREAMBLE: 2 Settings)
+setwd(WD_ORIG)

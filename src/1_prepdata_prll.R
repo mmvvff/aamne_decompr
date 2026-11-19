@@ -137,7 +137,11 @@ foreach(
 
     aamne_io_i <- list.files(
       path = path_data_aamne,
-      pattern = paste0("^(AAMNE_ICIO)?", i, "(_SML|_PROJECTED)?\\.csv$"),
+      pattern = paste0(
+        "^(AAMNE_ICIO|ICIO_PYP_)?",
+        i,
+        "(_SML|_PROJECTED)?\\.csv$"
+      ),
       full.names = TRUE
     )
     #

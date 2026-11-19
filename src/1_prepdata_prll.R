@@ -71,7 +71,7 @@ path_data_aamne <- if (DATA_FROM_SOURCES) {
     DATA_SOURCES,
     path_data_aamne,
     "gmrio/",
-    ifelse(aamne_version == "icio2026", "CurrentPrices/", "")
+    ifelse(aamne_version == "icio2026", "PYP/", "")
   )
 } else {
   paste0(RAW_DATA, path_data_aamne)
@@ -113,11 +113,11 @@ registerDoParallel(cl)
 ###### INITIATE LOOP
 # years available in the raw CSV data: AAMNE_ICIO<YYYY>.csv, <YYYY>_SML.csv, <YYYY>_PROJECTED.csv
 vctr_allyears <- sort(unique(sub(
-  "^(AAMNE_ICIO)?([0-9]{4}).*$",
+  "^(AAMNE_ICIO|ICIO_PYP_)?([0-9]{4}).*$",
   "\\2",
   list.files(
     path = path_data_aamne,
-    pattern = "^(AAMNE_ICIO)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"
+    pattern = "^(AAMNE_ICIO|ICIO_PYP_)?[0-9]{4}(_SML|_PROJECTED)?\.csv$"
   )
 )))
 

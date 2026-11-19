@@ -226,7 +226,7 @@ vctr_allyears <- sort(unique(sub(
   "\\2",
   list.files(
     path = path_data_aamne,
-    pattern = "^(AAMNE_ICIO|ICIO_PYP_)?[0-9]{4}(_SML|_PROJECTED)?\.csv$"
+    pattern = "^(AAMNE_ICIO|ICIO_PYP_)?[0-9]{4}(_SML|_PROJECTED)?\\.csv$"
   )
 )))
 
